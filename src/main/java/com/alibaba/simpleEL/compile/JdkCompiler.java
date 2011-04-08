@@ -23,9 +23,8 @@ import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
 import com.alibaba.simpleEL.Expr;
-import com.alibaba.simpleEL.JavaSourceCompiler;
 import com.alibaba.simpleEL.JavaSource;
-import com.alibaba.simpleEL.gen.ExprImpl;
+import com.alibaba.simpleEL.JavaSourceCompiler;
 
 /**
  * @author wenshao<szujobs@hotmail.com>
@@ -49,7 +48,7 @@ public class JdkCompiler implements JavaSourceCompiler {
 		try {
 			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
 
-			ClassLoader contextClassLoader = ExprImpl.class.getClassLoader();
+			ClassLoader contextClassLoader = Expr.class.getClassLoader();
 
 			CharSequenceCompiler<Expr> compiler = new CharSequenceCompiler<Expr>(contextClassLoader, options);
 
