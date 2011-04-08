@@ -46,16 +46,19 @@ public class DefaultVariantResolver implements VariantResolver {
 		}
 	}
 	
-	public void registerVariant(String varaint, Type type) {
-		if (varaint == null) {
-			throw new IllegalArgumentException("varaint is null");
-		}
+	public void registerVariant(Type type, String... variants) {
 		
 		if (type == null) {
 			throw new IllegalArgumentException("type is null");
 		}
 		
-		variants.put(varaint, type);
+		for (String variant : variants) {
+			if (variant == null) {
+				throw new IllegalArgumentException("varaint is null");
+			}
+	
+			this.variants.put(variant, type);
+		}
 	}
 	
 	public static enum Type {

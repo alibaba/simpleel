@@ -46,13 +46,9 @@ public class CharSequenceCompilerException extends Exception {
 		return source;
 	}
 
-
-
 	public void setSource(String source) {
 		this.source = source;
 	}
-
-
 
 	public CharSequenceCompilerException(String message, Set<String> qualifiedClassNames, DiagnosticCollector<JavaFileObject> diagnostics) {
 		super(message);
