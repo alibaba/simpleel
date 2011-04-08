@@ -1,0 +1,12 @@
+package $packageName;
+
+import java.util.Map;
+import static java.lang.Math.*;
+
+public class $className
+	   extends com.alibaba.simpleEL.gen.ExprImpl {
+
+ 	public Object eval(Map<String, Object> ctx) {
+		return ($expression) ;
+ 	}
+}
