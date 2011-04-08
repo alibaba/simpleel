@@ -6,7 +6,7 @@ import java.util.Map;
 import com.alibaba.simpleEL.ELException;
 
 public class DefaultVariantResolver implements VariantResolver {
-	private Map<String, Type> variants = new HashMap<String, Type>();
+	private final Map<String, Type> variants = new HashMap<String, Type>();
 
 	@Override
 	public String resolve(String variant) {
@@ -39,6 +39,8 @@ public class DefaultVariantResolver implements VariantResolver {
 			return "_decimal(ctx.get(\"" + variant + "\"))";
 		case Date:
 			return "_string(ctx.get(\"" + variant + "\"))";
+		case Object:
+			return "ctx.get(\"" + variant + "\")";
 		default:
 			throw new ELException("unkown variant : " + variant);
 		}
@@ -57,6 +59,6 @@ public class DefaultVariantResolver implements VariantResolver {
 	}
 	
 	public static enum Type {
-		Boolean, String, Byte, Short, Integer, Long, Float, Double, BigInteger, BigDecimal, Date
+		Boolean, String, Byte, Short, Integer, Long, Float, Double, BigInteger, BigDecimal, Date, Object
 	}
 }

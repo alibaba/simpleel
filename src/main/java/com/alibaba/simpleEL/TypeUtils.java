@@ -2,6 +2,7 @@ package com.alibaba.simpleEL;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 public class TypeUtils {
 	public static boolean _bool(Object val) {
@@ -85,6 +86,23 @@ public class TypeUtils {
 		}
 		
 		return BigInteger.valueOf(((Number) val).longValue());
+	}
+	
+
+	public static Date _date(Object val) {
+		if (val == null) {
+			return null;
+		}
+		
+		if (val instanceof Date) {
+			return (Date) val; 
+		}
+		
+		if (val instanceof Number) {
+			return new Date(((Number) val).longValue()); 
+		}
+		
+		throw new ELException("");
 	}
 
 	public static BigDecimal _decimal(Object val) {
