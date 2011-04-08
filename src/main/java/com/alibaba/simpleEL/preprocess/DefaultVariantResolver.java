@@ -46,7 +46,7 @@ public class DefaultVariantResolver implements VariantResolver {
 		}
 	}
 	
-	public void setVariant(String varaint, Type type) {
+	public void registerVariant(String varaint, Type type) {
 		if (varaint == null) {
 			throw new IllegalArgumentException("varaint is null");
 		}
