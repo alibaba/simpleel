@@ -35,7 +35,7 @@ public class TemplatePreProcessor implements Preprocessor {
 
 	private final AtomicLong classIdSeed = new AtomicLong(10000L);
 
-	private VariantResolver variantResolver = new SimpleVariantResolver();
+	private VariantResolver variantResolver = new DefaultVariantResolver();
 
 	public VariantResolver getVariantResolver() {
 		return variantResolver;
