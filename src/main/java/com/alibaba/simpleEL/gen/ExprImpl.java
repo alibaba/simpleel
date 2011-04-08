@@ -24,22 +24,42 @@ import com.alibaba.simpleEL.Expr;
 public abstract class ExprImpl implements Expr {
 
 	public static int _int(Object val) {
+		if (val == null) {
+			return 0;
+		}
+		
 		return ((Number) val).intValue();
 	}
 
 	public static long _long(Object val) {
+		if (val == null) {
+			return 0L;
+		}
+		
 		return ((Number) val).longValue();
 	}
 
 	public static double _double(Object val) {
+		if (val == null) {
+			return 0D;
+		}
+		
 		return ((Number) val).doubleValue();
 	}
 
 	public static double _float(Object val) {
+		if (val == null) {
+			return 0F;
+		}
+		
 		return ((Number) val).floatValue();
 	}
 
 	public static boolean _bool(Object val) {
+		if (val == null) {
+			return false;
+		}
+		
 		return (Boolean) val;
 	}
 
