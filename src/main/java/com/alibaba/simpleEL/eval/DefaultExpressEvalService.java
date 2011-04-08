@@ -76,6 +76,10 @@ public class DefaultExpressEvalService implements ExpressEvalService,
 	public Preprocessor getPreprocessor() {
 		return preprocessor;
 	}
+	
+	public TemplatePreProcessor getTemplatePreprocessor() {
+		return (TemplatePreProcessor)preprocessor;
+	}
 
 	public void setPreprocessor(Preprocessor preprocessor) {
 		this.preprocessor = preprocessor;

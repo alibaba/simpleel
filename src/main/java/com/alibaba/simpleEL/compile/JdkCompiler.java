@@ -38,7 +38,7 @@ public class JdkCompiler implements JavaSourceCompiler {
 
 	public JdkCompiler() {
 		options.add("-target");
-		options.add("1.5");
+		options.add("1.6");
 	}
 
 	public synchronized Class<? extends Expr> compile(JavaSource javaSource) {

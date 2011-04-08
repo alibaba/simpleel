@@ -3,6 +3,7 @@ package $packageName;
 import java.util.Map;
 import static java.lang.Math.*;
 import static com.alibaba.simpleEL.TypeUtils.*;
+import com.alibaba.simpleEL.Expr;
 
 public class $className implements Expr {
  	public Object eval(Map<String, Object> ctx) {
