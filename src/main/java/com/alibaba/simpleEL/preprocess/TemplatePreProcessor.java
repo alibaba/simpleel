@@ -36,6 +36,17 @@ public class TemplatePreProcessor implements Preprocessor {
 	private final AtomicLong classIdSeed = new AtomicLong(10000L);
 
 	private VariantResolver variantResolver = new DefaultVariantResolver();
+	
+	private boolean allowMultiStatement;
+	
+
+	public boolean isAllowMultiStatement() {
+		return allowMultiStatement;
+	}
+
+	public void setAllowMultiStatement(boolean allowMuliStatement) {
+		this.allowMultiStatement = allowMuliStatement;
+	}
 
 	public VariantResolver getVariantResolver() {
 		return variantResolver;
@@ -67,6 +78,10 @@ public class TemplatePreProcessor implements Preprocessor {
 		}
 
 		String resolvedExpr = ExpressUtils.resolve(expr, variantResolver);
+		
+		if (!allowMultiStatement) {
+			resolvedExpr = "return " + resolvedExpr + ";";
+		}
 
 		final String className = "GenClass_" + digits();
 

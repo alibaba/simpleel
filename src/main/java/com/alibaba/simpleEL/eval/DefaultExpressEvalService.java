@@ -70,6 +70,10 @@ public class DefaultExpressEvalService implements ExpressEvalService,
 		DefaultVariantResolver variantResolver = (DefaultVariantResolver) getTemplatePreprocessor().getVariantResolver();
 		variantResolver.registerVariant(type, variants);
 	}
+	
+	public void setAllowMultiStatement(boolean value) {
+		this.getTemplatePreprocessor().setAllowMultiStatement(value);
+	}
 
 	public JavaSourceCompiler getCompiler() {
 		return compiler;
