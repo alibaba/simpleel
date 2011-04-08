@@ -30,7 +30,6 @@ import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.JavaSourceCompiler;
 import com.alibaba.simpleEL.Preprocessor;
 import com.alibaba.simpleEL.compile.JdkCompiler;
-import com.alibaba.simpleEL.preprocess.DefaultVariantResolver.Type;
 import com.alibaba.simpleEL.preprocess.DefaultVariantResolver;
 import com.alibaba.simpleEL.preprocess.TemplatePreProcessor;
 
@@ -66,9 +65,9 @@ public class DefaultExpressEvalService implements ExpressEvalService,
 		this.cacheProvider = cacheProvider;
 	}
 	
-	public void regsiterVariant(Type type, String... variants) {
+	public void regsiterVariant(Class<?> clazz, String... variants) {
 		DefaultVariantResolver variantResolver = (DefaultVariantResolver) getTemplatePreprocessor().getVariantResolver();
-		variantResolver.registerVariant(type, variants);
+		variantResolver.registerVariant(clazz, variants);
 	}
 	
 	public void setAllowMultiStatement(boolean value) {

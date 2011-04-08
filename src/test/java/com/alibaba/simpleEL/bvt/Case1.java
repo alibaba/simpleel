@@ -7,12 +7,11 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import com.alibaba.simpleEL.eval.DefaultExpressEvalService;
-import com.alibaba.simpleEL.preprocess.DefaultVariantResolver.Type;
 
 public class Case1 extends TestCase {
 	public void test_0 () throws Exception {
 		DefaultExpressEvalService service = new DefaultExpressEvalService();
-		service.regsiterVariant(Type.Integer, "a", "b");
+		service.regsiterVariant(int.class, "a", "b");
 		service.setAllowMultiStatement(true);
 
         Map<String, Object> ctx = new HashMap<String, Object>();

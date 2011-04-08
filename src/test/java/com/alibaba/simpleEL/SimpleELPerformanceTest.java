@@ -7,12 +7,11 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import com.alibaba.simpleEL.eval.DefaultExpressEvalService;
-import com.alibaba.simpleEL.preprocess.DefaultVariantResolver.Type;
 
 public class SimpleELPerformanceTest extends TestCase {
 	public void test_perf() throws Exception {
 		DefaultExpressEvalService service = new DefaultExpressEvalService();
-		service.regsiterVariant(Type.Integer, "a", "b", "c");
+		service.regsiterVariant(int.class, "a", "b", "c");
 
         Map<String, Object> ctx = new HashMap<String, Object>();
         ctx.put("a", 3);
