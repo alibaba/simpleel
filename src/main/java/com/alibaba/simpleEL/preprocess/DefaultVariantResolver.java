@@ -38,7 +38,7 @@ public class DefaultVariantResolver implements VariantResolver {
 		case BigDecimal:
 			return "_decimal(ctx.get(\"" + variant + "\"))";
 		case Date:
-			return "_string(ctx.get(\"" + variant + "\"))";
+			return "_date(ctx.get(\"" + variant + "\"))";
 		case Object:
 			return "ctx.get(\"" + variant + "\")";
 		default:
