@@ -3,6 +3,8 @@ package com.alibaba.simpleEL.preprocess;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.alibaba.simpleEL.ELException;
+
 public class DefaultVariantResolver implements VariantResolver {
 	private Map<String, Type> variants = new HashMap<String, Type>();
 
@@ -11,7 +13,7 @@ public class DefaultVariantResolver implements VariantResolver {
 		Type type = variants.get(variant);
 		
 		if (type == null) {
-			throw new IllegalArgumentException("unkown variant : " + variant);
+			throw new ELException("unkown variant : " + variant);
 		}
 		
 		switch (type) {
