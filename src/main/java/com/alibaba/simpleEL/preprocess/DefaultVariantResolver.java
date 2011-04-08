@@ -40,10 +40,8 @@ public class DefaultVariantResolver implements VariantResolver {
 		case Date:
 			return "_string(ctx.get(\"" + variant + "\"))";
 		default:
-			break;
+			throw new ELException("unkown variant : " + variant);
 		}
-		
-		return null;
 	}
 	
 	public static enum Type {
