@@ -44,6 +44,18 @@ public class DefaultVariantResolver implements VariantResolver {
 		}
 	}
 	
+	public void setVariant(String varaint, Type type) {
+		if (varaint == null) {
+			throw new IllegalArgumentException("varaint is null");
+		}
+		
+		if (type == null) {
+			throw new IllegalArgumentException("type is null");
+		}
+		
+		variants.put(varaint, type);
+	}
+	
 	public static enum Type {
 		Boolean, String, Byte, Short, Integer, Long, Float, Double, BigInteger, BigDecimal, Date
 	}
