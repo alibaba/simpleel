@@ -2,10 +2,9 @@ package $packageName;
 
 import java.util.Map;
 import static java.lang.Math.*;
+import static com.alibaba.simpleEL.TypeUtils.*;
 
-public class $className
-	   extends com.alibaba.simpleEL.gen.ExprImpl {
-
+public class $className implements Expr {
  	public Object eval(Map<String, Object> ctx) {
 		return ($expression) ;
  	}
