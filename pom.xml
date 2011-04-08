@@ -73,5 +73,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.8</version>
 		</dependency>
+		
 	</dependencies>
 </project>
