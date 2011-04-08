@@ -134,12 +134,14 @@ public class CharSequenceCompiler<T> {
 						source);
 			}
 		}
+		
 		// Get a CompliationTask from the compiler and compile the sources
 		final CompilationTask task = compiler.getTask(null, javaFileManager, diagnostics, options, null, sources);
 		final Boolean result = task.call();
 		if (result == null || !result.booleanValue()) {
 			throw new CharSequenceCompilerException("Compilation failed.", classes.keySet(), diagnostics);
 		}
+		
 		try {
 			// For each class name in the inpput map, get its compiled
 			// class and put it in the output map
