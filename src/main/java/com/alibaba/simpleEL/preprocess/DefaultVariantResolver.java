@@ -44,7 +44,7 @@ public class DefaultVariantResolver implements VariantResolver {
 			return "ctx.get(\"" + variant + "\")";
 		} else {
 			String className = type.getName();
-			className = className.replaceAll("$", "."); // inner class
+			className = className.replaceAll("\\$", "."); // inner class
 			return "((" + className + ")" + "ctx.get(\"" + variant + "\"))";
 		}
 	}
