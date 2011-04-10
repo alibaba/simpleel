@@ -30,15 +30,27 @@ import com.alibaba.simpleEL.JavaSourceCompiler;
  * @author wenshao<szujobs@hotmail.com>
  *
  */
-public class JdkCompiler implements JavaSourceCompiler {
+public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 	private final AtomicLong compileCount = new AtomicLong();
 	private final AtomicLong compileTimeNano = new AtomicLong();
 
-	private List<String> options = new ArrayList<String>();
+	private final List<String> options = new ArrayList<String>();
 
 	public JdkCompiler() {
 		options.add("-target");
 		options.add("1.6");
+	}
+	
+	public List<String> getOptions() {
+		return this.options;
+	}
+	
+	public long getCompileCount() {
+		return compileCount.get();
+	}
+
+	public long getCompileTimeNano() {
+		return compileTimeNano.get();
 	}
 
 	public synchronized Class<? extends Expr> compile(JavaSource javaSource) {

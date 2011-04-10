@@ -15,17 +15,13 @@
  */
 package com.alibaba.simpleEL.compile;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +42,7 @@ import javax.tools.ToolProvider;
 public class CharSequenceCompiler<T> {
 	static final String JAVA_EXTENSION = ".java";
 
-	private final ClassLoaderImpl classLoader;
+	private final JdkCompilerClassLoader classLoader;
 
 	private final JavaCompiler compiler;
 
@@ -64,7 +60,7 @@ public class CharSequenceCompiler<T> {
 					+ "Check that your class path includes tools.jar");
 		}
 
-		classLoader = new ClassLoaderImpl(loader);
+		classLoader = new JdkCompilerClassLoader(loader);
 		diagnostics = new DiagnosticCollector<JavaFileObject>();
 		final StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 		// create our FileManager which chains to the default file manager
@@ -126,9 +122,6 @@ public class CharSequenceCompiler<T> {
 				final String packageName = dotPos == -1 ? "" : qualifiedClassName.substring(0, dotPos);
 				final JavaFileObjectImpl source = new JavaFileObjectImpl(className, javaSource);
 				sources.add(source);
-				// Store the source file in the FileManager via package/class
-				// name.
-				// For source files, we add a .java extension
 
 				javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, className + JAVA_EXTENSION,
 						source);
@@ -174,68 +167,7 @@ public class CharSequenceCompiler<T> {
 		}
 	}
 
-	/**
-	 * @return This compiler's class loader.
-	 */
 	public ClassLoader getClassLoader() {
 		return javaFileManager.getClassLoader();
-	}
-}
-
-/**
- * A custom ClassLoader which maps class names to JavaFileObjectImpl instances.
- */
-final class ClassLoaderImpl extends ClassLoader {
-	private final Map<String, JavaFileObject> classes = new HashMap<String, JavaFileObject>();
-
-	ClassLoaderImpl(final ClassLoader parentClassLoader) {
-		super(parentClassLoader);
-	}
-
-	/**
-	 * @return An collection of JavaFileObject instances for the classes in the
-	 *         class loader.
-	 */
-	Collection<JavaFileObject> files() {
-		return Collections.unmodifiableCollection(classes.values());
-	}
-
-	@Override
-	protected Class<?> findClass(final String qualifiedClassName) throws ClassNotFoundException {
-		JavaFileObject file = classes.get(qualifiedClassName);
-		if (file != null) {
-			byte[] bytes = ((JavaFileObjectImpl) file).getByteCode();
-			return defineClass(qualifiedClassName, bytes, 0, bytes.length);
-		}
-		// Workaround for "feature" in Java 6
-		// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6434149
-		try {
-			Class<?> c = Class.forName(qualifiedClassName);
-			return c;
-		} catch (ClassNotFoundException nf) {
-			// Ignore and fall through
-		}
-		return super.findClass(qualifiedClassName);
-	}
-
-	void add(final String qualifiedClassName, final JavaFileObject javaFile) {
-		classes.put(qualifiedClassName, javaFile);
-	}
-
-	@Override
-	protected synchronized Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-		return super.loadClass(name, resolve);
-	}
-
-	@Override
-	public InputStream getResourceAsStream(final String name) {
-		if (name.endsWith(".class")) {
-			String qualifiedClassName = name.substring(0, name.length() - ".class".length()).replace('/', '.');
-			JavaFileObjectImpl file = (JavaFileObjectImpl) classes.get(qualifiedClassName);
-			if (file != null) {
-				return new ByteArrayInputStream(file.getByteCode());
-			}
-		}
-		return super.getResourceAsStream(name);
 	}
 }

@@ -37,11 +37,11 @@ import javax.tools.StandardLocation;
  *
  */
 final class JavaFileManagerImpl extends ForwardingJavaFileManager<JavaFileManager> {
-	private final ClassLoaderImpl classLoader;
+	private final JdkCompilerClassLoader classLoader;
 
 	private final Map<URI, JavaFileObject> fileObjects = new HashMap<URI, JavaFileObject>();
 
-	public JavaFileManagerImpl(JavaFileManager fileManager, ClassLoaderImpl classLoader) {
+	public JavaFileManagerImpl(JavaFileManager fileManager, JdkCompilerClassLoader classLoader) {
 		super(fileManager);
 		this.classLoader = classLoader;
 	}
@@ -53,8 +53,11 @@ final class JavaFileManagerImpl extends ForwardingJavaFileManager<JavaFileManage
 	@Override
 	public FileObject getFileForInput(Location location, String packageName, String relativeName) throws IOException {
 		FileObject o = fileObjects.get(uri(location, packageName, relativeName));
-		if (o != null)
+		
+		if (o != null) {
 			return o;
+		}
+		
 		return super.getFileForInput(location, packageName, relativeName);
 	}
 
@@ -70,7 +73,9 @@ final class JavaFileManagerImpl extends ForwardingJavaFileManager<JavaFileManage
 	public JavaFileObject getJavaFileForOutput(Location location, String qualifiedName, Kind kind, FileObject outputFile)
 			throws IOException {
 		JavaFileObject file = new JavaFileObjectImpl(qualifiedName, kind);
+		
 		classLoader.add(qualifiedName, file);
+		
 		return file;
 	}
 
@@ -81,14 +86,11 @@ final class JavaFileManagerImpl extends ForwardingJavaFileManager<JavaFileManage
 
 	@Override
 	public String inferBinaryName(Location loc, JavaFileObject file) {
-		String result;
-		// For our JavaFileImpl instances, return the file's name, else
-		// simply run the default implementation
-		if (file instanceof JavaFileObjectImpl)
-			result = file.getName();
-		else
-			result = super.inferBinaryName(loc, file);
-		return result;
+		if (file instanceof JavaFileObjectImpl) {
+			return file.getName();
+		}
+		
+		return super.inferBinaryName(loc, file);
 	}
 
 	@Override

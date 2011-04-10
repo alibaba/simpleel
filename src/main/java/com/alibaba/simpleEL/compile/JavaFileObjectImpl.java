@@ -30,7 +30,7 @@ import javax.tools.SimpleJavaFileObject;
  */
 public final class JavaFileObjectImpl extends SimpleJavaFileObject {
 	// If kind == CLASS, this stores byte code from openOutputStream
-	private ByteArrayOutputStream byteCode;
+	private ByteArrayOutputStream byteCode = new ByteArrayOutputStream();
 
 	// if kind == SOURCE, this contains the source text
 	private final CharSequence source;
@@ -52,8 +52,10 @@ public final class JavaFileObjectImpl extends SimpleJavaFileObject {
 
 	@Override
 	public CharSequence getCharContent(final boolean ignoreEncodingErrors) throws UnsupportedOperationException {
-		if (source == null)
-			throw new UnsupportedOperationException("getCharContent()");
+		if (source == null) {
+			throw new UnsupportedOperationException();
+		}
+		
 		return source;
 	}
 
@@ -64,7 +66,6 @@ public final class JavaFileObjectImpl extends SimpleJavaFileObject {
 
 	@Override
 	public OutputStream openOutputStream() {
-		byteCode = new ByteArrayOutputStream();
 		return byteCode;
 	}
 
