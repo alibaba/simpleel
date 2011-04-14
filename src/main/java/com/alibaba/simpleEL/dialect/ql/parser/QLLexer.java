@@ -56,7 +56,7 @@ public class QLLexer {
 	/**
 	 * The token, set by nextToken().
 	 */
-	protected QLToken token;
+	private QLToken token;
 
 	protected Keywords keywods = Keywords.DEFAULT_KEYWORDS;
 

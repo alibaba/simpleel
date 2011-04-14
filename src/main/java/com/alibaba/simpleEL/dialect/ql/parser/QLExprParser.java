@@ -19,8 +19,7 @@ import com.alibaba.simpleEL.dialect.ql.ast.QLNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLPropertyExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLVariantRefExpr;
 
-public class QLExprParser {
-	private final QLLexer lexer;
+public class QLExprParser extends AbstractQLParser {
 	
 	public QLExprParser(String input) {
 		this(new QLLexer(input));
@@ -28,7 +27,7 @@ public class QLExprParser {
 	}
 	
 	public QLExprParser(QLLexer lexer) {
-		this.lexer = lexer;
+		super (lexer);
 	}
 	
 	public QLLexer getLexer() {
@@ -660,11 +659,5 @@ public class QLExprParser {
         }
     }
 
-    public void accept(QLToken token) {
-        if (lexer.token() == token) {
-            lexer.nextToken();
-        } else {
-            throw new ELException("syntax error, expect " + token + ", actual " + lexer.token());
-        }
-    }
+
 }

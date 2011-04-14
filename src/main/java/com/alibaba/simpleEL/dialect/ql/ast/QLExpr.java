@@ -9,4 +9,9 @@ public abstract class QLExpr extends QLAstNode {
 		
 	}
 
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        output(buf);
+        return buf.toString();
+    }
 }
