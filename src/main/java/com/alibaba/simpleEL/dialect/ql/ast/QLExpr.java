@@ -1,5 +1,12 @@
 package com.alibaba.simpleEL.dialect.ql.ast;
 
-public class QLExpr extends QLAstNode {
+import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
+
+public abstract class QLExpr extends QLAstNode {
+
+	@Override
+	protected void accept0(QLAstVisitor visitor) {
+		
+	}
 
 }

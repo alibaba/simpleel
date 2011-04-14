@@ -4,66 +4,77 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
+
 public class QLCaseExpr extends QLExpr implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private final List<Item> items = new ArrayList<Item>();
-    private QLExpr valueExpr;
-    private QLExpr elseExpr;
+	private static final long serialVersionUID = 1L;
+	private final List<Item> items = new ArrayList<Item>();
+	private QLExpr valueExpr;
+	private QLExpr elseExpr;
 
-    public QLCaseExpr() {
+	public QLCaseExpr() {
 
-    }
+	}
 
-    public QLExpr getValueExpr() {
-        return this.valueExpr;
-    }
+	public QLExpr getValueExpr() {
+		return this.valueExpr;
+	}
 
-    public void setValueExpr(QLExpr valueExpr) {
-        this.valueExpr = valueExpr;
-    }
+	public void setValueExpr(QLExpr valueExpr) {
+		this.valueExpr = valueExpr;
+	}
 
-    public QLExpr getElseExpr() {
-        return this.elseExpr;
-    }
+	public QLExpr getElseExpr() {
+		return this.elseExpr;
+	}
 
-    public void setElseExpr(QLExpr elseExpr) {
-        this.elseExpr = elseExpr;
-    }
+	public void setElseExpr(QLExpr elseExpr) {
+		this.elseExpr = elseExpr;
+	}
 
-    public List<Item> getItems() {
-        return this.items;
-    }
+	public List<Item> getItems() {
+		return this.items;
+	}
 
-    public static class Item extends QLAstNode implements Serializable {
-        private static final long serialVersionUID = 1L;
-        private QLExpr conditionExpr;
-        private QLExpr valueExpr;
+	public static class Item extends QLAstNode implements Serializable {
+		private static final long serialVersionUID = 1L;
+		private QLExpr conditionExpr;
+		private QLExpr valueExpr;
 
-        public Item() {
+		public Item() {
 
-        }
+		}
 
-        public Item(QLExpr conditionExpr, QLExpr valueExpr) {
+		public Item(QLExpr conditionExpr, QLExpr valueExpr) {
 
-            this.conditionExpr = conditionExpr;
-            this.valueExpr = valueExpr;
-        }
+			this.conditionExpr = conditionExpr;
+			this.valueExpr = valueExpr;
+		}
 
-        public QLExpr getConditionExpr() {
-            return this.conditionExpr;
-        }
+		public QLExpr getConditionExpr() {
+			return this.conditionExpr;
+		}
 
-        public void setConditionExpr(QLExpr conditionExpr) {
-            this.conditionExpr = conditionExpr;
-        }
+		public void setConditionExpr(QLExpr conditionExpr) {
+			this.conditionExpr = conditionExpr;
+		}
 
-        public QLExpr getValueExpr() {
-            return this.valueExpr;
-        }
+		public QLExpr getValueExpr() {
+			return this.valueExpr;
+		}
 
-        public void setValueExpr(QLExpr valueExpr) {
-            this.valueExpr = valueExpr;
-        }
+		public void setValueExpr(QLExpr valueExpr) {
+			this.valueExpr = valueExpr;
+		}
 
-    }
+		@Override
+		protected void accept0(QLAstVisitor visitor) {
+			if (visitor.visit(this)) {
+				acceptChild(visitor, this.conditionExpr);
+				acceptChild(visitor, this.valueExpr);
+			}
+			visitor.endVisit(this);
+		}
+
+	}
 }
