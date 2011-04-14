@@ -36,7 +36,7 @@ public enum QLToken {
     VALUES("VALUES"),
     INTERVAL("INTERVAL"),
     
-    Variant,
+    VARIANT,
 
     LPAREN("("),
     RPAREN(")"),

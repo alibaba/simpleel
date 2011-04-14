@@ -232,7 +232,7 @@ public class QLLexer {
 				throw new ELException("TODO"); // TODO
 			case '@':
 				scanVariable();
-				token = QLToken.Variant;
+				token = QLToken.VARIANT;
 				return;
 			default:
 				if (Character.isLetter(ch)) {

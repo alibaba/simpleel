@@ -48,7 +48,7 @@ public class QLServiceTest extends TestCase {
 		
 		List<Person> destCollection = new ArrayList<Person>();
 		
-		service.select(Person.class, srcCollection, destCollection, "WHERE age > 30 ORDER BY age desc");
+		service.select(Person.class, srcCollection, destCollection, "WHERE age > @age ORDER BY age desc");
 		Assert.assertEquals(2, destCollection.size());
 		Assert.assertEquals("夏留", destCollection.get(0).getName());
 		Assert.assertEquals("黄警", destCollection.get(1).getName());

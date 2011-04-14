@@ -8,6 +8,10 @@ import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
 public class QLSelectList extends QLAstNode {
 	private final List<QLSelectItem> items = new ArrayList<QLSelectItem>();
 
+	public List<QLSelectItem> getItems() {
+		return items;
+	}
+
 	@Override
 	protected void accept0(QLAstVisitor visitor) {
 		if (visitor.visit(this)) {
@@ -22,13 +26,13 @@ public class QLSelectList extends QLAstNode {
 		if (items.size() == 0) {
 			return;
 		}
-		
+
 		buf.append("SELECT ");
 		for (int i = 0, size = items.size(); i < size; ++i) {
 			if (i != 0) {
 				buf.append(", ");
 			}
-			
+
 			items.get(i).output(buf);
 		}
 	}

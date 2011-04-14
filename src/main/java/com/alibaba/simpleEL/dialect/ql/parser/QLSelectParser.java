@@ -6,16 +6,17 @@ import com.alibaba.simpleEL.dialect.ql.ast.QLOrderBy;
 import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByItem;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelect;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelectItem;
+import com.alibaba.simpleEL.dialect.ql.ast.QLSelectList;
 
-public class SelectParser extends AbstractQLParser {
+public class QLSelectParser extends AbstractQLParser {
 	private final QLExprParser exprParser;
 
-	public SelectParser(String input) {
+	public QLSelectParser(String input) {
 		this(new QLLexer(input));
 		this.lexer.nextToken();
 	}
 
-	public SelectParser(QLLexer lexer) {
+	public QLSelectParser(QLLexer lexer) {
 		super(lexer);
 		this.exprParser = new QLExprParser(lexer);
 	}
@@ -30,10 +31,12 @@ public class SelectParser extends AbstractQLParser {
 		if (lexer.token() == QLToken.SELECT) {
 			lexer.nextToken();
 
+			QLSelectList selectList = new QLSelectList();
 			for (;;) {
 				QLSelectItem item = new QLSelectItem();
 				item.setExpr(this.exprParser.expr());
 				item.setAlias(as());
+				selectList.getItems().add(item);
 				
 				if (lexer.token() == QLToken.COMMA) {
 					lexer.nextToken();
@@ -42,6 +45,7 @@ public class SelectParser extends AbstractQLParser {
 					break;
 				}
 			}
+			select.setSelectList(selectList);
 		}
 		
 		if (lexer.token() == QLToken.WHERE) {
@@ -65,6 +69,7 @@ public class SelectParser extends AbstractQLParser {
 					lexer.nextToken();
 					item.setMode(OrderByMode.DESC);
 				}
+				orderBy.getItems().add(item);
 				
 				if (lexer.token() == QLToken.COMMA) {
 					lexer.nextToken();

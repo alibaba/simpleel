@@ -533,6 +533,11 @@ public class QLExprParser extends AbstractQLParser {
             sqlExpr = new QLNullExpr();
             lexer.nextToken();
             break;
+        case VARIANT:
+        	String varName = lexer.stringVal();
+        	sqlExpr = new QLVariantRefExpr(varName);
+        	lexer.nextToken();
+        	break;
         default:
             throw new ELException("ERROR. token : " + tok);
         }
