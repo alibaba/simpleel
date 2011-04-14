@@ -9,7 +9,6 @@
 
 	<build>
 		<plugins>
-			<!-- 配置源码编译要求JDK 1.6 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
