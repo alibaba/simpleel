@@ -1,5 +1,7 @@
 package com.alibaba.simpleEL.dialect.ql.parser;
 
+import java.math.BigDecimal;
+
 public class QLLexer {
 	private char[] input;
 	private int pos;
@@ -12,7 +14,27 @@ public class QLLexer {
 		return this.pos;
 	}
 	
-	public QLToken next() {
+	public QLToken nextToken() {
+		throw new UnsupportedOperationException();
+	}
+	
+	public QLToken token() {
+		throw new UnsupportedOperationException();
+	}
+	
+	public String hexString() {
+		throw new UnsupportedOperationException();
+	}
+	
+	public Number integerValue() {
+		throw new UnsupportedOperationException();
+	}
+	
+	public BigDecimal decimalValue() {
+		throw new UnsupportedOperationException();
+	}
+	
+	public String stringVal() {
 		throw new UnsupportedOperationException();
 	}
 }

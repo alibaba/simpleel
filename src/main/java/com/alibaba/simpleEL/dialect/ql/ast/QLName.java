@@ -1,5 +1,5 @@
 package com.alibaba.simpleEL.dialect.ql.ast;
 
-public class QLExpr extends QLAstNode {
+public interface QLName {
 
 }
