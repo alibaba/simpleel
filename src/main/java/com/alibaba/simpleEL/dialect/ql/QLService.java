@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.Expr;
 import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.JavaSourceCompiler;
@@ -20,15 +19,11 @@ public class QLService {
 		
 		JavaSource source = preprocessor.handle(compileContext, ql);
 		
-		System.out.println(source.getSource());
+		// System.out.println(source.getSource());
 		
 		Class<? extends Expr> exprClass = compiler.compile(source);
 
 		Expr compiledExpr = exprClass.newInstance();
-		
-		System.out.println(source.getSource());
-		
-		//compiledExpr.eval(ctx)
 		
 		Map<String, Object> evalContext = new HashMap<String, Object>();
 		evalContext.put("_src_", srcCollection);
