@@ -4,23 +4,28 @@ import java.math.BigInteger;
 import java.util.Collection;
 
 import com.alibaba.simpleEL.ELException;
+import com.alibaba.simpleEL.dialect.ql.ast.QLAggregateExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLAllColumnExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLBetweenExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLBinaryOperator;
 import com.alibaba.simpleEL.dialect.ql.ast.QLCaseExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLCharExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLIdentifierExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNullExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLPropertyExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLVariantRefExpr;
-import com.alibaba.simpleEL.dialect.ql.ast.QLAggregateExpr;
-import com.alibaba.simpleEL.dialect.ql.ast.QLAllColumnExpr;
-import com.alibaba.simpleEL.dialect.ql.ast.QLBetweenExpr;
-import com.alibaba.simpleEL.dialect.ql.ast.QLMethodInvokeExpr;
 
 public class QLExprParser {
 	private final QLLexer lexer;
+	
+	public QLExprParser(String input) {
+		this(new QLLexer(input));
+		this.lexer.nextToken();
+	}
 	
 	public QLExprParser(QLLexer lexer) {
 		this.lexer = lexer;
