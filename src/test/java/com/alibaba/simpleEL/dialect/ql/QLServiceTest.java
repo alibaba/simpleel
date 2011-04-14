@@ -1,7 +1,9 @@
 package com.alibaba.simpleEL.dialect.ql;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -48,7 +50,10 @@ public class QLServiceTest extends TestCase {
 		
 		List<Person> destCollection = new ArrayList<Person>();
 		
-		service.select(Person.class, srcCollection, destCollection, "WHERE age > @age ORDER BY age desc");
+		Map<String, Object> context = new HashMap<String, Object>();
+		context.put("age", 30);
+		
+		service.select(Person.class, srcCollection, destCollection, "WHERE age > @age ORDER BY age desc", context);
 		Assert.assertEquals(2, destCollection.size());
 		Assert.assertEquals("夏留", destCollection.get(0).getName());
 		Assert.assertEquals("黄警", destCollection.get(1).getName());

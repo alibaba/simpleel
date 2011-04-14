@@ -5,21 +5,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.simpleEL.ELException;
+import com.alibaba.simpleEL.Expr;
 import com.alibaba.simpleEL.JavaSource;
-import com.alibaba.simpleEL.eval.DefaultExpressEvalService;
+import com.alibaba.simpleEL.JavaSourceCompiler;
+import com.alibaba.simpleEL.compile.JdkCompiler;
 
 public class QLService {
-	private DefaultExpressEvalService evalService = new DefaultExpressEvalService();
+	private JavaSourceCompiler compiler = new JdkCompiler();
 	private QLPreprocessor preprocessor = new QLPreprocessor();
 	
-	public <T> void select(Class<T> clazz, Collection<T> srcCollection, Collection<T> destCollection, String ql) {
-		Map<String, Object> context = new HashMap<String, Object>();
-		context.put("class", clazz);
+	public <T> void select(Class<T> clazz, Collection<T> srcCollection, Collection<T> destCollection, String ql, Map<String, Object> context) throws Exception {
+		Map<String, Object> compileContext = new HashMap<String, Object>();
+		compileContext.put("class", clazz);
 		
-		JavaSource source = preprocessor.handle(context, ql);
+		JavaSource source = preprocessor.handle(compileContext, ql);
 		
 		System.out.println(source.getSource());
 		
-		throw new ELException("TODO");
+		Class<? extends Expr> exprClass = compiler.compile(source);
+
+		Expr compiledExpr = exprClass.newInstance();
+		
+		System.out.println(source.getSource());
+		
+		//compiledExpr.eval(ctx)
+		
+		Map<String, Object> evalContext = new HashMap<String, Object>();
+		evalContext.put("_src_", srcCollection);
+		evalContext.put("_dest_", destCollection);
+		evalContext.putAll(context);
+		
+		compiledExpr.eval(evalContext);
 	}
 }
