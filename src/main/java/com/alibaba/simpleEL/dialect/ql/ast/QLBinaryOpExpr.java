@@ -1,5 +1,7 @@
 package com.alibaba.simpleEL.dialect.ql.ast;
 
+import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
+
 
 public class QLBinaryOpExpr extends QLExpr {
 	  private static final long serialVersionUID = 1L;
@@ -47,5 +49,22 @@ public class QLBinaryOpExpr extends QLExpr {
 
 	    public void setOperator(QLBinaryOperator operator) {
 	        this.operator = operator;
+	    }
+	    
+	    public void output(StringBuffer buf) {
+	        this.left.output(buf);
+	        buf.append(" ");
+	        buf.append(this.operator.name);
+	        buf.append(" ");
+	        this.right.output(buf);
+	    }
+
+	    protected void accept0(QLAstVisitor visitor) {
+	        if (visitor.visit(this)) {
+	            acceptChild(visitor, this.left);
+	            acceptChild(visitor, this.right);
+	        }
+
+	        visitor.endVisit(this);
 	    }
 }

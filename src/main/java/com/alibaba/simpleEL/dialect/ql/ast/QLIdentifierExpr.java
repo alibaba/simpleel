@@ -1,5 +1,7 @@
 package com.alibaba.simpleEL.dialect.ql.ast;
 
+import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
+
 public class QLIdentifierExpr extends QLExpr {
 	private String name;
 	
@@ -18,4 +20,13 @@ public class QLIdentifierExpr extends QLExpr {
 		this.name = name;
 	}
 	
+    public void output(StringBuffer buf) {
+        buf.append(this.name);
+    }
+
+    protected void accept0(QLAstVisitor visitor) {
+        visitor.visit(this);
+
+        visitor.endVisit(this);
+    }
 }

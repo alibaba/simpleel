@@ -36,6 +36,29 @@ public class QLCaseExpr extends QLExpr implements Serializable {
 		return this.items;
 	}
 
+	public void output(StringBuffer buf) {
+		buf.append("CASE ");
+		if (this.valueExpr != null) {
+			this.valueExpr.output(buf);
+			buf.append(" ");
+		}
+
+		int i = 0;
+		for (int size = this.items.size(); i < size; ++i) {
+			if (i != 0) {
+				buf.append(" ");
+			}
+			((Item) this.items.get(i)).output(buf);
+		}
+
+		if (this.elseExpr != null) {
+			buf.append(" ELSE ");
+			this.elseExpr.output(buf);
+		}
+
+		buf.append(" END");
+	}
+
 	public static class Item extends QLAstNode implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private QLExpr conditionExpr;
@@ -76,5 +99,11 @@ public class QLCaseExpr extends QLExpr implements Serializable {
 			visitor.endVisit(this);
 		}
 
+        public void output(StringBuffer buf) {
+            buf.append("WHEN ");
+            this.conditionExpr.output(buf);
+            buf.append(" THEN ");
+            this.valueExpr.output(buf);
+        }
 	}
 }

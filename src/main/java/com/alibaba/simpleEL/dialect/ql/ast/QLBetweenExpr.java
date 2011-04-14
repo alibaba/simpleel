@@ -2,6 +2,8 @@ package com.alibaba.simpleEL.dialect.ql.ast;
 
 import java.io.Serializable;
 
+import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
+
 public class QLBetweenExpr extends QLExpr implements Serializable {
     private static final long serialVersionUID = 1L;
     public QLExpr testExpr;
@@ -56,5 +58,25 @@ public class QLBetweenExpr extends QLExpr implements Serializable {
 
     public void setEndExpr(QLExpr endExpr) {
         this.endExpr = endExpr;
+    }
+    
+    public void output(StringBuffer buf) {
+        this.testExpr.output(buf);
+        if (this.not) buf.append(" NOT BETWEEN ");
+        else {
+            buf.append(" BETWEEN ");
+        }
+        this.beginExpr.output(buf);
+        buf.append(" AND ");
+        this.endExpr.output(buf);
+    }
+
+    protected void accept0(QLAstVisitor visitor) {
+        if (visitor.visit(this)) {
+            acceptChild(visitor, this.testExpr);
+            acceptChild(visitor, this.beginExpr);
+            acceptChild(visitor, this.endExpr);
+        }
+        visitor.endVisit(this);
     }
 }

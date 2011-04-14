@@ -32,4 +32,6 @@ public abstract class QLAstNode {
 
 		child.accept(visitor);
 	}
+	
+	public abstract void output(StringBuffer buf);
 }

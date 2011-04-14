@@ -1,5 +1,5 @@
 package com.alibaba.simpleEL.dialect.ql.ast;
 
-public class QLLiteralExpr extends QLExpr {
+public abstract class QLLiteralExpr extends QLExpr {
 
 }
