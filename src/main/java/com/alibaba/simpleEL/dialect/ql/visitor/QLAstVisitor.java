@@ -11,7 +11,11 @@ import com.alibaba.simpleEL.dialect.ql.ast.QLIdentifierExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNullExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNumberLiteralExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLOrderBy;
+import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByItem;
 import com.alibaba.simpleEL.dialect.ql.ast.QLPropertyExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLSelect;
+import com.alibaba.simpleEL.dialect.ql.ast.QLSelectList;
 import com.alibaba.simpleEL.dialect.ql.ast.QLVariantRefExpr;
 
 public interface QLAstVisitor {
@@ -70,4 +74,20 @@ public interface QLAstVisitor {
     void endVisit(QLVariantRefExpr x);
     
     boolean visit(QLVariantRefExpr x);
+    
+    void endVisit(QLSelectList x);
+    
+    boolean visit(QLSelectList x);
+    
+    void endVisit(QLSelect x);
+    
+    boolean visit(QLSelect x);
+    
+    void endVisit(QLOrderBy x);
+    
+    boolean visit(QLOrderBy x);
+    
+    void endVisit(QLOrderByItem x);
+    
+    boolean visit(QLOrderByItem x);
 }
