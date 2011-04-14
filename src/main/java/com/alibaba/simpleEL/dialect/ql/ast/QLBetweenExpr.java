@@ -14,14 +14,12 @@ public class QLBetweenExpr extends QLExpr implements Serializable {
     }
 
     public QLBetweenExpr(QLExpr testExpr, QLExpr beginExpr, QLExpr endExpr) {
-
         this.testExpr = testExpr;
         this.beginExpr = beginExpr;
         this.endExpr = endExpr;
     }
 
     public QLBetweenExpr(QLExpr testExpr, boolean not, QLExpr beginExpr, QLExpr endExpr) {
-
         this.testExpr = testExpr;
         this.not = not;
         this.beginExpr = beginExpr;
