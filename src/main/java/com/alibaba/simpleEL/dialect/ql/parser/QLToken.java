@@ -93,8 +93,8 @@ public enum QLToken {
     LITERAL_BIT,
     LITERAL_CHARS,
     LITERAL_NCHARS,
-    // QS_TODO remove alias token
-	;
+    LITERAL_ALIAS,
+    ;
 	
     public final String name;
 
