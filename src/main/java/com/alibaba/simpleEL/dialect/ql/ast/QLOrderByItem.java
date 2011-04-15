@@ -4,7 +4,7 @@ import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
 
 public class QLOrderByItem extends QLAstNode {
 	private QLExpr expr;
-	private OrderByMode mode = OrderByMode.ASC;
+	private QLOrderByMode mode = QLOrderByMode.ASC;
 
 	public QLOrderByItem() {
 
@@ -22,11 +22,11 @@ public class QLOrderByItem extends QLAstNode {
 		this.expr = expr;
 	}
 
-	public OrderByMode getMode() {
+	public QLOrderByMode getMode() {
 		return mode;
 	}
 
-	public void setMode(OrderByMode mode) {
+	public void setMode(QLOrderByMode mode) {
 		this.mode = mode;
 	}
 

@@ -19,7 +19,7 @@ public class QLService {
 		
 		JavaSource source = preprocessor.handle(compileContext, ql);
 		
-		// System.out.println(source.getSource());
+		System.out.println(source.getSource());
 		
 		Class<? extends Expr> exprClass = compiler.compile(source);
 

@@ -1,7 +1,7 @@
 package com.alibaba.simpleEL.dialect.ql.parser;
 
 import com.alibaba.simpleEL.ELException;
-import com.alibaba.simpleEL.dialect.ql.ast.OrderByMode;
+import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByMode;
 import com.alibaba.simpleEL.dialect.ql.ast.QLOrderBy;
 import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByItem;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelect;
@@ -64,10 +64,10 @@ public class QLSelectParser extends AbstractQLParser {
 				
 				if (lexer.token() == QLToken.ASC) {
 					lexer.nextToken();
-					item.setMode(OrderByMode.ASC);
+					item.setMode(QLOrderByMode.ASC);
 				} else if (lexer.token() == QLToken.DESC) {
 					lexer.nextToken();
-					item.setMode(OrderByMode.DESC);
+					item.setMode(QLOrderByMode.DESC);
 				}
 				orderBy.getItems().add(item);
 				

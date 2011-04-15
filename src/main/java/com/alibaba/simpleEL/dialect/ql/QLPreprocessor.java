@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.Preprocessor;
-import com.alibaba.simpleEL.dialect.ql.ast.OrderByMode;
+import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByMode;
 import com.alibaba.simpleEL.dialect.ql.ast.QLBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLIdentifierExpr;
@@ -143,7 +143,7 @@ public class QLPreprocessor implements Preprocessor {
 			out.println("					public int compare(" + className + " a, "
 					+ className + " b) {");
 
-			if (item.getMode() == OrderByMode.DESC) {
+			if (item.getMode() == QLOrderByMode.DESC) {
 				out.println("						if (" + gen_orderByItem(context, "a", item.getExpr()) + " > " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
 				out.println("							return -1;");
 				out.println("						}");
