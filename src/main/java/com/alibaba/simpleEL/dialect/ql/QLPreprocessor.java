@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -46,25 +45,25 @@ public class QLPreprocessor implements Preprocessor {
 
 		final String className = "GenClass_" + classIdSeed.getAndIncrement();
 
-		_package(out);
-		_import(out);
-		_class_start(out, className);
-		_eval_start(out);
-		gen(context, select, out);
-		_eval_end(out);
-		_class_end(out);
+		gen_package(out);
+		gen_import(out);
+		gen_class_start(out, className);
+		gen_eval_start(out);
+		gen_eval_body(context, select, out);
+		gen_eval_end(out);
+		gen_class_end(out);
 
 		String text = writer.toString();
 
 		return new JavaSource(packageName, className, text);
 	}
 
-	public void _package(PrintWriter out) {
+	public void gen_package(PrintWriter out) {
 		out.println("package " + packageName + ";");
 		out.println();
 	}
 
-	public void _import(PrintWriter out) {
+	public void gen_import(PrintWriter out) {
 		out.println("import java.util.*;");
 		out.println("import static java.lang.Math.*;");
 		out.println("import com.alibaba.simpleEL.Expr;");
@@ -72,27 +71,27 @@ public class QLPreprocessor implements Preprocessor {
 		out.println();
 	}
 
-	public void _class_start(PrintWriter out, String className) {
+	public void gen_class_start(PrintWriter out, String className) {
 		out.println("public class " + className + " implements Expr {");
 		out.println();
 	}
 
-	public void _class_end(PrintWriter out) {
+	public void gen_class_end(PrintWriter out) {
 		out.println();
 		out.println("}");
 	}
 
-	public void _eval_start(PrintWriter out) {
+	public void gen_eval_start(PrintWriter out) {
 		out.println("	public Object eval(Map<String, Object> ctx) {");
 	}
 
-	public void _eval_end(PrintWriter out) {
+	public void gen_eval_end(PrintWriter out) {
 		out.println();
 		out.println("		return null;");
 		out.println("	}");
 	}
 
-	public void gen(Map<String, Object> context, QLSelect select, PrintWriter out) {
+	public void gen_eval_body(Map<String, Object> context, QLSelect select, PrintWriter out) {
 		Class<?> clazz = (Class<?>) context.get("class");
 
 		if (clazz == null) {
