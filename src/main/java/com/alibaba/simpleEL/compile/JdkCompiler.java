@@ -64,9 +64,9 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 
 			JdkCompileTask<Expr> compileTask = new JdkCompileTask<Expr>(contextClassLoader, options);
 
-			String qName = javaSource.getPackageName() + "." + javaSource.getClassName();
+			String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
 			
-			return (Class<? extends Expr>) compileTask.compile(qName, javaSource.getSource(), errs);
+			return (Class<? extends Expr>) compileTask.compile(fullName, javaSource.getSource(), errs);
 		} catch (JdkCompileException ex) {
 			DiagnosticCollector<JavaFileObject> diagnostics = ex.getDiagnostics();
 

@@ -89,7 +89,7 @@ public class JdkCompileTask<T> {
 		}
 	}
 
-	public synchronized Class<T> compile(final String qualifiedClassName, final CharSequence javaSource, final DiagnosticCollector<JavaFileObject> diagnosticsList)
+	public synchronized Class<T> compile(final String className, final CharSequence javaSource, final DiagnosticCollector<JavaFileObject> diagnosticsList)
 			throws JdkCompileException, ClassCastException {
 		if (diagnosticsList != null) {
 			diagnostics = diagnosticsList;
@@ -98,10 +98,10 @@ public class JdkCompileTask<T> {
 		}
 
 		Map<String, CharSequence> classes = new HashMap<String, CharSequence>(1);
-		classes.put(qualifiedClassName, javaSource);
+		classes.put(className, javaSource);
 
 		Map<String, Class<T>> compiled = compile(classes, diagnosticsList);
-		Class<T> newClass = compiled.get(qualifiedClassName);
+		Class<T> newClass = compiled.get(className);
 
 		return newClass;
 	}
