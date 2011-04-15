@@ -14,15 +14,15 @@ import com.alibaba.simpleEL.eval.DefaultExpressEvalService;
 public class SimpleScriptEngine extends AbstractScriptEngine {
 	private DefaultExpressEvalService service = new DefaultExpressEvalService();
 	private SimpleScriptEngineFactory factory;
-	
+
 	public SimpleScriptEngine() {
-		
+
 	}
-	
+
 	public SimpleScriptEngine(DefaultExpressEvalService service) {
 		this.service = service;
 	}
-	
+
 	public SimpleScriptEngine(SimpleScriptEngineFactory factory) {
 		this.factory = factory;
 	}
@@ -36,16 +36,14 @@ public class SimpleScriptEngine extends AbstractScriptEngine {
 	}
 
 	@Override
-	public Object eval(String script, ScriptContext context)
-			throws ScriptException {
+	public Object eval(String script, ScriptContext context) throws ScriptException {
 		Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
-		
+
 		return service.eval(bindings, script);
 	}
 
 	@Override
-	public Object eval(Reader reader, ScriptContext context)
-			throws ScriptException {
+	public Object eval(Reader reader, ScriptContext context) throws ScriptException {
 		throw new UnsupportedOperationException();
 	}
 
