@@ -36,12 +36,12 @@ public final class JavaFileObjectImpl extends SimpleJavaFileObject {
 	private final CharSequence source;
 
 	public JavaFileObjectImpl(final String baseName, final CharSequence source) {
-		super(CharSequenceCompiler.toURI(baseName + CharSequenceCompiler.JAVA_EXTENSION), Kind.SOURCE);
+		super(ELCompiler.toURI(baseName + ELCompiler.JAVA_EXTENSION), Kind.SOURCE);
 		this.source = source;
 	}
 
 	JavaFileObjectImpl(final String name, final Kind kind) {
-		super(CharSequenceCompiler.toURI(name), kind);
+		super(ELCompiler.toURI(name), kind);
 		source = null;
 	}
 	

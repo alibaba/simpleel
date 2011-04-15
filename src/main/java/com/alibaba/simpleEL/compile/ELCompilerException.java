@@ -28,7 +28,7 @@ import javax.tools.JavaFileObject;
  * @author wenshao<szujobs@hotmail.com>
  *
  */
-public class CharSequenceCompilerException extends Exception {
+public class ELCompilerException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	private Set<String> classNames;
@@ -36,7 +36,7 @@ public class CharSequenceCompilerException extends Exception {
 	
 	private String source;
 
-	public CharSequenceCompilerException(String message, Set<String> qualifiedClassNames, Throwable cause, DiagnosticCollector<JavaFileObject> diagnostics) {
+	public ELCompilerException(String message, Set<String> qualifiedClassNames, Throwable cause, DiagnosticCollector<JavaFileObject> diagnostics) {
 		super(message, cause);
 		setClassNames(qualifiedClassNames);
 		setDiagnostics(diagnostics);
@@ -50,13 +50,13 @@ public class CharSequenceCompilerException extends Exception {
 		this.source = source;
 	}
 
-	public CharSequenceCompilerException(String message, Set<String> qualifiedClassNames, DiagnosticCollector<JavaFileObject> diagnostics) {
+	public ELCompilerException(String message, Set<String> qualifiedClassNames, DiagnosticCollector<JavaFileObject> diagnostics) {
 		super(message);
 		setClassNames(qualifiedClassNames);
 		setDiagnostics(diagnostics);
 	}
 
-	public CharSequenceCompilerException(Set<String> qualifiedClassNames, Throwable cause, DiagnosticCollector<JavaFileObject> diagnostics) {
+	public ELCompilerException(Set<String> qualifiedClassNames, Throwable cause, DiagnosticCollector<JavaFileObject> diagnostics) {
 		super(cause);
 		setClassNames(qualifiedClassNames);
 		setDiagnostics(diagnostics);
