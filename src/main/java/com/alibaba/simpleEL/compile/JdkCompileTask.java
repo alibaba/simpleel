@@ -39,7 +39,7 @@ import javax.tools.ToolProvider;
  * @author wenshao<szujobs@hotmail.com>
  * 
  */
-public class JdkCompilerTask<T> {
+public class JdkCompileTask<T> {
 	static final String JAVA_EXTENSION = ".java";
 
 	private final JdkCompilerClassLoader classLoader;
@@ -52,7 +52,7 @@ public class JdkCompilerTask<T> {
 
 	private final JavaFileManagerImpl javaFileManager;
 
-	public JdkCompilerTask(ClassLoader loader, Iterable<String> options) {
+	public JdkCompileTask(ClassLoader loader, Iterable<String> options) {
 		compiler = ToolProvider.getSystemJavaCompiler();
 
 		if (compiler == null) {
@@ -90,7 +90,7 @@ public class JdkCompilerTask<T> {
 	}
 
 	public synchronized Class<T> compile(final String qualifiedClassName, final CharSequence javaSource, final DiagnosticCollector<JavaFileObject> diagnosticsList)
-			throws JdkCompilerException, ClassCastException {
+			throws JdkCompileException, ClassCastException {
 		if (diagnosticsList != null) {
 			diagnostics = diagnosticsList;
 		} else {
@@ -107,7 +107,7 @@ public class JdkCompilerTask<T> {
 	}
 
 	public synchronized Map<String, Class<T>> compile(final Map<String, CharSequence> classes, final DiagnosticCollector<JavaFileObject> diagnosticsList)
-			throws JdkCompilerException {
+			throws JdkCompileException {
 		List<JavaFileObject> sources = new ArrayList<JavaFileObject>();
 		for (Entry<String, CharSequence> entry : classes.entrySet()) {
 			String qualifiedClassName = entry.getKey();
@@ -127,7 +127,7 @@ public class JdkCompilerTask<T> {
 		final CompilationTask task = compiler.getTask(null, javaFileManager, diagnostics, options, null, sources);
 		final Boolean result = task.call();
 		if (result == null || !result.booleanValue()) {
-			throw new JdkCompilerException("Compilation failed.", classes.keySet(), diagnostics);
+			throw new JdkCompileException("Compilation failed.", classes.keySet(), diagnostics);
 		}
 
 		try {
@@ -141,11 +141,11 @@ public class JdkCompilerTask<T> {
 
 			return compiled;
 		} catch (ClassNotFoundException e) {
-			throw new JdkCompilerException(classes.keySet(), e, diagnostics);
+			throw new JdkCompileException(classes.keySet(), e, diagnostics);
 		} catch (IllegalArgumentException e) {
-			throw new JdkCompilerException(classes.keySet(), e, diagnostics);
+			throw new JdkCompileException(classes.keySet(), e, diagnostics);
 		} catch (SecurityException e) {
-			throw new JdkCompilerException(classes.keySet(), e, diagnostics);
+			throw new JdkCompileException(classes.keySet(), e, diagnostics);
 		}
 	}
 
