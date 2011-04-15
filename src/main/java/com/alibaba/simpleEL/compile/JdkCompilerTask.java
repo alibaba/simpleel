@@ -39,7 +39,7 @@ import javax.tools.ToolProvider;
  * @author wenshao<szujobs@hotmail.com>
  * 
  */
-public class SimpleELCompiler<T> {
+public class JdkCompilerTask<T> {
 	static final String JAVA_EXTENSION = ".java";
 
 	private final JdkCompilerClassLoader classLoader;
@@ -52,7 +52,7 @@ public class SimpleELCompiler<T> {
 
 	private final JavaFileManagerImpl javaFileManager;
 
-	public SimpleELCompiler(ClassLoader loader, Iterable<String> options) {
+	public JdkCompilerTask(ClassLoader loader, Iterable<String> options) {
 		compiler = ToolProvider.getSystemJavaCompiler();
 
 		if (compiler == null) {
@@ -90,7 +90,7 @@ public class SimpleELCompiler<T> {
 	}
 
 	public synchronized Class<T> compile(final String qualifiedClassName, final CharSequence javaSource, final DiagnosticCollector<JavaFileObject> diagnosticsList)
-			throws SimpleELCompilerException, ClassCastException {
+			throws JdkCompilerException, ClassCastException {
 		if (diagnosticsList != null) {
 			diagnostics = diagnosticsList;
 		} else {
@@ -107,7 +107,7 @@ public class SimpleELCompiler<T> {
 	}
 
 	public synchronized Map<String, Class<T>> compile(final Map<String, CharSequence> classes, final DiagnosticCollector<JavaFileObject> diagnosticsList)
-			throws SimpleELCompilerException {
+			throws JdkCompilerException {
 		List<JavaFileObject> sources = new ArrayList<JavaFileObject>();
 		for (Entry<String, CharSequence> entry : classes.entrySet()) {
 			String qualifiedClassName = entry.getKey();
@@ -127,7 +127,7 @@ public class SimpleELCompiler<T> {
 		final CompilationTask task = compiler.getTask(null, javaFileManager, diagnostics, options, null, sources);
 		final Boolean result = task.call();
 		if (result == null || !result.booleanValue()) {
-			throw new SimpleELCompilerException("Compilation failed.", classes.keySet(), diagnostics);
+			throw new JdkCompilerException("Compilation failed.", classes.keySet(), diagnostics);
 		}
 
 		try {
@@ -141,11 +141,11 @@ public class SimpleELCompiler<T> {
 
 			return compiled;
 		} catch (ClassNotFoundException e) {
-			throw new SimpleELCompilerException(classes.keySet(), e, diagnostics);
+			throw new JdkCompilerException(classes.keySet(), e, diagnostics);
 		} catch (IllegalArgumentException e) {
-			throw new SimpleELCompilerException(classes.keySet(), e, diagnostics);
+			throw new JdkCompilerException(classes.keySet(), e, diagnostics);
 		} catch (SecurityException e) {
-			throw new SimpleELCompilerException(classes.keySet(), e, diagnostics);
+			throw new JdkCompilerException(classes.keySet(), e, diagnostics);
 		}
 	}
 

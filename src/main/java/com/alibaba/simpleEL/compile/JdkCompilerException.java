@@ -28,7 +28,7 @@ import javax.tools.JavaFileObject;
  * @author wenshao<szujobs@hotmail.com>
  *
  */
-public class SimpleELCompilerException extends Exception {
+public class JdkCompilerException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	private Set<String> classNames;
@@ -36,7 +36,7 @@ public class SimpleELCompilerException extends Exception {
 	
 	private String source;
 
-	public SimpleELCompilerException(String message, Set<String> qualifiedClassNames, Throwable cause, DiagnosticCollector<JavaFileObject> diagnostics) {
+	public JdkCompilerException(String message, Set<String> qualifiedClassNames, Throwable cause, DiagnosticCollector<JavaFileObject> diagnostics) {
 		super(message, cause);
 		setClassNames(qualifiedClassNames);
 		setDiagnostics(diagnostics);
@@ -50,13 +50,13 @@ public class SimpleELCompilerException extends Exception {
 		this.source = source;
 	}
 
-	public SimpleELCompilerException(String message, Set<String> qualifiedClassNames, DiagnosticCollector<JavaFileObject> diagnostics) {
+	public JdkCompilerException(String message, Set<String> qualifiedClassNames, DiagnosticCollector<JavaFileObject> diagnostics) {
 		super(message);
 		setClassNames(qualifiedClassNames);
 		setDiagnostics(diagnostics);
 	}
 
-	public SimpleELCompilerException(Set<String> qualifiedClassNames, Throwable cause, DiagnosticCollector<JavaFileObject> diagnostics) {
+	public JdkCompilerException(Set<String> qualifiedClassNames, Throwable cause, DiagnosticCollector<JavaFileObject> diagnostics) {
 		super(cause);
 		setClassNames(qualifiedClassNames);
 		setDiagnostics(diagnostics);
