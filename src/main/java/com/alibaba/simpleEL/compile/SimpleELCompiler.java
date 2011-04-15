@@ -56,18 +56,15 @@ public class SimpleELCompiler<T> {
 		compiler = ToolProvider.getSystemJavaCompiler();
 
 		if (compiler == null) {
-			throw new IllegalStateException("Cannot find the system Java compiler. "
-					+ "Check that your class path includes tools.jar");
+			throw new IllegalStateException("Cannot find the system Java compiler. " + "Check that your class path includes tools.jar");
 		}
 
 		classLoader = new JdkCompilerClassLoader(loader);
 		diagnostics = new DiagnosticCollector<JavaFileObject>();
 		final StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-		// create our FileManager which chains to the default file manager
-		// and our ClassLoader
+		// create our FileManager which chains to the default file manager and our ClassLoader
 
-		if (loader instanceof URLClassLoader
-				&& (!loader.getClass().getName().equals("sun.misc.Launcher$AppClassLoader"))) {
+		if (loader instanceof URLClassLoader && (!loader.getClass().getName().equals("sun.misc.Launcher$AppClassLoader"))) {
 			try {
 				URLClassLoader urlClassLoader = (URLClassLoader) loader;
 
@@ -92,9 +89,8 @@ public class SimpleELCompiler<T> {
 		}
 	}
 
-	public synchronized Class<T> compile(final String qualifiedClassName, final CharSequence javaSource,
-			final DiagnosticCollector<JavaFileObject> diagnosticsList) throws SimpleELCompilerException,
-			ClassCastException {
+	public synchronized Class<T> compile(final String qualifiedClassName, final CharSequence javaSource, final DiagnosticCollector<JavaFileObject> diagnosticsList)
+			throws SimpleELCompilerException, ClassCastException {
 		if (diagnosticsList != null) {
 			diagnostics = diagnosticsList;
 		} else {
@@ -110,8 +106,8 @@ public class SimpleELCompiler<T> {
 		return newClass;
 	}
 
-	public synchronized Map<String, Class<T>> compile(final Map<String, CharSequence> classes,
-			final DiagnosticCollector<JavaFileObject> diagnosticsList) throws SimpleELCompilerException {
+	public synchronized Map<String, Class<T>> compile(final Map<String, CharSequence> classes, final DiagnosticCollector<JavaFileObject> diagnosticsList)
+			throws SimpleELCompilerException {
 		List<JavaFileObject> sources = new ArrayList<JavaFileObject>();
 		for (Entry<String, CharSequence> entry : classes.entrySet()) {
 			String qualifiedClassName = entry.getKey();
@@ -123,18 +119,17 @@ public class SimpleELCompiler<T> {
 				final JavaFileObjectImpl source = new JavaFileObjectImpl(className, javaSource);
 				sources.add(source);
 
-				javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, className + JAVA_EXTENSION,
-						source);
+				javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, className + JAVA_EXTENSION, source);
 			}
 		}
-		
+
 		// Get a CompliationTask from the compiler and compile the sources
 		final CompilationTask task = compiler.getTask(null, javaFileManager, diagnostics, options, null, sources);
 		final Boolean result = task.call();
 		if (result == null || !result.booleanValue()) {
 			throw new SimpleELCompilerException("Compilation failed.", classes.keySet(), diagnostics);
 		}
-		
+
 		try {
 			// For each class name in the inpput map, get its compiled
 			// class and put it in the output map
