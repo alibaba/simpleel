@@ -39,7 +39,7 @@ import javax.tools.ToolProvider;
  * @author wenshao<szujobs@hotmail.com>
  * 
  */
-public class ELCompiler<T> {
+public class SimpleELCompiler<T> {
 	static final String JAVA_EXTENSION = ".java";
 
 	private final JdkCompilerClassLoader classLoader;
@@ -52,7 +52,7 @@ public class ELCompiler<T> {
 
 	private final JavaFileManagerImpl javaFileManager;
 
-	public ELCompiler(ClassLoader loader, Iterable<String> options) {
+	public SimpleELCompiler(ClassLoader loader, Iterable<String> options) {
 		compiler = ToolProvider.getSystemJavaCompiler();
 
 		if (compiler == null) {
@@ -93,7 +93,7 @@ public class ELCompiler<T> {
 	}
 
 	public synchronized Class<T> compile(final String qualifiedClassName, final CharSequence javaSource,
-			final DiagnosticCollector<JavaFileObject> diagnosticsList) throws ELCompilerException,
+			final DiagnosticCollector<JavaFileObject> diagnosticsList) throws SimpleELCompilerException,
 			ClassCastException {
 		if (diagnosticsList != null) {
 			diagnostics = diagnosticsList;
@@ -111,7 +111,7 @@ public class ELCompiler<T> {
 	}
 
 	public synchronized Map<String, Class<T>> compile(final Map<String, CharSequence> classes,
-			final DiagnosticCollector<JavaFileObject> diagnosticsList) throws ELCompilerException {
+			final DiagnosticCollector<JavaFileObject> diagnosticsList) throws SimpleELCompilerException {
 		List<JavaFileObject> sources = new ArrayList<JavaFileObject>();
 		for (Entry<String, CharSequence> entry : classes.entrySet()) {
 			String qualifiedClassName = entry.getKey();
@@ -132,7 +132,7 @@ public class ELCompiler<T> {
 		final CompilationTask task = compiler.getTask(null, javaFileManager, diagnostics, options, null, sources);
 		final Boolean result = task.call();
 		if (result == null || !result.booleanValue()) {
-			throw new ELCompilerException("Compilation failed.", classes.keySet(), diagnostics);
+			throw new SimpleELCompilerException("Compilation failed.", classes.keySet(), diagnostics);
 		}
 		
 		try {
@@ -146,11 +146,11 @@ public class ELCompiler<T> {
 
 			return compiled;
 		} catch (ClassNotFoundException e) {
-			throw new ELCompilerException(classes.keySet(), e, diagnostics);
+			throw new SimpleELCompilerException(classes.keySet(), e, diagnostics);
 		} catch (IllegalArgumentException e) {
-			throw new ELCompilerException(classes.keySet(), e, diagnostics);
+			throw new SimpleELCompilerException(classes.keySet(), e, diagnostics);
 		} catch (SecurityException e) {
-			throw new ELCompilerException(classes.keySet(), e, diagnostics);
+			throw new SimpleELCompilerException(classes.keySet(), e, diagnostics);
 		}
 	}
 

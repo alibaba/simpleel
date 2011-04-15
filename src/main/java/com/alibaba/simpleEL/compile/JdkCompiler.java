@@ -62,12 +62,12 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 
 			ClassLoader contextClassLoader = Expr.class.getClassLoader();
 
-			ELCompiler<Expr> compiler = new ELCompiler<Expr>(contextClassLoader, options);
+			SimpleELCompiler<Expr> compiler = new SimpleELCompiler<Expr>(contextClassLoader, options);
 
 			String qName = javaSource.getPackageName() + "." + javaSource.getClassName();
 			
 			return (Class<? extends Expr>) compiler.compile(qName, javaSource.getSource(), errs);
-		} catch (ELCompilerException ex) {
+		} catch (SimpleELCompilerException ex) {
 			DiagnosticCollector<JavaFileObject> diagnostics = ex.getDiagnostics();
 
 			throw new CompileExprException("compile error, source : \n" + javaSource + ", "
