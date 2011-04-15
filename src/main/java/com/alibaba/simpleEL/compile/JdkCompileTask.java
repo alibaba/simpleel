@@ -52,17 +52,17 @@ public class JdkCompileTask<T> {
 
 	private final JavaFileManagerImpl javaFileManager;
 
-	public JdkCompileTask(ClassLoader loader, Iterable<String> options) {
+	public JdkCompileTask(JdkCompilerClassLoader classLoader, Iterable<String> options) {
 		compiler = ToolProvider.getSystemJavaCompiler();
 
 		if (compiler == null) {
 			throw new IllegalStateException("Cannot find the system Java compiler. " + "Check that your class path includes tools.jar");
 		}
 
-		classLoader = new JdkCompilerClassLoader(loader);
+		this.classLoader = classLoader;
+		ClassLoader loader = classLoader.getParent();
 		diagnostics = new DiagnosticCollector<JavaFileObject>();
 		final StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-		// create our FileManager which chains to the default file manager and our ClassLoader
 
 		if (loader instanceof URLClassLoader && (!loader.getClass().getName().equals("sun.misc.Launcher$AppClassLoader"))) {
 			try {
@@ -131,8 +131,7 @@ public class JdkCompileTask<T> {
 		}
 
 		try {
-			// For each class name in the inpput map, get its compiled
-			// class and put it in the output map
+			// For each class name in the inpput map, get its compiled class and put it in the output map
 			Map<String, Class<T>> compiled = new HashMap<String, Class<T>>();
 			for (String qualifiedClassName : classes.keySet()) {
 				final Class<T> newClass = loadClass(qualifiedClassName);
