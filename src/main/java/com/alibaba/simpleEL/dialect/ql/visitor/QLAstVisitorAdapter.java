@@ -9,6 +9,7 @@ import com.alibaba.simpleEL.dialect.ql.ast.QLCaseExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLCaseExpr.Item;
 import com.alibaba.simpleEL.dialect.ql.ast.QLCharExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLIdentifierExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLLimit;
 import com.alibaba.simpleEL.dialect.ql.ast.QLMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNullExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNumberLiteralExpr;
@@ -198,6 +199,16 @@ public class QLAstVisitorAdapter implements QLAstVisitor {
 
 	@Override
 	public boolean visit(QLOrderByItem x) {
+		return true;
+	}
+
+	@Override
+	public void endVisit(QLLimit x) {
+		
+	}
+
+	@Override
+	public boolean visit(QLLimit x) {
 		return true;
 	}
 

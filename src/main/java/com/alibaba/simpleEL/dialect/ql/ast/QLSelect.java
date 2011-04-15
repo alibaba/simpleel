@@ -6,7 +6,8 @@ public class QLSelect extends QLAstNode {
 	private QLSelectList selectList;
 	private QLExpr where;
 	private QLOrderBy orderBy;
-	
+	private QLLimit limit;
+
 	public QLExpr getWhere() {
 		return where;
 	}
@@ -31,30 +32,45 @@ public class QLSelect extends QLAstNode {
 		this.selectList = selectList;
 	}
 
-    public void output(StringBuffer buf) {
-    	if (selectList != null) {
-    		this.selectList.output(buf);
-    		buf.append(" ");
-    	}
-    	
-    	if (where != null) {
-    		where.output(buf);
-    		buf.append(" ");
-    	}
+	public QLLimit getLimit() {
+		return limit;
+	}
 
-        if (this.orderBy != null)  {
-        	this.orderBy.output(buf);
-        }
-    }
+	public void setLimit(QLLimit limit) {
+		this.limit = limit;
+	}
 
-    protected void accept0(QLAstVisitor visitor) {
-        if (visitor.visit(this)) {
-            acceptChild(visitor, this.selectList);
-            acceptChild(visitor, this.where);
-            acceptChild(visitor, this.orderBy);
-        }
+	public void output(StringBuffer buf) {
+		if (selectList != null) {
+			this.selectList.output(buf);
+			buf.append(" ");
+		}
 
-        visitor.endVisit(this);
-    }
+		if (where != null) {
+			where.output(buf);
+			buf.append(" ");
+		}
+
+		if (this.orderBy != null) {
+			buf.append(" ");
+			this.orderBy.output(buf);
+		}
+		
+		if (this.limit != null) {
+			buf.append(" ");
+			this.limit.output(buf);
+		}
+	}
+
+	protected void accept0(QLAstVisitor visitor) {
+		if (visitor.visit(this)) {
+			acceptChild(visitor, this.selectList);
+			acceptChild(visitor, this.where);
+			acceptChild(visitor, this.orderBy);
+			acceptChild(visitor, this.limit);
+		}
+
+		visitor.endVisit(this);
+	}
 
 }

@@ -8,6 +8,7 @@ import com.alibaba.simpleEL.dialect.ql.ast.QLBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLCaseExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLCharExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLIdentifierExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLLimit;
 import com.alibaba.simpleEL.dialect.ql.ast.QLMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNullExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNumberLiteralExpr;
@@ -90,4 +91,8 @@ public interface QLAstVisitor {
     void endVisit(QLOrderByItem x);
     
     boolean visit(QLOrderByItem x);
+    
+    void endVisit(QLLimit x);
+    
+    boolean visit(QLLimit x);
 }

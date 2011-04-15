@@ -11,6 +11,7 @@ import com.alibaba.simpleEL.dialect.ql.ast.QLBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLCaseExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLCharExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLIdentifierExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLLimit;
 import com.alibaba.simpleEL.dialect.ql.ast.QLMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNullExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLNumberLiteralExpr;
@@ -187,6 +188,20 @@ public class QLOutputAstVisitor extends QLAstVisitorAdapter {
 
         return false;
     }
+    
+	@Override
+	public boolean visit(QLLimit x) {
+		out.print(" LIMIT ");
+		
+		if (x.getOffset() != null) {
+			x.getOffset().accept(this);
+			out.print(", ");
+		}
+		
+		x.getRowCount().accept(this);
+		
+		return false;
+	}
 
     public boolean visit(QLSelectItem x) {
         x.getExpr().accept(this);

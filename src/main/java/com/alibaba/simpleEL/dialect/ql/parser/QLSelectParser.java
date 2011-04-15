@@ -1,9 +1,11 @@
 package com.alibaba.simpleEL.dialect.ql.parser;
 
 import com.alibaba.simpleEL.ELException;
-import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByMode;
+import com.alibaba.simpleEL.dialect.ql.ast.QLExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLLimit;
 import com.alibaba.simpleEL.dialect.ql.ast.QLOrderBy;
 import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByItem;
+import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByMode;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelect;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelectItem;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelectList;
@@ -79,6 +81,25 @@ public class QLSelectParser extends AbstractQLParser {
 				}
 			}
 			select.setOrderBy(orderBy);
+		}
+		
+		if (lexer.token() == QLToken.LIMIT) {
+			lexer.nextToken();
+			
+			QLLimit limit = new QLLimit();
+			
+			QLExpr expr = exprParser.expr();
+			
+			if (lexer.token() == QLToken.COMMA){
+				lexer.nextToken();
+				QLExpr rowCount = exprParser.expr();
+				limit.setOffset(expr);
+				limit.setRowCount(rowCount);
+			} else {
+				limit.setRowCount(expr);
+			}
+			
+			select.setLimit(limit);
 		}
 
 		return select;

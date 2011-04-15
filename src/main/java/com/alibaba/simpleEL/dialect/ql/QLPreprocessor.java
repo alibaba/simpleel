@@ -11,12 +11,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.Preprocessor;
-import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByMode;
 import com.alibaba.simpleEL.dialect.ql.ast.QLBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLIdentifierExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLLimit;
 import com.alibaba.simpleEL.dialect.ql.ast.QLOrderBy;
 import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByItem;
+import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByMode;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelect;
 import com.alibaba.simpleEL.dialect.ql.ast.QLVariantRefExpr;
 import com.alibaba.simpleEL.dialect.ql.parser.QLSelectParser;
@@ -90,8 +91,7 @@ public class QLPreprocessor implements Preprocessor {
 		out.println("	}");
 	}
 
-	public void gen(Map<String, Object> context, QLSelect select,
-			PrintWriter out) {
+	public void gen(Map<String, Object> context, QLSelect select, PrintWriter out) {
 		Class<?> clazz = (Class<?>) context.get("class");
 
 		if (clazz == null) {
@@ -103,13 +103,19 @@ public class QLPreprocessor implements Preprocessor {
 
 		String entryVarName = "item";
 
-		out.println("		List<" + className + "> " + srcCollectionName
-				+ " = (List<" + className + ">) ctx.get(\"_src_\");");
-		out.println("		List<" + className + "> " + destCollectionName
-				+ " = (List<" + className + ">) ctx.get(\"_dest_\");");
+		out.println("		List<" + className + "> " + srcCollectionName + " = (List<" + className + ">) ctx.get(\"_src_\");");
+		out.println("		List<" + className + "> " + destCollectionName + " = (List<" + className + ">) ctx.get(\"_dest_\");");
 
-		out.println("		for (" + className + " " + entryVarName + " : "
-				+ srcCollectionName + ") {");
+		final QLLimit limit = select.getLimit();
+		if (limit != null) {
+			if (limit.getOffset() != null) {
+				out.println("		final int offset = " + limit.getOffset() + ";");	
+			}
+			out.println("		final int rowCount = " + limit.getRowCount() + ";");
+			out.println();
+		}
+		
+		out.println("		for (" + className + " " + entryVarName + " : " + srcCollectionName + ") {");
 		out.println();
 
 		gen_where(context, select, out);
@@ -120,8 +126,7 @@ public class QLPreprocessor implements Preprocessor {
 
 	}
 
-	public void gen_orderBy(final Map<String, Object> context,
-			final QLSelect select, final PrintWriter out) {
+	public void gen_orderBy(final Map<String, Object> context, final QLSelect select, final PrintWriter out) {
 		final Class<?> clazz = (Class<?>) context.get("class");
 
 		if (clazz == null) {
@@ -138,10 +143,8 @@ public class QLPreprocessor implements Preprocessor {
 
 		for (QLOrderByItem item : orderBy.getItems()) {
 			out.println("			{");
-			out.println("				Comparator<" + className
-					+ "> comparator = new Comparator<" + className + ">() {");
-			out.println("					public int compare(" + className + " a, "
-					+ className + " b) {");
+			out.println("				Comparator<" + className + "> comparator = new Comparator<" + className + ">() {");
+			out.println("					public int compare(" + className + " a, " + className + " b) {");
 
 			if (item.getMode() == QLOrderByMode.DESC) {
 				out.println("						if (" + gen_orderByItem(context, "a", item.getExpr()) + " > " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
@@ -164,8 +167,7 @@ public class QLPreprocessor implements Preprocessor {
 			out.println("						return 0;");
 			out.println("					}");
 			out.println("				};");
-			out.println("				Collections.sort(" + destCollectionName
-					+ ", comparator);");
+			out.println("				Collections.sort(" + destCollectionName + ", comparator);");
 			out.println("			}");
 		}
 	}
@@ -199,8 +201,7 @@ public class QLPreprocessor implements Preprocessor {
 		return out.toString();
 	}
 
-	public void gen_where(final Map<String, Object> context,
-			final QLSelect select, final PrintWriter out) {
+	public void gen_where(final Map<String, Object> context, final QLSelect select, final PrintWriter out) {
 		final Class<?> clazz = (Class<?>) context.get("class");
 
 		if (clazz == null) {
@@ -211,6 +212,8 @@ public class QLPreprocessor implements Preprocessor {
 		if (where == null) {
 			return;
 		}
+		
+		final QLLimit limit = select.getLimit();
 
 		QLAstVisitorAdapter setTypeVisitor = new SetTypeVisitor(clazz);
 		where.accept(setTypeVisitor);
@@ -271,8 +274,7 @@ public class QLPreprocessor implements Preprocessor {
 						String className = type.getName();
 						className = className.replaceAll("\\$", "."); // inner
 																		// class
-						out.print("((" + className + ")" + "ctx.get(\""
-								+ variant + "\"))");
+						out.print("((" + className + ")" + "ctx.get(\"" + variant + "\"))");
 					}
 				} else {
 					out.print(x.getName());
@@ -284,8 +286,16 @@ public class QLPreprocessor implements Preprocessor {
 		where.accept(visitor);
 
 		out.println(") {");
+		
+		if (limit != null) {
+			out.println("				if (_dest_.size() >= rowCount) {");
+			out.println("					break;");
+			out.println("				}");
+		}
+		
 		out.println("				" + destCollectionName + ".add(item);");
 		out.println("			}");
+		out.println();
 	}
 
 	private static Method getMethod(Class<?> clazz, String name) {
@@ -339,10 +349,8 @@ public class QLPreprocessor implements Preprocessor {
 			x.getLeft().accept(this);
 			x.getRight().accept(this);
 
-			Class<?> leftType = (Class<?>) x.getLeft().getAttributes()
-					.get(ATTR_TYPE);
-			Class<?> rightType = (Class<?>) x.getRight().getAttributes()
-					.get(ATTR_TYPE);
+			Class<?> leftType = (Class<?>) x.getLeft().getAttributes().get(ATTR_TYPE);
+			Class<?> rightType = (Class<?>) x.getRight().getAttributes().get(ATTR_TYPE);
 
 			if (leftType == null && rightType != null) {
 				x.getLeft().getAttributes().put(ATTR_TYPE, rightType);

@@ -25,6 +25,7 @@ public enum QLToken {
     END("END"),
     EXISTS("EXISTS"),
     IN("IN"),
+    LIMIT("LIMIT"),
     
     NEW("NEW"),
     ASC("ASC"),

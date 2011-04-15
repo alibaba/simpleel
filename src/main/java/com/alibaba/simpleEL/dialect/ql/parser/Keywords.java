@@ -61,6 +61,7 @@ public class Keywords {
         map.put("ESCAPE", QLToken.ESCAPE);
         map.put("BETWEEN", QLToken.BETWEEN);
         map.put("INTERVAL", QLToken.INTERVAL);
+        map.put("LIMIT", QLToken.LIMIT);
         DEFAULT_KEYWORDS = new Keywords(map);
     }
 
