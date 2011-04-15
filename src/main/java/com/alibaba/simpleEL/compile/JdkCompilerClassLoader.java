@@ -6,10 +6,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.tools.JavaFileObject;
 
-public final class JdkCompilerClassLoader extends ClassLoader {
+public final class JdkCompilerClassLoader extends ClassLoader implements JdkCompilerClassLoaderMBean {
 	private final Map<String, JavaFileObject> classes = new HashMap<String, JavaFileObject>();
 
 	public JdkCompilerClassLoader(ClassLoader parentClassLoader) {
@@ -64,5 +65,10 @@ public final class JdkCompilerClassLoader extends ClassLoader {
 		}
 		
 		return super.getResourceAsStream(name);
+	}
+
+	@Override
+	public Set<String> getCacheFileNames() {
+		return classes.keySet();
 	}
 }
