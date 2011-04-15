@@ -36,13 +36,17 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 
 	private final List<String> options = new ArrayList<String>();
 	
-	private JdkCompilerClassLoader complerClassLoader;
+	private JdkCompilerClassLoader classLoader;
 
 	public JdkCompiler() {
 		options.add("-target");
 		options.add("1.6");
 		
-		complerClassLoader = new JdkCompilerClassLoader(this.getClass().getClassLoader());
+		classLoader = new JdkCompilerClassLoader(this.getClass().getClassLoader());
+	}
+	
+	public JdkCompilerClassLoader getClassLoader() {
+		return this.classLoader;
 	}
 	
 	public List<String> getOptions() {
@@ -64,7 +68,7 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 		try {
 			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
 
-			JdkCompileTask<Expr> compileTask = new JdkCompileTask<Expr>(complerClassLoader, options);
+			JdkCompileTask<Expr> compileTask = new JdkCompileTask<Expr>(classLoader, options);
 
 			String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
 			
