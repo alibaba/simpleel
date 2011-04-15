@@ -8,4 +8,6 @@ public interface JdkCompilerMBean {
 	long getCompileCount();
 	
 	long getCompileTimeNano();
+	
+	void resetClassLoader();
 }
