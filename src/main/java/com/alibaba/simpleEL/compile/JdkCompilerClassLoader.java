@@ -12,7 +12,7 @@ import javax.tools.JavaFileObject;
 public final class JdkCompilerClassLoader extends ClassLoader {
 	private final Map<String, JavaFileObject> classes = new HashMap<String, JavaFileObject>();
 
-	public JdkCompilerClassLoader(final ClassLoader parentClassLoader) {
+	public JdkCompilerClassLoader(ClassLoader parentClassLoader) {
 		super(parentClassLoader);
 	}
 
@@ -21,7 +21,7 @@ public final class JdkCompilerClassLoader extends ClassLoader {
 	}
 
 	@Override
-	protected Class<?> findClass(final String qualifiedClassName) throws ClassNotFoundException {
+	protected synchronized Class<?> findClass(String qualifiedClassName) throws ClassNotFoundException {
 		JavaFileObject file = classes.get(qualifiedClassName);
 		if (file != null) {
 			byte[] bytes = ((JavaFileObjectImpl) file).getByteCode();
@@ -43,7 +43,7 @@ public final class JdkCompilerClassLoader extends ClassLoader {
 		return super.findClass(qualifiedClassName);
 	}
 
-	void add(final String qualifiedClassName, final JavaFileObject javaFile) {
+	public void add(String qualifiedClassName, final JavaFileObject javaFile) {
 		classes.put(qualifiedClassName, javaFile);
 	}
 
