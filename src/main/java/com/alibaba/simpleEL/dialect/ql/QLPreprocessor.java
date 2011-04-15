@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -113,17 +114,42 @@ public class QLPreprocessor implements Preprocessor {
 			}
 			out.println("		final int rowCount = " + limit.getRowCount() + ";");
 			out.println();
+			
+			if (limit.getOffset() != null) {
+				out.println("		int rowIndex = 0;");	
+			}
 		}
 		
 		out.println("		for (" + className + " " + entryVarName + " : " + srcCollectionName + ") {");
 		out.println();
 
 		gen_where(context, select, out);
-		gen_orderBy(context, select, out);
 
 		out.println();
 		out.println("		}");
 
+		gen_orderBy(context, select, out);
+		gen_limit(context, select, out);
+	}
+	
+	public void gen_limit(final Map<String, Object> context, final QLSelect select, final PrintWriter out) {
+		QLLimit limit = select.getLimit();
+		
+		if (limit == null) {
+			return;
+		}
+		
+		out.println();
+		
+		if (limit.getOffset() != null) {
+			out.println("		for (int i = 0; i < offset && i < _dest_.size(); ++i) {");
+			out.println("			_dest_.remove(0);");
+			out.println("		}");
+		}
+		
+		out.println("		while(_dest_.size() > rowCount) {");
+		out.println("			_dest_.remove(_dest_.size() - 1);");
+		out.println("		}");
 	}
 
 	public void gen_orderBy(final Map<String, Object> context, final QLSelect select, final PrintWriter out) {
@@ -142,33 +168,33 @@ public class QLPreprocessor implements Preprocessor {
 		className = className.replaceAll("\\$", ".");
 
 		for (QLOrderByItem item : orderBy.getItems()) {
-			out.println("			{");
-			out.println("				Comparator<" + className + "> comparator = new Comparator<" + className + ">() {");
-			out.println("					public int compare(" + className + " a, " + className + " b) {");
+			out.println("		{");
+			out.println("			Comparator<" + className + "> comparator = new Comparator<" + className + ">() {");
+			out.println("				public int compare(" + className + " a, " + className + " b) {");
 
 			if (item.getMode() == QLOrderByMode.DESC) {
-				out.println("						if (" + gen_orderByItem(context, "a", item.getExpr()) + " > " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
-				out.println("							return -1;");
-				out.println("						}");
+				out.println("					if (" + gen_orderByItem(context, "a", item.getExpr()) + " > " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
+				out.println("						return -1;");
+				out.println("					}");
 
-				out.println("						if (" + gen_orderByItem(context, "a", item.getExpr()) + " < " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
-				out.println("							return 1;");
-				out.println("						}");
+				out.println("					if (" + gen_orderByItem(context, "a", item.getExpr()) + " < " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
+				out.println("						return 1;");
+				out.println("					}");
 			} else {
-				out.println("						if (" + gen_orderByItem(context, "a", item.getExpr()) + " > " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
-				out.println("							return 1;");
-				out.println("						}");
+				out.println("					if (" + gen_orderByItem(context, "a", item.getExpr()) + " > " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
+				out.println("						return 1;");
+				out.println("					}");
 
-				out.println("						if (" + gen_orderByItem(context, "a", item.getExpr()) + " < " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
-				out.println("							return -1;");
-				out.println("						}");
+				out.println("					if (" + gen_orderByItem(context, "a", item.getExpr()) + " < " + gen_orderByItem(context, "b", item.getExpr()) + ") {");
+				out.println("						return -1;");
+				out.println("					}");
 			}
 
-			out.println("						return 0;");
-			out.println("					}");
-			out.println("				};");
-			out.println("				Collections.sort(" + destCollectionName + ", comparator);");
-			out.println("			}");
+			out.println("					return 0;");
+			out.println("				}");
+			out.println("			};");
+			out.println("			Collections.sort(" + destCollectionName + ", comparator);");
+			out.println("		}");
 		}
 	}
 
@@ -287,7 +313,7 @@ public class QLPreprocessor implements Preprocessor {
 
 		out.println(") {");
 		
-		if (limit != null) {
+		if (limit != null && select.getOrderBy() == null) {
 			out.println("				if (_dest_.size() >= rowCount) {");
 			out.println("					break;");
 			out.println("				}");

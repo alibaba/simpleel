@@ -1,4 +1,4 @@
-package com.alibaba.simpleEL;
+package com.alibaba.simpleEL.dialect.ql.gen;
 
 import java.util.*;
 import static java.lang.Math.*;
@@ -35,7 +35,7 @@ public class GenClass_10000 implements Expr {
 				Collections.sort(_dest_, comparator);
 			}
 
-			for (int i = 0; i < offset && i < _dest_.size(); ++i) {
+			for (int i = 0; i < 1; ++i) {
 				_dest_.remove(0);
 			}
 			while(_dest_.size() > rowCount) {
