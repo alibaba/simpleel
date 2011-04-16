@@ -51,7 +51,7 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 	
 	public void resetClassLoader() {
 		classLoader.clearCache();
-		//classLoader = new JdkCompilerClassLoader(this.getClass().getClassLoader());
+		classLoader = new JdkCompilerClassLoader(this.getClass().getClassLoader());
 	}
 	
 	public List<String> getOptions() {
