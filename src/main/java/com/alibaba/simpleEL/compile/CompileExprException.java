@@ -19,8 +19,9 @@ package com.alibaba.simpleEL.compile;
  * @author wenshao<szujobs@hotmail.com>
  *
  */
-@SuppressWarnings("serial")
 public class CompileExprException extends RuntimeException {
+	private static final long serialVersionUID = 1L;
+	
 	public CompileExprException(String message) {
 		super(message);
 	}
