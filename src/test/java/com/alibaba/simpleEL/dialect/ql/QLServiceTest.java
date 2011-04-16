@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.simpleEL.GenClass_10000;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
 

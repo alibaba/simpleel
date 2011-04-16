@@ -21,7 +21,7 @@ public class EvalServiceTest extends TestCase {
 		
 		ManagementFactory.getPlatformMBeanServer().registerMBean(manager, new ObjectName("alibaba.simpleEL:type=TestManager"));
 		
-		Thread.sleep(1000 * 1000);
+		Thread.sleep(1000 * 1000 * 10);
 	}
 	
 	public static class TestManager implements TestManagerMBean {
