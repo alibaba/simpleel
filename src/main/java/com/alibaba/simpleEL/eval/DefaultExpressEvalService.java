@@ -173,7 +173,7 @@ public class DefaultExpressEvalService implements ExpressEvalService,
 	}
 
 	@Override
-	public boolean clearCache() {
+	public boolean reset() {
 		if (cacheProvider == null) {
 			return false;
 		}

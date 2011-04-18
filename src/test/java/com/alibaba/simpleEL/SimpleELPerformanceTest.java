@@ -11,6 +11,8 @@ import com.alibaba.simpleEL.eval.DefaultExpressEvalService;
 public class SimpleELPerformanceTest extends TestCase {
 	public void test_perf() throws Exception {
 		DefaultExpressEvalService service = new DefaultExpressEvalService();
+		service.reset();
+		
 		service.regsiterVariant(int.class, "a", "b", "c");
 
         Map<String, Object> ctx = new HashMap<String, Object>();

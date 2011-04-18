@@ -23,7 +23,7 @@ import javax.management.openmbean.TabularData;
  *
  */
 public interface DefaultExpressEvalServiceMBean {
-	boolean clearCache();
+	boolean reset();
 	
 	long getEvalCount();
 	
