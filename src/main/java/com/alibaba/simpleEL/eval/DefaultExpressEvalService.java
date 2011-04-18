@@ -172,6 +172,9 @@ public class DefaultExpressEvalService implements ExpressEvalService,
 		return compiledExpr;
 	}
 
+	/**
+	 * clear cache, classloader
+	 */
 	@Override
 	public boolean reset() {
 		if (cacheProvider == null) {
