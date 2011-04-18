@@ -21,4 +21,6 @@ package com.alibaba.simpleEL;
  */
 public interface JavaSourceCompiler {
 	Class<? extends Expr> compile(JavaSource javaSource);
+	
+	void resetClassLoader();
 }

@@ -179,7 +179,11 @@ public class DefaultExpressEvalService implements ExpressEvalService,
 		}
 
 		cacheProvider.clear();
-
+		
+		if (compiler != null) {
+			compiler.resetClassLoader();
+		}
+		
 		return true;
 	}
 
