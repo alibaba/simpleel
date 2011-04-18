@@ -78,6 +78,7 @@ public class TemplatePreProcessor implements Preprocessor {
 	@Override
 	public JavaSource handle(Map<String, Object> context, String expr) {
 		if (variantResolver == null) {
+			throw new IllegalStateException("variantResolver is null");
 		}
 
 		String resolvedExpr = ExpressUtils.resolve(expr, variantResolver);
