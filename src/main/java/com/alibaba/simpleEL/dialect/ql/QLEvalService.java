@@ -52,18 +52,18 @@ public class QLEvalService {
 		compiledExpr.eval(evalContext);
 	}
 
-	public Expr getExpr(Map<String, Object> ctx, String expr) throws InstantiationException, IllegalAccessException {
+	public Expr getExpr(Map<String, Object> compileContext, String expr) throws InstantiationException, IllegalAccessException {
 		Expr cachedExpr = null;
 
 		if (cacheProvider != null) {
-			cachedExpr = cacheProvider.get(ctx, expr);
+			cachedExpr = cacheProvider.get(compileContext, expr);
 		}
 
 		if (cachedExpr != null) {
 			return cachedExpr;
 		}
 		
-		JavaSource source = preprocessor.handle(ctx, expr);
+		JavaSource source = preprocessor.handle(compileContext, expr);
 
 		System.out.println(source.getSource());
 
@@ -71,9 +71,9 @@ public class QLEvalService {
 
 		Expr compiledExpr = exprClass.newInstance();
 		
-		cacheProvider.putIfAbsent(ctx, expr, compiledExpr);
+		cacheProvider.putIfAbsent(compileContext, expr, compiledExpr);
 		
-		cachedExpr = cacheProvider.get(ctx, expr);
+		cachedExpr = cacheProvider.get(compileContext, expr);
 
 		return cachedExpr;
 	}
