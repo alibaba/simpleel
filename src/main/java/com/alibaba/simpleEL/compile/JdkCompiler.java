@@ -28,36 +28,36 @@ import com.alibaba.simpleEL.JavaSourceCompiler;
 
 /**
  * @author wenshao<szujobs@hotmail.com>
- *
+ * 
  */
 public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 	private final AtomicLong compileCount = new AtomicLong();
 	private final AtomicLong compileTimeNano = new AtomicLong();
 
 	private final List<String> options = new ArrayList<String>();
-	
+
 	private JdkCompilerClassLoader classLoader;
 
 	public JdkCompiler() {
 		options.add("-target");
 		options.add("1.6");
-		
+
 		classLoader = new JdkCompilerClassLoader(this.getClass().getClassLoader());
 	}
-	
+
 	public JdkCompilerClassLoader getClassLoader() {
 		return this.classLoader;
 	}
-	
+
 	public void resetClassLoader() {
 		classLoader.clearCache();
 		classLoader = new JdkCompilerClassLoader(this.getClass().getClassLoader());
 	}
-	
+
 	public List<String> getOptions() {
 		return this.options;
 	}
-	
+
 	public long getCompileCount() {
 		return compileCount.get();
 	}
@@ -76,13 +76,12 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 			JdkCompileTask<Expr> compileTask = new JdkCompileTask<Expr>(classLoader, options);
 
 			String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
-			
+
 			return (Class<? extends Expr>) compileTask.compile(fullName, javaSource.getSource(), errs);
 		} catch (JdkCompileException ex) {
 			DiagnosticCollector<JavaFileObject> diagnostics = ex.getDiagnostics();
 
-			throw new CompileExprException("compile error, source : \n" + javaSource + ", "
-					+ diagnostics.getDiagnostics(), ex);
+			throw new CompileExprException("compile error, source : \n" + javaSource + ", " + diagnostics.getDiagnostics(), ex);
 		} catch (Exception ex) {
 			throw new CompileExprException("compile error, source : \n" + javaSource, ex);
 		} finally {
