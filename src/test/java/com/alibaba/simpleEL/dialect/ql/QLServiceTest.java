@@ -40,6 +40,7 @@ public class QLServiceTest extends TestCase {
 		srcCollection.add(new Person(50, "夏留"));
 		srcCollection.add(new Person(60, "刘晶"));
 		srcCollection.add(new Person(33, "石榴姐"));
+		srcCollection.add(new Person(90, "松下太郎"));
 		
 		List<Person> destCollection = new ArrayList<Person>();
 		
