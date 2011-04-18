@@ -31,7 +31,7 @@ public class QLServiceTest extends TestCase {
 	}
 
 	public void test_0 () throws Exception {
-		QLService service = new QLService();
+		QLEvalService service = new QLEvalService();
 		
 		List<Person> srcCollection = new ArrayList<Person>();
 		srcCollection.add(new Person(18, "吴能"));

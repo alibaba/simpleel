@@ -9,7 +9,7 @@ import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.JavaSourceCompiler;
 import com.alibaba.simpleEL.compile.JdkCompiler;
 
-public class QLService {
+public class QLEvalService {
 	private JavaSourceCompiler compiler = new JdkCompiler();
 	private QLPreprocessor preprocessor = new QLPreprocessor();
 
