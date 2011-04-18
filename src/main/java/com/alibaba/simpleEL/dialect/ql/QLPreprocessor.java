@@ -12,6 +12,7 @@ import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.Preprocessor;
 import com.alibaba.simpleEL.dialect.ql.ast.QLBinaryOpExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLBinaryOperator;
 import com.alibaba.simpleEL.dialect.ql.ast.QLExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLIdentifierExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLLimit;
@@ -244,70 +245,7 @@ public class QLPreprocessor implements Preprocessor {
 		where.accept(setTypeVisitor);
 
 		out.print("			if(");
-		QLAstVisitor visitor = new QLOutputAstVisitor(out) {
-			@Override
-			public boolean visit(QLIdentifierExpr x) {
-				String name = x.getName();
-
-				Method method = getMethod(clazz, name);
-
-				if (method == null) {
-					throw new ELException("getter not found. " + x.getName());
-				}
-
-				out.print("item." + method.getName() + "()");
-
-				return true;
-			}
-
-			@Override
-			public boolean visit(QLVariantRefExpr x) {
-				Class<?> type = (Class<?>) x.getAttributes().get(ATTR_TYPE);
-
-				String variant = x.getName();
-
-				if (variant.startsWith("@")) {
-					variant = variant.substring(1);
-				}
-
-				if (type != null) {
-					if (boolean.class == type) {
-						out.print("_bool(ctx.get(\"" + variant + "\"))");
-					} else if (String.class == type) {
-						out.print("_string(ctx.get(\"" + variant + "\"))");
-					} else if (byte.class == type) {
-						out.print("_byte(ctx.get(\"" + variant + "\"))");
-					} else if (short.class == type) {
-						out.print("_short(ctx.get(\"" + variant + "\"))");
-					} else if (int.class == type) {
-						out.print("_int(ctx.get(\"" + variant + "\"))");
-					} else if (long.class == type) {
-						out.print("_long(ctx.get(\"" + variant + "\"))");
-					} else if (float.class == type) {
-						out.print("_float(ctx.get(\"" + variant + "\"))");
-					} else if (double.class == type) {
-						out.print("_double(ctx.get(\"" + variant + "\"))");
-					} else if (BigInteger.class == type) {
-						out.print("_bigInt(ctx.get(\"" + variant + "\"))");
-					} else if (BigDecimal.class == type) {
-						out.print("_decimal(ctx.get(\"" + variant + "\"))");
-					} else if (java.util.Date.class == type) {
-						out.print("_date(ctx.get(\"" + variant + "\"))");
-					} else if (Object.class == type) {
-						out.print("ctx.get(\"" + variant + "\")");
-					} else {
-						String className = type.getName();
-						className = className.replaceAll("\\$", "."); // inner
-																		// class
-						out.print("((" + className + ")" + "ctx.get(\"" + variant + "\"))");
-					}
-				} else {
-					out.print(x.getName());
-				}
-
-				return false;
-			}
-		};
+		QLAstVisitor visitor = new WhereGenOutputVisitor(out, clazz);
 		where.accept(visitor);
 
 		out.println(") {");
@@ -345,6 +283,118 @@ public class QLPreprocessor implements Preprocessor {
 		}
 
 		return method;
+	}
+
+	private final class WhereGenOutputVisitor extends QLOutputAstVisitor {
+		private final Class<?> clazz;
+
+		private WhereGenOutputVisitor(PrintWriter out, Class<?> clazz) {
+			super(out);
+			this.clazz = clazz;
+		}
+
+		@Override
+		public boolean visit(QLIdentifierExpr x) {
+			String name = x.getName();
+
+			Method method = getMethod(clazz, name);
+
+			if (method == null) {
+				throw new ELException("getter not found. " + x.getName());
+			}
+
+			out.print("item." + method.getName() + "()");
+
+			return true;
+		}
+
+		@Override
+		public boolean visit(QLVariantRefExpr x) {
+			Class<?> type = (Class<?>) x.getAttributes().get(ATTR_TYPE);
+
+			String variant = x.getName();
+
+			if (variant.startsWith("@")) {
+				variant = variant.substring(1);
+			}
+
+			if (type != null) {
+				if (boolean.class == type) {
+					out.print("_bool(ctx.get(\"" + variant + "\"))");
+				} else if (String.class == type) {
+					out.print("_string(ctx.get(\"" + variant + "\"))");
+				} else if (byte.class == type) {
+					out.print("_byte(ctx.get(\"" + variant + "\"))");
+				} else if (short.class == type) {
+					out.print("_short(ctx.get(\"" + variant + "\"))");
+				} else if (int.class == type) {
+					out.print("_int(ctx.get(\"" + variant + "\"))");
+				} else if (long.class == type) {
+					out.print("_long(ctx.get(\"" + variant + "\"))");
+				} else if (float.class == type) {
+					out.print("_float(ctx.get(\"" + variant + "\"))");
+				} else if (double.class == type) {
+					out.print("_double(ctx.get(\"" + variant + "\"))");
+				} else if (BigInteger.class == type) {
+					out.print("_bigInt(ctx.get(\"" + variant + "\"))");
+				} else if (BigDecimal.class == type) {
+					out.print("_decimal(ctx.get(\"" + variant + "\"))");
+				} else if (java.util.Date.class == type) {
+					out.print("_date(ctx.get(\"" + variant + "\"))");
+				} else if (Object.class == type) {
+					out.print("ctx.get(\"" + variant + "\")");
+				} else {
+					String className = type.getName();
+					className = className.replaceAll("\\$", "."); // inner
+																	// class
+					out.print("((" + className + ")" + "ctx.get(\"" + variant + "\"))");
+				}
+			} else {
+				out.print(x.getName());
+			}
+
+			return false;
+		}
+		
+		   public boolean visit(QLBinaryOpExpr x) {
+		        if (x.getLeft() instanceof QLBinaryOpExpr) {
+		            QLBinaryOpExpr left = (QLBinaryOpExpr) x.getLeft();
+		            if (left.getOperator().priority > x.getOperator().priority) {
+		                out.print('(');
+		                left.accept(this);
+		                out.print(')');
+		            } else {
+		                left.accept(this);
+		            }
+		        } else {
+		            x.getLeft().accept(this);
+		        }
+
+		        out.print(" ");
+		        if (QLBinaryOperator.BooleanAnd == x.getOperator()) {
+		        	out.print("&&");
+		        } else if (QLBinaryOperator.BooleanOr == x.getOperator()) {
+		        	out.print("||");
+		        } else {
+		        	out.print(x.getOperator().name);
+		        }
+		        out.print(" ");
+
+		        if (x.getRight() instanceof QLBinaryOpExpr) {
+		            QLBinaryOpExpr right = (QLBinaryOpExpr) x.getRight();
+		            if (right.getOperator().priority >= x.getOperator().priority) {
+		                out.print('(');
+		                right.accept(this);
+		                out.print(')');
+		            } else {
+		                right.accept(this);
+		            }
+		        } else {
+		            x.getRight().accept(this);
+		        }
+
+		        return false;
+		    }
 	}
 
 	private final class SetTypeVisitor extends QLAstVisitorAdapter {

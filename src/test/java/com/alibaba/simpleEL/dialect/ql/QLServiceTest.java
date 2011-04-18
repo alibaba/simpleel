@@ -44,9 +44,10 @@ public class QLServiceTest extends TestCase {
 		List<Person> destCollection = new ArrayList<Person>();
 		
 		Map<String, Object> context = new HashMap<String, Object>();
-		context.put("age", 30);
+		context.put("min", 30);
+		context.put("max", 70);
 		
-		service.select(Person.class, srcCollection, destCollection, "WHERE age > @age ORDER BY age desc LIMIT 1, 2", context);
+		service.select(Person.class, srcCollection, destCollection, "WHERE age >= @min AND age <= @max ORDER BY age desc LIMIT 1, 2", context);
 		Assert.assertEquals(2, destCollection.size());
 		Assert.assertEquals("夏留", destCollection.get(0).getName());
 		Assert.assertEquals("黄警", destCollection.get(1).getName());

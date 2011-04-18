@@ -5,13 +5,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.simpleEL.Expr;
+import com.alibaba.simpleEL.ExprCacheProvider;
 import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.JavaSourceCompiler;
 import com.alibaba.simpleEL.compile.JdkCompiler;
+import com.alibaba.simpleEL.eval.DefaultExprCacheProvider;
 
 public class QLEvalService {
 	private JavaSourceCompiler compiler = new JdkCompiler();
 	private QLPreprocessor preprocessor = new QLPreprocessor();
+	private DefaultExprCacheProvider cacheProvider = new DefaultExprCacheProvider();
+
+	public QLEvalService() {
+
+	}
 
 	public JavaSourceCompiler getCompiler() {
 		return compiler;
@@ -23,6 +30,10 @@ public class QLEvalService {
 
 	public QLPreprocessor getPreprocessor() {
 		return preprocessor;
+	}
+	
+	public ExprCacheProvider getCacheProvider() {
+		return this.cacheProvider;
 	}
 
 	public void setPreprocessor(QLPreprocessor preprocessor) {
