@@ -28,16 +28,19 @@ import com.alibaba.simpleEL.Preprocessor;
  *
  */
 public class TemplatePreProcessor implements Preprocessor {
-	private String templdateResource = "com/alibaba/simpleEL/Expr.java.template";
+	public final static String DEFAULT_TEMPLATE = "com/alibaba/simpleEL/Expr.java.template";
+	public final static String DEFAULT_PACKAGE_NAME = "com.alibaba.simpleEL.gen";
+	
+	private String templdateResource = DEFAULT_TEMPLATE;
 
-	private String template;
-	private String packageName = "com.alibaba.simpleEL.gen";
+	private transient String template;
+	private String packageName = DEFAULT_PACKAGE_NAME;
 
 	private final AtomicLong classIdSeed = new AtomicLong(10000L);
 
 	private VariantResolver variantResolver = new DefaultVariantResolver();
 	
-	private boolean allowMultiStatement;
+	private boolean allowMultiStatement = false;
 	
 
 	public boolean isAllowMultiStatement() {
