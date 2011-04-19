@@ -97,7 +97,12 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 						return super.visit(x);
 					}
 					
-			        out.print(x.getMethodName());
+					String className = method.getDeclaringClass().getName();
+					className = className.replaceAll("\\$", "."); // inner class
+					out.print(className);
+					out.print(".");
+					out.print(method.getName());
+					
 			        out.print("(");
 			        for (int i =0, size = x.getParameters().size(); i < size; ++i) {
 			            if (i != 0) {
@@ -113,7 +118,12 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 						return super.visit(x);
 					}
 					
-			        out.print(x.getMethodName());
+					String className = method.getDeclaringClass().getName();
+					className = className.replaceAll("\\$", "."); // inner class
+					out.print(className);
+					out.print(".");
+					out.print(method.getName());
+					
 			        out.print("(");
 			        for (int i =0, size = x.getParameters().size(); i < size; ++i) {
 			            if (i != 0) {
@@ -138,59 +148,56 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 		
 		public void visitMethodParameter(Class<?> type, TinyELExpr exp) {
 			if (boolean.class == type) {
-				out.print("_bool(ctx.get(\"");
+				out.print("_bool(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (String.class == type) {
-				out.print("_string(ctx.get(\"");
+				out.print("_string(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (byte.class == type) {
-				out.print("_byte(ctx.get(\"");
+				out.print("_byte(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (short.class == type) {
-				out.print("_short(ctx.get(\"");
+				out.print("_short(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (int.class == type) {
-				out.print("_int(ctx.get(\"");
+				out.print("_int(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (long.class == type) {
-				out.print("_long(ctx.get(\"");
+				out.print("_long(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (float.class == type) {
-				out.print("_float(ctx.get(\"");
+				out.print("_float(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (double.class == type) {
-				out.print("_double(ctx.get(\"");
+				out.print("_double(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (BigInteger.class == type) {
-				out.print("_bigInt(ctx.get(\"");
+				out.print("_bigInt(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (BigDecimal.class == type) {
-				out.print("_decimal(ctx.get(\"");
+				out.print("_decimal(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (java.util.Date.class == type) {
-				out.print("_date(ctx.get(\"");
+				out.print("_date(");
 				exp.accept(this);
-				out.print("))");
+				out.print(")");
 			} else if (Object.class == type) {
-				out.print("ctx.get(\"");
 				exp.accept(this);
-				out.print("))");
 			} else {
 				String className = type.getName();
 				className = className.replaceAll("\\$", "."); // inner class
-				out.print("((" + className + ")" + "ctx.get(\"");
+				out.print("(" + className + ")");
 				exp.accept(this);
-				out.print("))");
 			}
 			
 		}
