@@ -49,8 +49,7 @@ public enum TinyELToken {
 	    IDENTIFIER,
 	    VARIANT,
 	    LITERAL_CHARS,
-	    LITERAL_NCHARS,
-	    LITERAL_ALIAS,
+	    LITERAL_STRING,
 	    LITERAL_INT,
 	    LITERAL_FLOAT,
 	    LITERAL_HEX

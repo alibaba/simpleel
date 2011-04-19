@@ -123,16 +123,6 @@ public class TinyELLexer {
 			}
 
 			if (isFirstIdentifierChar(ch)) {
-				if (ch == 'N') {
-					if (buf[bp + 1] == '\'') {
-						bp++;
-						ch = '\'';
-						scanString();
-						token = TinyELToken.LITERAL_NCHARS;
-						return;
-					}
-				}
-
 				scanIdent();
 				return;
 			}
@@ -423,7 +413,7 @@ public class TinyELLexer {
 
 			if (ch == '\"') {
 				scanChar();
-				token = TinyELToken.LITERAL_ALIAS;
+				token = TinyELToken.LITERAL_STRING;
 				return;
 			}
 
