@@ -37,7 +37,7 @@ public enum QLToken {
     VALUES("VALUES"),
     INTERVAL("INTERVAL"),
     
-    VARIANT,
+   
 
     LPAREN("("),
     RPAREN(")"),
@@ -81,17 +81,10 @@ public enum QLToken {
     EOF,
     ERROR,
     IDENTIFIER,
-    HINT,
-    //QS_TODO add support in Lexer
-    SYS_VAR,
-    USR_VAR,
-    /** number composed purely of digit */
-    LITERAL_NUM_PURE_DIGIT,
-    /** number composed of digit mixed with <code>.</code> or <code>e</code> */
-    LITERAL_NUM_MIX_DIGIT,
+    VARIANT,
+    LITERAL_INT,
+    LITERAL_FLOAT,
     LITERAL_HEX,
-    //QS_TODO add syntax support
-    LITERAL_BIT,
     LITERAL_CHARS,
     LITERAL_NCHARS,
     LITERAL_ALIAS,

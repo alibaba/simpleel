@@ -424,24 +424,17 @@ public class QLExprParser extends AbstractQLParser {
             break;
         case NEW:
             throw new ELException("TODO");
-        case LITERAL_NUM_PURE_DIGIT:
+        case LITERAL_INT:
             sqlExpr = new QLNumberLiteralExpr(lexer.integerValue());
             lexer.nextToken();
             break;
-        case LITERAL_NUM_MIX_DIGIT:
+        case LITERAL_FLOAT:
             sqlExpr = new QLNumberLiteralExpr(lexer.decimalValue());
             lexer.nextToken();
             break;
         case LITERAL_CHARS:
             sqlExpr = new QLCharExpr(lexer.stringVal());
             lexer.nextToken();
-            break;
-        case USR_VAR:
-            sqlExpr = new QLVariantRefExpr(lexer.stringVal());
-            lexer.nextToken();
-            break;
-        case SYS_VAR:
-            //QS_TODO add support for system var
             break;
         case CASE:
             QLCaseExpr caseExpr = new QLCaseExpr();
@@ -480,7 +473,7 @@ public class QLExprParser extends AbstractQLParser {
         case SUB:
             lexer.nextToken();
             switch (lexer.token()) {
-            case LITERAL_NUM_PURE_DIGIT:
+            case LITERAL_INT:
                 Number integerValue = lexer.integerValue();
                 if (integerValue instanceof Integer) {
                     int intVal = ((Integer) integerValue).intValue();
@@ -502,7 +495,7 @@ public class QLExprParser extends AbstractQLParser {
                 sqlExpr = new QLNumberLiteralExpr(integerValue);
                 lexer.nextToken();
                 break;
-            case LITERAL_NUM_MIX_DIGIT:
+            case LITERAL_FLOAT:
                 sqlExpr = new QLNumberLiteralExpr(lexer.decimalValue().negate());
                 lexer.nextToken();
                 break;
@@ -513,11 +506,11 @@ public class QLExprParser extends AbstractQLParser {
         case PLUS:
             lexer.nextToken();
             switch (lexer.token()) {
-            case LITERAL_NUM_PURE_DIGIT:
+            case LITERAL_INT:
                 sqlExpr = new QLNumberLiteralExpr(lexer.integerValue());
                 lexer.nextToken();
                 break;
-            case LITERAL_NUM_MIX_DIGIT:
+            case LITERAL_FLOAT:
                 sqlExpr = new QLNumberLiteralExpr(lexer.decimalValue());
                 lexer.nextToken();
                 break;

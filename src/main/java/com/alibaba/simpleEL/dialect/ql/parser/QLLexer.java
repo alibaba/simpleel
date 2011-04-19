@@ -573,9 +573,9 @@ public class QLLexer {
 		}
 
 		if (isDouble) {
-			token = QLToken.LITERAL_NUM_MIX_DIGIT;
+			token = QLToken.LITERAL_FLOAT;
 		} else {
-			token = QLToken.LITERAL_NUM_PURE_DIGIT;
+			token = QLToken.LITERAL_INT;
 		}
 	}
 
