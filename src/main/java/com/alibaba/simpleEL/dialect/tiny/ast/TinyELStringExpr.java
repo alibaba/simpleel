@@ -2,14 +2,14 @@ package com.alibaba.simpleEL.dialect.tiny.ast;
 
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELAstVisitor;
 
-public class TinyELCharExpr extends TinyELLiteralExpr {
+public class TinyELStringExpr extends TinyELLiteralExpr {
 	private String value;
 
-	public TinyELCharExpr() {
+	public TinyELStringExpr() {
 
 	}
 
-	public TinyELCharExpr(String value) {
+	public TinyELStringExpr(String value) {
 		this.value = value;
 	}
 
