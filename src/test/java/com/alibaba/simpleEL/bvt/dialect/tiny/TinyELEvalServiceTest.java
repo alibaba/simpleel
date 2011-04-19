@@ -71,7 +71,7 @@ public class TinyELEvalServiceTest extends TestCase {
 	}
 	
 	public void test_5 () throws Exception {
-	TinyELEvalService service = new TinyELEvalService();
+		TinyELEvalService service = new TinyELEvalService();
 		
 		service.regsiterVariant(int.class, "a", "b");
 
@@ -80,5 +80,17 @@ public class TinyELEvalServiceTest extends TestCase {
         ctx.put("b", 4);
         
         Assert.assertEquals(4, service.eval(ctx, "java.lang.Math.max(a, b)"));
+	}
+	
+	public void test_6 () throws Exception {
+		TinyELEvalService service = new TinyELEvalService();
+		
+		service.regsiterVariant(int.class, "a", "b");
+		
+		Map<String, Object> ctx = new HashMap<String, Object>();
+		ctx.put("a", 3);
+		ctx.put("b", 4);
+		
+		Assert.assertEquals(4, service.eval(ctx, "Math.max(a, b)"));
 	}
 }

@@ -72,6 +72,22 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 		@Override
 		public boolean visit(TinyELIdentifierExpr x) {
 			String ident = x.getName();
+			
+			{
+				String fullName = "java.lang." + ident;
+				if (isClassName(fullName)) {
+					out.print(fullName);
+					return false;
+				}
+			}
+			{
+				String fullName = "java.util." + ident;
+				if (isClassName(fullName)) {
+					out.print(fullName);
+					return false;
+				}
+			}
+			
 			String result = variantResolver.resolve(ident);
 			out.print(result);
 			return false;
