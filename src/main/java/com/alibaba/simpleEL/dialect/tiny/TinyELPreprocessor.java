@@ -76,7 +76,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			{
 				String fullName = "java.lang." + ident;
 				if (isClassName(fullName)) {
-					out.print(fullName);
+					out.print(ident);
 					return false;
 				}
 			}
