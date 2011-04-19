@@ -4,7 +4,7 @@ import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELAstVisitor;
 
 public class TinyELNullExpr extends TinyELExpr {
     public void output(StringBuffer buf) {
-        buf.append("NULL");
+        buf.append("null");
     }
 
     protected void accept0(TinyELAstVisitor visitor) {
