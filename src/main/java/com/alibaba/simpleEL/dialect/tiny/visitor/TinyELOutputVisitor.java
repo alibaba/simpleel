@@ -90,6 +90,13 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 
 	@Override
 	public boolean visit(TinyELNumberLiteralExpr x) {
+		Number value = x.getValue();
+		
+		if (value == null) {
+			out.print("null");
+			return false;
+		}
+		
         out.print(x.getValue().toString());
         return false;
 	}
