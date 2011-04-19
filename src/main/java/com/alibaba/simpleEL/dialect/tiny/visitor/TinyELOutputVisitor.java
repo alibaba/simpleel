@@ -69,7 +69,14 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 
 	@Override
 	public boolean visit(TinyELPropertyExpr x) {
-        x.getOwner().accept(this);
+		if (x.getOwner() instanceof TinyELBinaryOpExpr) {
+			out.print('(');
+			x.getOwner().accept(this);
+			out.print(')');
+		} else {
+			x.getOwner().accept(this);
+		}
+		
         out.print(".");
         out.print(x.getName());
         return false;
@@ -78,7 +85,14 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 	@Override
 	public boolean visit(TinyELMethodInvokeExpr x) {
         if (x.getOwner() != null) {
-            x.getOwner().accept(this);
+    		if (x.getOwner() instanceof TinyELBinaryOpExpr) {
+    			out.print('(');
+    			x.getOwner().accept(this);
+    			out.print(')');
+    		} else {
+    			x.getOwner().accept(this);
+    		}
+    		
             out.print(".");
         }
         out.print(x.getMethodName());
@@ -107,7 +121,7 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
         if (value == null) {
             out.print("null");
         } else {
-            out.print("'");
+            out.print('"');
             for (char ch : value.toCharArray()) {
             	switch (ch) {
             	case '\t':
@@ -129,7 +143,7 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
             		out.print(ch);
             	}
         	}
-            out.print("'");
+            out.print('"');
         }
 
         return false;

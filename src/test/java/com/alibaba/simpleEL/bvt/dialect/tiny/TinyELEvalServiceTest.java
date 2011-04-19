@@ -47,4 +47,15 @@ public class TinyELEvalServiceTest extends TestCase {
         
         Assert.assertEquals(3, service.eval(ctx, "name.length()"));
 	}
+	
+	public void test_3 () throws Exception {
+		TinyELEvalService service = new TinyELEvalService();
+		
+		service.regsiterVariant(String.class, "name");
+		
+		Map<String, Object> ctx = new HashMap<String, Object>();
+		ctx.put("name", "abc");
+		
+		Assert.assertEquals(5, service.eval(ctx, "('aa' + name).length()"));
+	}
 }

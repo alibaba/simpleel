@@ -129,7 +129,13 @@ public class QLOutputAstVisitor extends QLAstVisitorAdapter {
 
     public boolean visit(QLMethodInvokeExpr x) {
         if (x.getOwner() != null) {
-            x.getOwner().accept(this);
+       		if (x.getOwner() instanceof QLBinaryOpExpr) {
+    			out.print('(');
+    			x.getOwner().accept(this);
+    			out.print(')');
+    		} else {
+    			x.getOwner().accept(this);
+    		}
             out.print(".");
         }
         out.print(x.getMethodName());
@@ -159,7 +165,13 @@ public class QLOutputAstVisitor extends QLAstVisitorAdapter {
     }
 
     public boolean visit(QLPropertyExpr x) {
-        x.getOwner().accept(this);
+   		if (x.getOwner() instanceof QLBinaryOpExpr) {
+			out.print('(');
+			x.getOwner().accept(this);
+			out.print(')');
+		} else {
+			x.getOwner().accept(this);
+		}
         out.print(".");
         out.print(x.getName());
         return false;

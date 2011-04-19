@@ -44,6 +44,8 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 		expr.accept(visitor);
 
 		String resolvedResult = out.toString();
+		
+		System.out.println(resolvedResult);
 
 		if (!allowMultiStatement) {
 			resolvedResult = "return " + resolvedResult + ";";

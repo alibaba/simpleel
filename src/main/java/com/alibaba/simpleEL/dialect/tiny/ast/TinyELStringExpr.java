@@ -24,11 +24,11 @@ public class TinyELStringExpr extends TinyELLiteralExpr {
     @Override
     public void output(StringBuffer buf) {
         if ((this.value == null) || (this.value.length() == 0)) {
-            buf.append("NULL");
+            buf.append("null");
         } else {
-            buf.append("'");
-            buf.append(this.value.replaceAll("'", "''"));
-            buf.append("'");
+            buf.append('"');
+            buf.append(this.value);
+            buf.append('"');
         }
     }
 
