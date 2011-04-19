@@ -18,22 +18,32 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/bvt/**/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
-	    <profile>
-	        <id>default-profile</id>
-	        <activation>
-	            <activeByDefault>true</activeByDefault>
-	            <file>
-	                <exists>${java.home}/../lib/tools.jar</exists>
-	            </file>
-	        </activation>
-	        <properties>
-	            <toolsjar>${java.home}/../lib/tools.jar</toolsjar>
-	        </properties>
-	        
+		<profile>
+			<id>default-profile</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<file>
+					<exists>${java.home}/../lib/tools.jar</exists>
+				</file>
+			</activation>
+			<properties>
+				<toolsjar>${java.home}/../lib/tools.jar</toolsjar>
+			</properties>
+
 			<dependencies>
 				<dependency>
 					<groupId>com.sun</groupId>
@@ -43,21 +53,21 @@
 					<systemPath>${toolsjar}</systemPath>
 				</dependency>
 			</dependencies>
-	    </profile>
-	    <profile>
-	        <id>mac-profile</id>
-	        <activation>
-	            <activeByDefault>false</activeByDefault>
-	            <file>
-	                <exists>${java.home}/../Classes/classes.jar</exists>
-	            </file>
-	        </activation>
-	        <properties>
-	            <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
-	        </properties>
-	    </profile>
+		</profile>
+		<profile>
+			<id>mac-profile</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<file>
+					<exists>${java.home}/../Classes/classes.jar</exists>
+				</file>
+			</activation>
+			<properties>
+				<toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
+			</properties>
+		</profile>
 	</profiles>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.sun</groupId>
@@ -72,6 +82,7 @@
 			<artifactId>junit</artifactId>
 			<version>4.8</version>
 		</dependency>
-		
+
+
 	</dependencies>
 </project>
