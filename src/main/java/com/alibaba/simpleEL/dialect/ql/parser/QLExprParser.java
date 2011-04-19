@@ -560,7 +560,7 @@ public class QLExprParser extends AbstractQLParser {
                 if (lexer.token() == QLToken.LPAREN) {
                     lexer.nextToken();
 
-                    QLMethodInvokeExpr methodInvokeExpr = new QLMethodInvokeExpr(name);
+                    QLMethodInvokeExpr methodInvokeExpr = new QLMethodInvokeExpr(name, expr);
                     if (lexer.token() == QLToken.RPAREN) {
                         lexer.nextToken();
                     } else {

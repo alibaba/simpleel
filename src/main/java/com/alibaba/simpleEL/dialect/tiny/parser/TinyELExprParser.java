@@ -333,7 +333,7 @@ public class TinyELExprParser {
 			sTinyELExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
 			lexer.nextToken();
 			break;
-		case LITERAL_CHARS:
+		case LITERAL_STRING:
 			sTinyELExpr = new TinyELStringExpr(lexer.stringVal());
 			lexer.nextToken();
 			break;
@@ -427,7 +427,7 @@ public class TinyELExprParser {
 				if (lexer.token() == TinyELToken.LPAREN) {
 					lexer.nextToken();
 
-					TinyELMethodInvokeExpr methodInvokeExpr = new TinyELMethodInvokeExpr(name);
+					TinyELMethodInvokeExpr methodInvokeExpr = new TinyELMethodInvokeExpr(name, expr);
 					if (lexer.token() == TinyELToken.RPAREN) {
 						lexer.nextToken();
 					} else {

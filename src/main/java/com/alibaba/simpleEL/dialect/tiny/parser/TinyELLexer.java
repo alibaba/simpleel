@@ -2,7 +2,17 @@ package com.alibaba.simpleEL.dialect.tiny.parser;
 
 import static com.alibaba.simpleEL.dialect.ql.parser.CharTypes.isFirstIdentifierChar;
 import static com.alibaba.simpleEL.dialect.ql.parser.CharTypes.isIdentifierChar;
-import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.*;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.COLON;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.COLONEQ;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.COMMA;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.EOF;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.ERROR;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.LBRACE;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.LBRACKET;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.LPAREN;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.RBRACE;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.RBRACKET;
+import static com.alibaba.simpleEL.dialect.tiny.parser.TinyELToken.RPAREN;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -192,7 +202,7 @@ public class TinyELLexer {
 				token = TinyELToken.DOT;
 				return;
 			case '\'':
-				scanString();
+				scanStringSingQuote();
 				return;
 			case '\"':
 				scanAlias();
@@ -358,30 +368,79 @@ public class TinyELLexer {
 		}
 	}
 
-	protected void scanString() {
+	protected void scanStringSingQuote() {
 		np = bp;
 		boolean hasSpecial = false;
-
+		char ch;
 		for (;;) {
-			if (bp >= buflen) {
-				lexError(pos, "unclosed.str.lit");
-				return;
-			}
-
 			ch = buf[++bp];
 
 			if (ch == '\'') {
-				scanChar();
-				if (ch != '\'') {
-					token = LITERAL_CHARS;
-					break;
-				} else {
-					System.arraycopy(buf, np + 1, sbuf, 0, sp);
+				break;
+			}
+
+			if (ch == EOI) {
+				throw new ELException("unclosed single-quote string");
+			}
+
+			if (ch == '\\') {
+				if (!hasSpecial) {
 					hasSpecial = true;
-					putChar('\'');
-					continue;
+					
+					if (sp > sbuf.length) {
+						char[] newsbuf = new char[sp * 2];
+						System.arraycopy(sbuf, 0, newsbuf, 0, sbuf.length);
+						sbuf = newsbuf;
+					}
+					
+					System.arraycopy(buf, np + 1, sbuf, 0, sp);
 				}
-			} 
+
+				ch = buf[++bp];
+
+				switch (ch) {
+				case '"':
+					putChar('"');
+					break;
+				case '\\':
+					putChar('\\');
+					break;
+				case '/':
+					putChar('/');
+					break;
+				case '\'':
+					putChar('\'');
+					break;
+				case 'b':
+					putChar('\b');
+					break;
+				case 'f':
+				case 'F':
+					putChar('\f');
+					break;
+				case 'n':
+					putChar('\n');
+					break;
+				case 'r':
+					putChar('\r');
+					break;
+				case 't':
+					putChar('\t');
+					break;
+				case 'u':
+					char c1 = ch = buf[++bp];
+					char c2 = ch = buf[++bp];
+					char c3 = ch = buf[++bp];
+					char c4 = ch = buf[++bp];
+					int val = Integer.parseInt(new String(new char[] { c1, c2, c3, c4 }), 16);
+					putChar((char) val);
+					break;
+				default:
+					this.ch = ch;
+					throw new ELException("unclosed single-quote string");
+				}
+				continue;
+			}
 
 			if (!hasSpecial) {
 				sp++;
@@ -400,21 +459,94 @@ public class TinyELLexer {
 		} else {
 			stringVal = new String(sbuf, 0, sp);
 		}
+		
+		token = TinyELToken.LITERAL_STRING;
+		this.ch = buf[++bp];
+		
 	}
 
 	private final void scanAlias() {
+		np = bp;
+		boolean hasSpecial = false;
+		char ch;
 		for (;;) {
-			if (bp >= buflen) {
-				lexError(pos, "unclosed.str.lit");
-				return;
-			}
-
 			ch = buf[++bp];
 
 			if (ch == '\"') {
-				scanChar();
-				token = TinyELToken.LITERAL_STRING;
-				return;
+				break;
+			}
+
+			if (ch == '\\') {
+				if (!hasSpecial) {
+					hasSpecial = true;
+					
+					if (sp >= sbuf.length) {
+						int newCapcity = sbuf.length * 2;
+						if (sp > newCapcity) {
+							newCapcity = sp;
+						}
+						char[] newsbuf = new char[newCapcity];
+						System.arraycopy(sbuf, 0, newsbuf, 0, sbuf.length);
+						sbuf = newsbuf;
+					}
+					
+					System.arraycopy(buf, np + 1, sbuf, 0, sp);
+				}
+
+				ch = buf[++bp];
+
+				switch (ch) {
+				case '"':
+					putChar('"');
+					break;
+				case '\\':
+					putChar('\\');
+					break;
+				case '/':
+					putChar('/');
+					break;
+				case 'b':
+					putChar('\b');
+					break;
+				case 'f':
+				case 'F':
+					putChar('\f');
+					break;
+				case 'n':
+					putChar('\n');
+					break;
+				case 'r':
+					putChar('\r');
+					break;
+				case 't':
+					putChar('\t');
+					break;
+				case 'x':
+					char x1 = ch = buf[++bp];
+					char x2 = ch = buf[++bp];
+					
+					int x_val = digits[x1] * 16 + digits[x2];
+					char x_char = (char) x_val;
+					putChar(x_char);
+					break;
+				case 'u':
+					char u1 = ch = buf[++bp];
+					char u2 = ch = buf[++bp];
+					char u3 = ch = buf[++bp];
+					char u4 = ch = buf[++bp];
+					int val = Integer.parseInt(new String(new char[] { u1, u2, u3, u4 }), 16);
+					putChar((char) val);
+					break;
+				default:
+					this.ch = ch;
+					throw new ELException("unclosed string");
+				}
+				continue;
+			}
+
+			if (!hasSpecial) {
+				sp++;
+				continue;
 			}
 
 			if (sp == sbuf.length) {
@@ -423,6 +555,15 @@ public class TinyELLexer {
 				sbuf[sp++] = ch;
 			}
 		}
+		
+		if (!hasSpecial) {
+			stringVal = new String(buf, np + 1, sp);
+		} else {
+			stringVal = new String(sbuf, 0, sp);
+		}
+
+		token = TinyELToken.LITERAL_STRING;
+		this.ch = buf[++bp];
 	}
 
 	public void scanVariable() {
