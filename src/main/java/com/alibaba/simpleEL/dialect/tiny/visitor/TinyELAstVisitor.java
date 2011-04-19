@@ -2,12 +2,13 @@ package com.alibaba.simpleEL.dialect.tiny.visitor;
 
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
-import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNullExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 
 public interface TinyELAstVisitor {
     void postVisit(TinyELAstNode astNode);
@@ -41,4 +42,8 @@ public interface TinyELAstVisitor {
     void endVisit(TinyELStringExpr x);
     
     boolean visit(TinyELStringExpr x);
+    
+    void endVisit(TinyELVariantRefExpr x);
+    
+    boolean visit(TinyELVariantRefExpr x);
 }
