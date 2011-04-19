@@ -20,10 +20,10 @@ import java.util.Map;
 /**
  * @author shaojin.wensj
  */
-public class Keywords {
+public class QLKeywords {
     private final Map<String, QLToken> keywords;
 
-    public static Keywords DEFAULT_KEYWORDS;
+    public static QLKeywords DEFAULT_KEYWORDS;
 
     static {
         Map<String, QLToken> map = new HashMap<String, QLToken>();
@@ -62,10 +62,10 @@ public class Keywords {
         map.put("BETWEEN", QLToken.BETWEEN);
         map.put("INTERVAL", QLToken.INTERVAL);
         map.put("LIMIT", QLToken.LIMIT);
-        DEFAULT_KEYWORDS = new Keywords(map);
+        DEFAULT_KEYWORDS = new QLKeywords(map);
     }
 
-    public Keywords(Map<String, QLToken> keywords) {
+    public QLKeywords(Map<String, QLToken> keywords) {
         this.keywords = keywords;
     }
 

@@ -1,6 +1,10 @@
 package com.alibaba.simpleEL.dialect.tiny.parser;
 
 public enum TinyELToken {
+	   NEW("new"),
+	   NULL("null"),
+	   IF("if"),
+	   
 	   LPAREN("("),
 	    RPAREN(")"),
 	    LBRACE("{"),
@@ -43,7 +47,13 @@ public enum TinyELToken {
 	    EOF,
 	    ERROR,
 	    IDENTIFIER,
-	    
+	    VARIANT,
+	    LITERAL_CHARS,
+	    LITERAL_NCHARS,
+	    LITERAL_ALIAS,
+	    LITERAL_INT,
+	    LITERAL_FLOAT,
+	    LITERAL_HEX
 	    ;
 		
 	    public final String name;

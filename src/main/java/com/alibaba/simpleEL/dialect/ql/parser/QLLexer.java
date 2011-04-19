@@ -58,7 +58,7 @@ public class QLLexer {
 	 */
 	private QLToken token;
 
-	protected Keywords keywods = Keywords.DEFAULT_KEYWORDS;
+	protected QLKeywords keywods = QLKeywords.DEFAULT_KEYWORDS;
 
 	protected final static ThreadLocal<char[]> sbufRef = new ThreadLocal<char[]>();
 
