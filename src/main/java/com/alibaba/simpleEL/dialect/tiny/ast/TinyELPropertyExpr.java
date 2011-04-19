@@ -8,11 +8,22 @@ public class TinyELPropertyExpr extends TinyELExpr implements TinyELName {
 
     private TinyELExpr owner;
     private String name;
-
+    
     public TinyELPropertyExpr(TinyELExpr owner, String name) {
-
         this.owner = owner;
         this.name = name;
+    }
+    
+    public boolean isTinyELName() {
+    	if (this.owner instanceof TinyELIdentifierExpr) {
+    		return true;
+    	}
+    	
+    	if (this.owner instanceof TinyELPropertyExpr) {
+    		return ((TinyELPropertyExpr) this.owner).isTinyELName();
+    	}
+    	
+    	return false;
     }
 
     public TinyELPropertyExpr() {

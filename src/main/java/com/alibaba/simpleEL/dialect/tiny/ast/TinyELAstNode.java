@@ -33,7 +33,11 @@ public abstract class TinyELAstNode {
 		child.accept(visitor);
 	}
 	
-	public void output(StringBuffer buf) {
-		
+	abstract void output(StringBuffer buf);
+	
+	public String toString() {
+		StringBuffer out = new StringBuffer();
+		output(out);
+		return out.toString();
 	}
 }

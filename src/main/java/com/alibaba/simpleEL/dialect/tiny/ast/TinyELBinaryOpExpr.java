@@ -59,4 +59,12 @@ public class TinyELBinaryOpExpr extends TinyELExpr {
 
 	        visitor.endVisit(this);
 	    }
+	    
+	    public void output(StringBuffer buf) {
+	        this.left.output(buf);
+	        buf.append(" ");
+	        buf.append(this.operator.name);
+	        buf.append(" ");
+	        this.right.output(buf);
+	    }
 }

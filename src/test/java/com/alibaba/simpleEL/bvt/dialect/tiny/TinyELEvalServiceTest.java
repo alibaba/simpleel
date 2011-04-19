@@ -69,4 +69,16 @@ public class TinyELEvalServiceTest extends TestCase {
 		
 		Assert.assertEquals(5, service.eval(ctx, "(\"aa\" + name).length()"));
 	}
+	
+	public void test_5 () throws Exception {
+	TinyELEvalService service = new TinyELEvalService();
+		
+		service.regsiterVariant(int.class, "a", "b");
+
+        Map<String, Object> ctx = new HashMap<String, Object>();
+        ctx.put("a", 3);
+        ctx.put("b", 4);
+        
+        Assert.assertEquals(4, service.eval(ctx, "java.lang.Math.max(a, b)"));
+	}
 }

@@ -9,9 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.simpleEL.JavaSource;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 import com.alibaba.simpleEL.dialect.tiny.parser.TinyELExprParser;
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELOutputVisitor;
@@ -81,6 +83,45 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			String result = variantResolver.resolve(ident);
 			out.print(result);
 			return false;
+		}
+		
+		public boolean isClassName(String fullName) {
+			try {
+				Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(fullName);
+				
+				if (clazz != null) {
+					return true;
+				}
+			} catch (ClassNotFoundException e) {
+				return false;
+			}
+			
+			return false;
+		}
+		
+		@Override
+		public boolean visit(TinyELPropertyExpr x) {
+			if (x.getOwner() instanceof TinyELBinaryOpExpr) {
+				out.print('(');
+				x.getOwner().accept(this);
+				out.print(')');
+				out.print(".");
+		        out.print(x.getName());
+		        
+		        return false;
+			}
+			
+			String fullName = x.toString();
+			if (isClassName(fullName)) {
+				out.print(fullName);
+				return false;
+			}
+			
+			x.getOwner().accept(this);
+			
+	        out.print(".");
+	        out.print(x.getName());
+	        return false;
 		}
 
 		@Override
