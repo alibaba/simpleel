@@ -39,7 +39,7 @@ import com.alibaba.simpleEL.preprocess.TemplatePreProcessor;
  */
 public class DefaultExpressEvalService implements ExpressEvalService,
 		DefaultExpressEvalServiceMBean {
-	private Preprocessor preprocessor = new TemplatePreProcessor();
+	protected Preprocessor preprocessor;
 	private JavaSourceCompiler compiler = new JdkCompiler();
 	private ExprCacheProvider cacheProvider = new DefaultExprCacheProvider();
 
@@ -48,6 +48,14 @@ public class DefaultExpressEvalService implements ExpressEvalService,
 	private final AtomicLong evalCount = new AtomicLong();
 	private final AtomicLong evalNano = new AtomicLong();
 	private final AtomicLong evalErrorCount = new AtomicLong();
+	
+	public DefaultExpressEvalService() {
+		this.preprocessor = new TemplatePreProcessor();
+	}
+	
+	public DefaultExpressEvalService(Preprocessor preprocessor) {
+		this.preprocessor = preprocessor;
+	}
 
 	public boolean isProfileEnable() {
 		return profileEnable;

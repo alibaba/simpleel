@@ -33,14 +33,14 @@ public class TemplatePreProcessor implements Preprocessor {
 	
 	private String templdateResource = DEFAULT_TEMPLATE;
 
-	private transient String template;
-	private String packageName = DEFAULT_PACKAGE_NAME;
+	protected transient String template;
+	protected String packageName = DEFAULT_PACKAGE_NAME;
 
-	private final AtomicLong classIdSeed = new AtomicLong(10000L);
+	protected final AtomicLong classIdSeed = new AtomicLong(10000L);
 
-	private VariantResolver variantResolver = new DefaultVariantResolver();
+	protected VariantResolver variantResolver = new DefaultVariantResolver();
 	
-	private boolean allowMultiStatement = false;
+	protected boolean allowMultiStatement = false;
 	
 
 	public boolean isAllowMultiStatement() {
