@@ -9,6 +9,11 @@ public class TinyELAssignExpr extends TinyELExpr {
 	public TinyELAssignExpr() {
 	}
 
+	public TinyELAssignExpr(TinyELExpr target, TinyELExpr value) {
+		this.target = target;
+		this.value = value;
+	}
+
 	public TinyELExpr getTarget() {
 		return target;
 	}

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.TypeUtils;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAssignExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
@@ -252,6 +253,29 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			}
 
 			return super.visit(x);
+		}
+		
+		@Override
+		public boolean visit(TinyELAssignExpr x) {
+			if (x.getTarget() instanceof TinyELIdentifierExpr) {
+				TinyELIdentifierExpr target = (TinyELIdentifierExpr) x.getTarget();
+				String varName = target.getName();
+				if (localVariants.containsKey(varName)) {
+					x.getTarget().accept(this);
+				} else {
+					print("ctx.put(\"");
+					print(varName);
+					print("\", ");
+					x.getValue().accept(this);
+					print(")");
+					return false;
+				}
+			} else {
+				x.getTarget().accept(this);
+			}
+			print(" = ");
+			x.getValue().accept(this);
+			return false;
 		}
 		
 		public void visitMethodParameter(Class<?> type, TinyELExpr exp) {

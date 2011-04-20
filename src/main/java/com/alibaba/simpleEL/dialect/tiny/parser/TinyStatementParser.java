@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.simpleEL.ELException;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELExprStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
@@ -78,7 +80,9 @@ public class TinyStatementParser {
 			break;
 		}
 		
-		throw new ELException("parse error, TODO : " + lexer.token());
+		TinyELExpr expr = exprParser.expr();
+		accept(TinyELToken.SEMI);
+		return new TinyELExprStatement(expr);
 	}
 	
 	public TinyLocalVarDeclareStatement parseVarDecl() {

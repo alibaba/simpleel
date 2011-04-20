@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAssignExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOperator;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
@@ -66,6 +67,7 @@ public class TinyELExprParser {
 		expr = andRest(expr);
 		expr = orRest(expr);
 		expr = conditionalRest(expr);
+		expr = assignRest(expr);
 
 		return expr;
 	}
@@ -148,14 +150,14 @@ public class TinyELExprParser {
 		TinyELExpr rightExp;
 		if (lexer.token() == TinyELToken.EQEQ) {
 			lexer.nextToken();
-			rightExp = conditional();
+			rightExp = assign();
 
 			rightExp = equalityRest(rightExp);
 
 			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Equality, rightExp);
 		} else if (lexer.token() == TinyELToken.BANGEQ) {
 			lexer.nextToken();
-			rightExp = conditional();
+			rightExp = assign();
 
 			rightExp = equalityRest(rightExp);
 
@@ -257,6 +259,21 @@ public class TinyELExprParser {
 			TinyELExpr falseExpr = expr();
 			expr = new TinyELConditionalExpr(expr, trueExpr, falseExpr);
 			
+			expr = conditionalRest(expr);
+		}
+		return expr;
+	}
+	
+	public final TinyELExpr assign() {
+		TinyELExpr expr = conditional();
+		return assignRest(expr);
+	}
+	
+	public final TinyELExpr assignRest(TinyELExpr expr) {
+		if (lexer.token() == TinyELToken.EQ) {
+			lexer.nextToken();
+			TinyELExpr valueExpr = expr();
+			expr = new TinyELAssignExpr(expr, valueExpr);
 			expr = conditionalRest(expr);
 		}
 		return expr;

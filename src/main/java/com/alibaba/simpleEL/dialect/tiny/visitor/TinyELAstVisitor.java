@@ -14,6 +14,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELExprStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
@@ -101,4 +102,8 @@ public interface TinyELAstVisitor {
     void endVisit(TinyELAssignExpr x);
     
     boolean visit(TinyELAssignExpr x);
+    
+    void endVisit(TinyELExprStatement x);
+    
+    boolean visit(TinyELExprStatement x);
 }
