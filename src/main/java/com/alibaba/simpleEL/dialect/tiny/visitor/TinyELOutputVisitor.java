@@ -15,7 +15,9 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
 
@@ -249,8 +251,44 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 	@Override
 	public boolean visit(Else x) {
 		print(" else {");
+		incrementIndent();
+		println();
+		
+		printAndAccept(x.getStatementList());
+		
+		decrementIndent();
+		println();
+		print("}");
+		return false;
+	}
+	
+	@Override
+	public boolean visit(ElseIf x) {
+		print(" else if (");
+		x.getCondition().accept(this);
+		print(") {");
+		incrementIndent();
+		
 		println();
 		printAndAccept(x.getStatementList());
+		
+		decrementIndent();
+		println();
+		print("}");
+		return false;
+	}
+	
+	@Override
+	public boolean visit(TinyELIfStatement x) {
+		print(" if (");
+		x.getCondition().accept(this);
+		print(") {");
+		incrementIndent();
+		println();
+		
+		printAndAccept(x.getStatementList());
+		
+		decrementIndent(); 
 		println();
 		print("}");
 		return false;

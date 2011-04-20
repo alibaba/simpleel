@@ -145,4 +145,18 @@ public class TinyELEvalServiceTest extends TestCase {
 
 		Assert.assertEquals(4, service.eval(ctx, "Math.max(c[0], c[1]) + 2"));
 	}
+	
+	public void test_11() throws Exception {
+		TinyELEvalService service = new TinyELEvalService();
+		
+		service.regsiterVariant(int.class, "a", "b");
+		service.regsiterVariant(int[].class, "c");
+		
+		Map<String, Object> ctx = new HashMap<String, Object>();
+		ctx.put("a", 3);
+		ctx.put("b", 4);
+		ctx.put("c", new int[] { 1, 2 });
+		
+		Assert.assertEquals(4, service.eval(ctx, "Math.max(c[0], c[1]) + 2"));
+	}
 }

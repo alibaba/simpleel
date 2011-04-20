@@ -46,14 +46,29 @@ public class TinyELIfStatement extends TinyELStatement {
 
 	@Override
 	protected void accept0(TinyELAstVisitor visitor) {
-
+		if (visitor.visit(this)) {
+			acceptChild(visitor, condition);
+			acceptChild(visitor, statementList);
+			acceptChild(visitor, elseIfList);
+			acceptChild(visitor, elseItem);
+		}
+		visitor.endVisit(this);
 	}
 
 	public static class ElseIf extends TinyELAstNode {
+		private TinyELExpr condition;
 		private final List<TinyELStatement> statementList = new ArrayList<TinyELStatement>();
 
 		public ElseIf() {
 
+		}
+
+		public TinyELExpr getCondition() {
+			return condition;
+		}
+
+		public void setCondition(TinyELExpr condition) {
+			this.condition = condition;
 		}
 
 		public List<TinyELStatement> getStatementList() {
@@ -62,8 +77,11 @@ public class TinyELIfStatement extends TinyELStatement {
 
 		@Override
 		protected void accept0(TinyELAstVisitor visitor) {
-			// TODO Auto-generated method stub
-			
+			if (visitor.visit(this)) {
+				acceptChild(visitor, condition);
+				acceptChild(visitor, statementList);
+			}
+			visitor.endVisit(this);
 		}
 
 		@Override
@@ -85,7 +103,7 @@ public class TinyELIfStatement extends TinyELStatement {
 		public List<TinyELStatement> getStatementList() {
 			return this.statementList;
 		}
-		
+
 		@Override
 		public void output(StringBuffer buf) {
 			StringWriter out = new StringWriter();
