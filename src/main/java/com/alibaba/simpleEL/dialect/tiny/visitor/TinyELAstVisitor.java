@@ -1,6 +1,7 @@
 package com.alibaba.simpleEL.dialect.tiny.visitor;
 
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAssignExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
@@ -96,4 +97,8 @@ public interface TinyELAstVisitor {
     void endVisit(TinyLocalVarDeclareStatement x);
     
     boolean visit(TinyLocalVarDeclareStatement x);
+    
+    void endVisit(TinyELAssignExpr x);
+    
+    boolean visit(TinyELAssignExpr x);
 }

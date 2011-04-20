@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAssignExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
@@ -188,6 +189,14 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		x.getTrueExpr().accept(this);
 		print(" : ");
 		x.getFalseExpr().accept(this);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(TinyELAssignExpr x) {
+		x.getTarget().accept(this);
+		print(" = ");
+		x.getValue().accept(this);
 		return false;
 	}
 
