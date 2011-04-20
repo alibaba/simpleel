@@ -119,4 +119,16 @@ public class TinyELEvalServiceTest extends TestCase {
 		
 		Assert.assertEquals(true, service.eval(ctx, "Math.max(c[0], c[1]) == 2"));
 	}
+	
+	public void test_9 () throws Exception {
+		TinyELEvalService service = new TinyELEvalService();
+		
+		service.regsiterVariant(long.class, "millis");
+		
+		long millis = System.currentTimeMillis();
+		Map<String, Object> ctx = new HashMap<String, Object>();
+		ctx.put("millis", millis);
+		
+		Assert.assertEquals(new java.util.Date(millis), service.eval(ctx, "new java.util.Date(millis)"));
+	}
 }

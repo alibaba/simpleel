@@ -6,6 +6,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNewExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNullExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
@@ -56,4 +57,8 @@ public interface TinyELAstVisitor {
     void endVisit(TinyELArrayAccessExpr x);
     
     boolean visit(TinyELArrayAccessExpr x);
+    
+    void endVisit(TinyELNewExpr x);
+    
+    boolean visit(TinyELNewExpr x);
 }
