@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.simpleEL.JavaSource;
@@ -16,7 +17,9 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
 import com.alibaba.simpleEL.dialect.tiny.parser.TinyELExprParser;
+import com.alibaba.simpleEL.dialect.tiny.parser.TinyStatementParser;
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELOutputVisitor;
 import com.alibaba.simpleEL.preprocess.TemplatePreProcessor;
 
@@ -39,14 +42,31 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			throw new IllegalStateException("variantResolver is null");
 		}
 
-		TinyELExprParser parser = new TinyELExprParser(text);
-		TinyELExpr expr = parser.expr();
-
-		StringWriter out = new StringWriter();
-		JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
-		expr.accept(visitor);
-
-		String resolvedResult = out.toString();
+		String resolvedResult;
+		if (!allowMultiStatement) {
+			TinyELExprParser parser = new TinyELExprParser(text);
+			TinyELExpr expr = parser.expr();
+	
+			StringWriter out = new StringWriter();
+			JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
+			expr.accept(visitor);
+	
+			resolvedResult = out.toString();
+		} else {
+			TinyStatementParser parser = new TinyStatementParser(text);
+			List<TinyELStatement> statements = parser.statementList();
+	
+			StringWriter out = new StringWriter();
+			JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
+			visitor.incrementIndent();
+			for (TinyELStatement statement : statements) {
+				visitor.println();
+				statement.accept(visitor);
+			}
+			visitor.decrementIndent();
+	
+			resolvedResult = out.toString();
+		}
 		
 		//System.out.println(resolvedResult);
 

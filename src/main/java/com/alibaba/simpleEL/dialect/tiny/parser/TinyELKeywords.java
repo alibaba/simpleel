@@ -27,6 +27,12 @@ public class TinyELKeywords {
 
     static {
         Map<String, TinyELToken> map = new HashMap<String, TinyELToken>();
+        map.put("if", TinyELToken.IF);
+        map.put("else", TinyELToken.ELSE);
+        map.put("return", TinyELToken.RETURN);
+        map.put("for", TinyELToken.FOR);
+        map.put("while", TinyELToken.WHILE);
+        map.put("do", TinyELToken.DO);
         map.put("new", TinyELToken.NEW);
         map.put("null", TinyELToken.NULL);
         map.put("true", TinyELToken.TRUE);

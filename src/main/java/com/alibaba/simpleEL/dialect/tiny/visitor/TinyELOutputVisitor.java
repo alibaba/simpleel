@@ -291,6 +291,15 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		decrementIndent(); 
 		println();
 		print("}");
+		
+		for (ElseIf elseIf : x.getElseIfList()) {
+			elseIf.accept(this);
+		}
+		
+		if (x.getElse() != null) {
+			x.getElse().accept(this);
+		}
+		
 		return false;
 	}
 

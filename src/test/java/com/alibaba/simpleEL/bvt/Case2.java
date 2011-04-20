@@ -30,8 +30,7 @@ public class Case2 extends TestCase {
 			Map<String, Object> ctx = new HashMap<String, Object>();
 			ctx.put("p", p);
 			ctx.put("list", list);
-			service.eval(ctx,
-					"if (@p.getAge() > 30) { @list.add(@p); } return null;");
+			service.eval(ctx, "if (@p.getAge() > 30) { @list.add(@p); } return null;");
 		}
 
 		Assert.assertEquals(2, list.size());
