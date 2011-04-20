@@ -22,6 +22,7 @@ public enum TinyELBinaryOperator {
     LessThan("<", 110),
     LessThanOrEqual("<=", 110),
     LessThanOrEqualOrGreaterThan("<=>", 110),
+    InstanceOf("instanceof", 110),
     LessThanOrGreater("<>", 110),
     LeftShift("<<", 80),
     Like("LIKE", 110),
@@ -29,14 +30,7 @@ public enum TinyELBinaryOperator {
     Modulus("%", 60),
     NotEqual("!=", 110),
     NotLessThan("!<", 110),
-    NotGreaterThan("!>", 110),
-    Union("UNION", 0),
-    NotLike("NOT LIKE", 110),
-    IsNot("IS NOT", 110),
-    Escape("ESCAPE", 110),
-    RegExp("REGEXP", 110),
-    NotRegExp("NOT REGEXP", 110),
-    COLLATE("COLLATE", 20);
+    NotGreaterThan("!>", 110);
 
     public static int getPriority(TinyELBinaryOperator operator) {
         return 0;

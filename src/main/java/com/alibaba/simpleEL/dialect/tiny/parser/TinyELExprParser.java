@@ -343,6 +343,13 @@ public class TinyELExprParser {
 			rightExp = relationalRest(rightExp);
 
 			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LessThanOrGreater, rightExp);
+		} else if (lexer.token() == TinyELToken.INSTNACEOF) {
+			lexer.nextToken();
+			rightExp = shift();
+			
+			rightExp = relationalRest(rightExp);
+			
+			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.InstanceOf, rightExp);
 		}
 
 		return expr;

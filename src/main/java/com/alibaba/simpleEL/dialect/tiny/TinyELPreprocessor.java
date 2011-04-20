@@ -13,6 +13,7 @@ import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.TypeUtils;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAssignExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOperator;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
@@ -332,6 +333,24 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 				exp.accept(this);
 			}
 			
+		}
+		
+		@Override
+		public boolean visit(TinyELBinaryOpExpr x) {
+			if (x.getOperator() == TinyELBinaryOperator.InstanceOf) {
+				if (x.getLeft() instanceof TinyELIdentifierExpr) {
+					TinyELIdentifierExpr ident = (TinyELIdentifierExpr) x.getLeft();
+					String varName = ident.getName();
+					if (!localVariants.containsKey(varName)) {
+						print("ctx.get(\"");
+						print(varName);
+						print("\") instanceof ");
+					}
+					x.getRight().accept(this);
+					return false;
+				}
+			}
+			return super.visit(x);
 		}
 		
 		@Override

@@ -34,6 +34,7 @@ public class TinyELKeywords {
         map.put("while", TinyELToken.WHILE);
         map.put("do", TinyELToken.DO);
         map.put("new", TinyELToken.NEW);
+        map.put("instanceof", TinyELToken.INSTNACEOF);
         
         map.put("byte", TinyELToken.BYTE);
         map.put("short", TinyELToken.SHORT);

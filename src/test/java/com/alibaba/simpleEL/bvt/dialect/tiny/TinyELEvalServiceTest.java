@@ -170,5 +170,6 @@ public class TinyELEvalServiceTest extends TestCase {
 		ctx.put("b", 4);
 		
 		Assert.assertEquals(4, service.eval(ctx, "a > b ? a : b"));
+		Assert.assertEquals(true, service.eval(ctx, "a instanceof Number"));
 	}
 }
