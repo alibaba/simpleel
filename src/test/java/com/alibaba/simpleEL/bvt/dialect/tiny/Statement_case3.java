@@ -19,6 +19,9 @@ public class Statement_case3 extends TestCase {
 		ctx.put("b", 4);
 
 		Assert.assertEquals(null, service.eval(ctx, "int temp; temp = a; a = b; b = temp; return null;"));
+		
+		Assert.assertEquals(4, ctx.get("a"));
+		Assert.assertEquals(3, ctx.get("b"));
 	}
 
 }
