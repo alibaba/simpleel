@@ -17,242 +17,260 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
 
 public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 	protected PrintWriter out;
-    private String indent = "\t";
-    private int indentCount = 0;
+	private String indent = "\t";
+	private int indentCount = 0;
 
 	public TinyELOutputVisitor(PrintWriter out) {
 		this.out = out;
 	}
+
+	public void decrementIndent() {
+		this.indentCount -= 1;
+	}
+
+	public void incrementIndent() {
+		this.indentCount += 1;
+	}
+
+	public void printIndent() {
+		for (int i = 0; i < this.indentCount; ++i)
+			print(this.indent);
+	}
+
+	public void println() {
+		print("\n");
+		printIndent();
+	}
+
+	public void println(String text) {
+		print(text);
+		println();
+	}
+
+	public void print(String text) {
+		out.print(text);
+	}
 	
-    public void decrementIndent() {
-        this.indentCount -= 1;
-    }
+	public void print(char ch) {
+		out.print(ch);
+	}
 
-    public void incrementIndent() {
-        this.indentCount += 1;
-    }
-    
-    public void printIndent() {
-        for (int i = 0; i < this.indentCount; ++i)
-            print(this.indent);
-    }
-
-    public void println() {
-        print("\n");
-        printIndent();
-    }
-
-    public void println(String text) {
-        print(text);
-        println();
-    }
-    
-    public void print(String text) {
-    	out.print(text);
-    }
-	
 	@Override
 	public boolean visit(TinyELBinaryOpExpr x) {
-	       if (x.getLeft() instanceof TinyELBinaryOpExpr) {
-	    	   TinyELBinaryOpExpr left = (TinyELBinaryOpExpr) x.getLeft();
-	            if (left.getOperator().priority > x.getOperator().priority) {
-	                out.print('(');
-	                left.accept(this);
-	                out.print(')');
-	            } else {
-	                left.accept(this);
-	            }
-	        } else {
-	            x.getLeft().accept(this);
-	        }
+		if (x.getLeft() instanceof TinyELBinaryOpExpr) {
+			TinyELBinaryOpExpr left = (TinyELBinaryOpExpr) x.getLeft();
+			if (left.getOperator().priority > x.getOperator().priority) {
+				print('(');
+				left.accept(this);
+				print(')');
+			} else {
+				left.accept(this);
+			}
+		} else {
+			x.getLeft().accept(this);
+		}
 
-	        out.print(" ");
-	        out.print(x.getOperator().name);
-	        out.print(" ");
+		print(" ");
+		print(x.getOperator().name);
+		print(" ");
 
-	        if (x.getRight() instanceof TinyELBinaryOpExpr) {
-	        	TinyELBinaryOpExpr right = (TinyELBinaryOpExpr) x.getRight();
-	            if (right.getOperator().priority >= x.getOperator().priority) {
-	                out.print('(');
-	                right.accept(this);
-	                out.print(')');
-	            } else {
-	                right.accept(this);
-	            }
-	        } else {
-	            x.getRight().accept(this);
-	        }
+		if (x.getRight() instanceof TinyELBinaryOpExpr) {
+			TinyELBinaryOpExpr right = (TinyELBinaryOpExpr) x.getRight();
+			if (right.getOperator().priority >= x.getOperator().priority) {
+				print('(');
+				right.accept(this);
+				print(')');
+			} else {
+				right.accept(this);
+			}
+		} else {
+			x.getRight().accept(this);
+		}
 
-	        return false;
+		return false;
 	}
 
 	@Override
 	public boolean visit(TinyELIdentifierExpr x) {
-        out.print(x.getName());
-        return false;
+		print(x.getName());
+		return false;
 	}
 
 	@Override
 	public boolean visit(TinyELNullExpr x) {
-		out.print("null");
+		print("null");
 		return false;
 	}
 
 	@Override
 	public boolean visit(TinyELPropertyExpr x) {
 		if (x.getOwner() instanceof TinyELBinaryOpExpr) {
-			out.print('(');
+			print('(');
 			x.getOwner().accept(this);
-			out.print(')');
+			print(')');
 		} else {
 			x.getOwner().accept(this);
 		}
-		
-        out.print(".");
-        out.print(x.getName());
-        return false;
+
+		print(".");
+		print(x.getName());
+		return false;
 	}
 
 	@Override
 	public boolean visit(TinyELMethodInvokeExpr x) {
-        if (x.getOwner() != null) {
-    		if (x.getOwner() instanceof TinyELBinaryOpExpr) {
-    			out.print('(');
-    			x.getOwner().accept(this);
-    			out.print(')');
-    		} else {
-    			x.getOwner().accept(this);
-    		}
-    		
-            out.print(".");
-        }
-        out.print(x.getMethodName());
-        out.print("(");
-        printAndAccept(x.getParameters(), ", ");
-        out.print(")");
-        return false;
+		if (x.getOwner() != null) {
+			if (x.getOwner() instanceof TinyELBinaryOpExpr) {
+				print('(');
+				x.getOwner().accept(this);
+				print(')');
+			} else {
+				x.getOwner().accept(this);
+			}
+
+			print(".");
+		}
+		print(x.getMethodName());
+		print("(");
+		printAndAccept(x.getParameters(), ", ");
+		print(")");
+		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyELNewExpr x) {
 		if (x.getOwner() != null) {
 			if (x.getOwner() instanceof TinyELBinaryOpExpr) {
-				out.print('(');
+				print('(');
 				x.getOwner().accept(this);
-				out.print(')');
+				print(')');
 			} else {
 				x.getOwner().accept(this);
 			}
-			
-			out.print(".");
+
+			print(".");
 		}
-		out.print("new ");
-		
-		out.print(x.getType());
-		out.print("(");
+		print("new ");
+
+		print(x.getType());
+		print("(");
 		printAndAccept(x.getParameters(), ", ");
-		out.print(")");
+		print(")");
 		return false;
 	}
 
 	@Override
 	public boolean visit(TinyELNumberLiteralExpr x) {
 		Number value = x.getValue();
-		
+
 		if (value == null) {
-			out.print("null");
+			print("null");
 			return false;
 		}
-		
-        out.print(x.getValue().toString());
-        return false;
-	}
-	
-	@Override
-	public boolean visit(TinyELReturnStatement x) {
-		out.print("return ");
-		x.getExpr().accept(this);
+
+		print(x.getValue().toString());
 		return false;
 	}
-	
+
+	@Override
+	public boolean visit(TinyELReturnStatement x) {
+		print("return ");
+		x.getExpr().accept(this);
+		print(";");
+		return false;
+	}
+
 	@Override
 	public boolean visit(TinyELBooleanExpr x) {
 		if (x.getValue()) {
-			out.print("true");
+			print("true");
 		} else {
-			out.print("false");
+			print("false");
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyELArrayAccessExpr x) {
 		x.getArray().accept(this);
-		out.print("[");
+		print("[");
 		x.getIndex().accept(this);
-		out.print("]");
+		print("]");
 		return false;
 	}
 
 	@Override
 	public boolean visit(TinyELStringExpr x) {
 		String value = x.getValue();
-        if (value == null) {
-            out.print("null");
-        } else {
-            out.print('"');
-            for (char ch : value.toCharArray()) {
-            	switch (ch) {
-            	case '\t':
-            		out.print("\\t");
-            		break;
-            	case '\n':
-            		out.print("\\n");
-            		break;
-            	case '\r':
-            		out.print("\\r");
-            		break;
-            	case '\f':
-            		out.print("\\f");
-            		break;
-            	case '\b':
-            		out.print("\\b");
-            		break;
-            	case '\"':
-            		out.print("\\\"");
-            		break;
-            	default:
-            		out.print(ch);
-            	}
-        	}
-            out.print('"');
-        }
+		if (value == null) {
+			print("null");
+		} else {
+			print('"');
+			for (char ch : value.toCharArray()) {
+				switch (ch) {
+				case '\t':
+					print("\\t");
+					break;
+				case '\n':
+					print("\\n");
+					break;
+				case '\r':
+					print("\\r");
+					break;
+				case '\f':
+					print("\\f");
+					break;
+				case '\b':
+					print("\\b");
+					break;
+				case '\"':
+					print("\\\"");
+					break;
+				default:
+					print(ch);
+				}
+			}
+			print('"');
+		}
 
-        return false;
+		return false;
 	}
 
 	@Override
 	public boolean visit(TinyELVariantRefExpr x) {
-    	out.print(x.getName());
+		print(x.getName());
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(Else x) {
-		out.print(" else {");
+		print(" else {");
+		println();
+		printAndAccept(x.getStatementList());
+		println();
+		print("}");
 		return false;
 	}
-	
-	
-    protected void printAndAccept(List<? extends TinyELAstNode> nodes, String seperator) {
-        for (int i =0, size = nodes.size(); i < size; ++i) {
-            if (i != 0) {
-                out.print(seperator);
-            }
-            nodes.get(i).accept(this);
-        }
-    }
+
+	protected void printAndAccept(List<? extends TinyELStatement> statements) {
+		for (int i = 0, size = statements.size(); i < size; ++i) {
+			if (i != 0) {
+				println();
+			}
+			statements.get(i).accept(this);
+		}
+	}
+
+	protected void printAndAccept(List<? extends TinyELAstNode> nodes, String seperator) {
+		for (int i = 0, size = nodes.size(); i < size; ++i) {
+			if (i != 0) {
+				print(seperator);
+			}
+			nodes.get(i).accept(this);
+		}
+	}
 }
