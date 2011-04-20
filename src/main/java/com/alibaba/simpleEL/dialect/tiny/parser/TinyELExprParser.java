@@ -11,6 +11,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNewExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNullExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
@@ -306,8 +307,33 @@ public class TinyELExprParser {
 
 			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LessThanOrGreater, rightExp);
 		}
-		
+
 		return expr;
+	}
+
+	public final TinyELExpr name() throws ELException {
+		if (lexer.token() != TinyELToken.IDENTIFIER) {
+			throw new ELException("error");
+		}
+
+		String identName = lexer.stringVal();
+
+		lexer.nextToken();
+
+		TinyELExpr name = new TinyELIdentifierExpr(identName);
+
+		while (lexer.token() == TinyELToken.DOT) {
+			lexer.nextToken();
+
+			if (lexer.token() != TinyELToken.IDENTIFIER) {
+				throw new ELException("error");
+			}
+
+			name = new TinyELPropertyExpr(name, lexer.stringVal());
+			lexer.nextToken();
+		}
+
+		return name;
 	}
 
 	public TinyELExpr primary() {
@@ -326,7 +352,24 @@ public class TinyELExprParser {
 			lexer.nextToken();
 			break;
 		case NEW:
-			throw new ELException("TODO");
+			lexer.nextToken();
+
+			TinyELExpr name = name();
+			String typeName = name.toString();
+
+			if (lexer.token() == TinyELToken.LPAREN) {
+				lexer.nextToken();
+
+				TinyELNewExpr newExpr = new TinyELNewExpr(typeName);
+				if (lexer.token() != TinyELToken.RPAREN) {
+					exprList(newExpr.getParameters());
+				}
+
+				accept(TinyELToken.RPAREN);
+
+				return primaryRest(newExpr);
+			}
+			throw new ELException("TODO " + lexer.token());
 		case TRUE:
 			sTinyELExpr = new TinyELBooleanExpr(true);
 			lexer.nextToken();
@@ -484,7 +527,6 @@ public class TinyELExprParser {
 
 		return expr;
 	}
-
 
 	public final void exprList(Collection<TinyELExpr> exprCol) throws ELException {
 		if (lexer.token() == TinyELToken.RPAREN) {
