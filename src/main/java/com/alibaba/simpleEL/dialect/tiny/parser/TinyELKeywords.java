@@ -34,9 +34,19 @@ public class TinyELKeywords {
         map.put("while", TinyELToken.WHILE);
         map.put("do", TinyELToken.DO);
         map.put("new", TinyELToken.NEW);
+        
+        map.put("byte", TinyELToken.BYTE);
+        map.put("short", TinyELToken.SHORT);
+        map.put("int", TinyELToken.INT);
+        map.put("long", TinyELToken.LONG);
+        map.put("float", TinyELToken.FLOAT);
+        map.put("double", TinyELToken.DOUBLE);
+        
         map.put("null", TinyELToken.NULL);
         map.put("true", TinyELToken.TRUE);
         map.put("false", TinyELToken.FALSE);
+        
+        
         DEFAULT_KEYWORDS = new TinyELKeywords(map);
     }
 

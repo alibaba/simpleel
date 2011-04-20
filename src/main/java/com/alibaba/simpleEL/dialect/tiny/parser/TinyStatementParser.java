@@ -9,6 +9,8 @@ import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement.VariantDeclareItem;
 
 public class TinyStatementParser {
 	protected final TinyELLexer lexer;
@@ -35,22 +37,18 @@ public class TinyStatementParser {
 
 	public void statementList(List<TinyELStatement> statements) {
 		for (;;) {
-			if (lexer.token() == TinyELToken.IF) {
-				statements.add(parseIf());
-				continue;
-			}
-
-			if (lexer.token() == TinyELToken.RETURN) {
-				statements.add(parseIf());
-				continue;
+			if (lexer.token() == TinyELToken.RBRACE) {
+				break;
 			}
 			
-			if (lexer.token() == TinyELToken.SEMI) {
-				lexer.nextToken();
-				continue;
+			if (lexer.token() == TinyELToken.EOF) {
+				break;
 			}
 			
-			break;
+			TinyELStatement stmt = statement();
+			if (stmt != null) {
+				statements.add(stmt);
+			}
 		}
 	}
 	
@@ -68,7 +66,65 @@ public class TinyStatementParser {
 			return null;
 		}
 		
+		switch (lexer.token()) {
+		case BYTE:
+		case SHORT:
+		case INT:
+		case LONG:
+		case FLOAT:
+		case DOUBLE:
+			return parseVarDecl();
+		default:
+			break;
+		}
+		
 		throw new ELException("parse error, TODO : " + lexer.token());
+	}
+	
+	public TinyLocalVarDeclareStatement parseVarDecl() {
+		TinyLocalVarDeclareStatement stmt = new TinyLocalVarDeclareStatement();
+		
+		switch (lexer.token()) {
+		case BYTE:
+		case SHORT:
+		case INT:
+		case LONG:
+		case FLOAT:
+		case DOUBLE:
+			stmt.setType(lexer.token().name);
+			lexer.nextToken();
+			break;
+		default:
+			throw new ELException("parse error, TODO : " + lexer.token());
+		}
+		
+		for (;;) {
+			if (lexer.token() != TinyELToken.IDENTIFIER) {
+				throw new ELException("parse error : " + lexer.token());
+			}
+			
+			String varName = lexer.stringVal();
+			lexer.nextToken();
+			
+			VariantDeclareItem var = new VariantDeclareItem(varName);
+			stmt.getVariants().add(var);
+			
+			if (lexer.token() == TinyELToken.EQ) {
+				lexer.nextToken();
+				var.setInitValue(exprParser.expr());
+			}
+			
+			if (lexer.token() == TinyELToken.COMMA) {
+				lexer.nextToken();
+				continue;
+			}
+			
+			break;
+		}
+		
+		accept(TinyELToken.SEMI);
+		
+		return stmt;
 	}
 	
 	public void statementListBody(List<TinyELStatement> statements) {

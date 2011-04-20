@@ -18,6 +18,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
 import com.alibaba.simpleEL.dialect.tiny.parser.TinyELExprParser;
 import com.alibaba.simpleEL.dialect.tiny.parser.TinyStatementParser;
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELOutputVisitor;
@@ -86,6 +87,8 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 	}
 
 	public class JavaSourceGenVisitor extends TinyELOutputVisitor {
+		private Map<String, Object> localVariants = new HashMap<String, Object>();
+		
 		public JavaSourceGenVisitor(PrintWriter out) {
 			super(out);
 		}
@@ -93,6 +96,11 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 		@Override
 		public boolean visit(TinyELIdentifierExpr x) {
 			String ident = x.getName();
+			
+			if (localVariants.containsKey(ident)) {
+				out.print(ident);
+				return false;
+			}
 			
 			{
 				String fullName = "java.lang." + ident;
@@ -300,6 +308,16 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 				exp.accept(this);
 			}
 			
+		}
+		
+		@Override
+		public boolean visit(TinyLocalVarDeclareStatement x) {
+			for (int i = 0, size = x.getVariants().size(); i < size; ++i) {
+				String varName = x.getVariants().get(i).getName();
+				localVariants.put(varName, x.getType());
+			}
+			
+			return super.visit(x);
 		}
 	}
 }

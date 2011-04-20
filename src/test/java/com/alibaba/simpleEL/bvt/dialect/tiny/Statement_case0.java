@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 
 import com.alibaba.simpleEL.dialect.tiny.TinyELEvalService;
 
-public class TinyELEvalServiceTest_stmt extends TestCase {
+public class Statement_case0 extends TestCase {
 	public void test_0() throws Exception {
 		TinyELEvalService service = new TinyELEvalService();
 		service.setAllowMultiStatement(true);
