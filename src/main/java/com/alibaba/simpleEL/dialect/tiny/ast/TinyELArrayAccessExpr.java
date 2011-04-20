@@ -41,7 +41,7 @@ public class TinyELArrayAccessExpr extends TinyELExpr {
 	}
 
 	@Override
-	void output(StringBuffer buf) {
+	public void output(StringBuffer buf) {
 		array.output(buf);
 		buf.append("[");
 		index.output(buf);

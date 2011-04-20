@@ -15,6 +15,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 
 public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 	protected PrintWriter out;
@@ -138,6 +139,13 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		
         out.print(x.getValue().toString());
         return false;
+	}
+	
+	@Override
+	public boolean visit(TinyELReturnStatement x) {
+		out.print("return ");
+		x.getExpr().accept(this);
+		return false;
 	}
 	
 	@Override

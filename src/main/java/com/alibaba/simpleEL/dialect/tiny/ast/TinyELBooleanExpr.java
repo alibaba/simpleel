@@ -24,7 +24,7 @@ public class TinyELBooleanExpr extends TinyELExpr {
 	}
 
 	@Override
-	void output(StringBuffer buf) {
+	public void output(StringBuffer buf) {
 		buf.append(value ? "true" : "false");
 	}
 
