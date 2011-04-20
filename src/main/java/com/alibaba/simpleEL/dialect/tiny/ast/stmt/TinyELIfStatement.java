@@ -1,10 +1,14 @@
 package com.alibaba.simpleEL.dialect.tiny.ast.stmt;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELAstVisitor;
+import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELOutputVisitor;
 
 public class TinyELIfStatement extends TinyELStatement {
 	private TinyELExpr condition;
@@ -45,15 +49,7 @@ public class TinyELIfStatement extends TinyELStatement {
 
 	}
 
-	@Override
-	public void output(StringBuffer buf) {
-		buf.append("if(");
-		this.condition.output(buf);
-		buf.append(") {\n");
-		buf.append("\n}");
-	}
-
-	public static class ElseIf {
+	public static class ElseIf extends TinyELAstNode {
 		private final List<TinyELStatement> statementList = new ArrayList<TinyELStatement>();
 
 		public ElseIf() {
@@ -63,9 +59,23 @@ public class TinyELIfStatement extends TinyELStatement {
 		public List<TinyELStatement> getStatementList() {
 			return this.statementList;
 		}
+
+		@Override
+		protected void accept0(TinyELAstVisitor visitor) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void output(StringBuffer buf) {
+			StringWriter out = new StringWriter();
+			TinyELOutputVisitor visitor = new TinyELOutputVisitor(new PrintWriter(out));
+			this.accept(visitor);
+			buf.append(out.toString());
+		}
 	}
 
-	public static class Else {
+	public static class Else extends TinyELAstNode {
 		private final List<TinyELStatement> statementList = new ArrayList<TinyELStatement>();
 
 		public Else() {
@@ -74,6 +84,22 @@ public class TinyELIfStatement extends TinyELStatement {
 
 		public List<TinyELStatement> getStatementList() {
 			return this.statementList;
+		}
+		
+		@Override
+		public void output(StringBuffer buf) {
+			StringWriter out = new StringWriter();
+			TinyELOutputVisitor visitor = new TinyELOutputVisitor(new PrintWriter(out));
+			this.accept(visitor);
+			buf.append(out.toString());
+		}
+
+		@Override
+		protected void accept0(TinyELAstVisitor visitor) {
+			if (visitor.visit(this)) {
+				acceptChild(visitor, statementList);
+			}
+			visitor.endVisit(this);
 		}
 	}
 

@@ -15,14 +15,44 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 
 public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 	protected PrintWriter out;
+    private String indent = "\t";
+    private int indentCount = 0;
 
 	public TinyELOutputVisitor(PrintWriter out) {
 		this.out = out;
 	}
+	
+    public void decrementIndent() {
+        this.indentCount -= 1;
+    }
+
+    public void incrementIndent() {
+        this.indentCount += 1;
+    }
+    
+    public void printIndent() {
+        for (int i = 0; i < this.indentCount; ++i)
+            print(this.indent);
+    }
+
+    public void println() {
+        print("\n");
+        printIndent();
+    }
+
+    public void println(String text) {
+        print(text);
+        println();
+    }
+    
+    public void print(String text) {
+    	out.print(text);
+    }
 	
 	@Override
 	public boolean visit(TinyELBinaryOpExpr x) {
@@ -209,6 +239,13 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
     	out.print(x.getName());
 		return false;
 	}
+	
+	@Override
+	public boolean visit(Else x) {
+		out.print(" else {");
+		return false;
+	}
+	
 	
     protected void printAndAccept(List<? extends TinyELAstNode> nodes, String seperator) {
         for (int i =0, size = nodes.size(); i < size; ++i) {
