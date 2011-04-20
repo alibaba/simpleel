@@ -29,6 +29,8 @@ public class TinyELKeywords {
         Map<String, TinyELToken> map = new HashMap<String, TinyELToken>();
         map.put("new", TinyELToken.NEW);
         map.put("null", TinyELToken.NULL);
+        map.put("true", TinyELToken.TRUE);
+        map.put("false", TinyELToken.FALSE);
         DEFAULT_KEYWORDS = new TinyELKeywords(map);
     }
 

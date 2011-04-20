@@ -3,6 +3,8 @@ package com.alibaba.simpleEL.dialect.tiny.parser;
 public enum TinyELToken {
 	NEW("new"),
 	NULL("null"),
+	TRUE("true"),
+	FALSE("false"),
    
 	LPAREN("("),
 	RPAREN(")"),
