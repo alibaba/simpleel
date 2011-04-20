@@ -14,7 +14,7 @@ public enum TinyELBinaryOperator {
     BooleanAnd("AND", 140),
     BooleanOr("OR", 160),
     BooleanXor("XOR", 150),
-    Equality("=", 170),
+    Equality("==", 170),
     Assignment(":=", 169),
     GreaterThan(">", 110),
     GreaterThanOrEqual(">=", 110),

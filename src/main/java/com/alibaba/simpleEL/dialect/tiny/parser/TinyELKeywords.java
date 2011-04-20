@@ -39,7 +39,6 @@ public class TinyELKeywords {
     }
 
     public TinyELToken getKeyword(String key) {
-        key = key.toUpperCase();
         return keywords.get(key);
     }
 

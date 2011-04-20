@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 
 import com.alibaba.simpleEL.ELException;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOperator;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
@@ -142,7 +143,7 @@ public class TinyELExprParser {
 
 	public final TinyELExpr equalityRest(TinyELExpr expr) {
 		TinyELExpr rightExp;
-		if (lexer.token() == TinyELToken.EQ) {
+		if (lexer.token() == TinyELToken.EQEQ) {
 			lexer.nextToken();
 			rightExp = or();
 
@@ -449,6 +450,12 @@ public class TinyELExprParser {
 				}
 			}
 
+			expr = primaryRest(expr);
+		} else if (lexer.token() == TinyELToken.LBRACKET) {
+			lexer.nextToken();
+			TinyELExpr indexExpr = expr();
+			accept(TinyELToken.RBRACKET);
+			expr = new TinyELArrayAccessExpr(expr, indexExpr);
 			expr = primaryRest(expr);
 		} else if (lexer.token() == TinyELToken.COLONEQ) {
 			lexer.nextToken();

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.simpleEL.JavaSource;
+import com.alibaba.simpleEL.TypeUtils;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
@@ -273,8 +274,8 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			} else if (Object.class == type) {
 				exp.accept(this);
 			} else {
-				String className = type.getName();
-				className = className.replaceAll("\\$", "."); // inner class
+				String className = TypeUtils.getClassName(type);
+				
 				out.print("(" + className + ")");
 				exp.accept(this);
 			}

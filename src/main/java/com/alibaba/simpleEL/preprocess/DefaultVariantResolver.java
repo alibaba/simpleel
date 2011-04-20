@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.simpleEL.ELException;
+import com.alibaba.simpleEL.TypeUtils;
 
 public class DefaultVariantResolver implements VariantResolver {
 	private final Map<String, Class<?>> variants = new HashMap<String, Class<?>>();
@@ -47,8 +48,7 @@ public class DefaultVariantResolver implements VariantResolver {
 		} else if (Object.class == type) {
 			return "ctx.get(\"" + variant + "\")";
 		} else {
-			String className = type.getName();
-			className = className.replaceAll("\\$", "."); // inner class
+			String className = TypeUtils.getClassName(type);
 			return "((" + className + ")" + "ctx.get(\"" + variant + "\"))";
 		}
 	}

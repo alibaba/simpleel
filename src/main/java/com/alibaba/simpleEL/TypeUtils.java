@@ -120,4 +120,14 @@ public class TypeUtils {
 		
 		return BigDecimal.valueOf(((Number) val).longValue());
 	}
+	
+	public static String getClassName(Class<?> clazz) {
+		if (clazz.isArray()) {
+			return getClassName(clazz.getComponentType()) + "[]";
+		}
+		
+		String className = clazz.getName();
+		className = className.replaceAll("\\$", "."); // inner class
+		return className;
+	}
 }
