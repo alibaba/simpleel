@@ -183,6 +183,9 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
             	case '\b':
             		out.print("\\b");
             		break;
+            	case '\"':
+            		out.print("\\\"");
+            		break;
             	default:
             		out.print(ch);
             	}
