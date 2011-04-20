@@ -7,6 +7,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELConditionalExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNewExpr;
@@ -177,6 +178,16 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		}
 
 		print(x.getValue().toString());
+		return false;
+	}
+	
+	@Override
+	public boolean visit(TinyELConditionalExpr x) {
+		x.getCondition().accept(this);
+		print(" ? ");
+		x.getTrueExpr().accept(this);
+		print(" : ");
+		x.getFalseExpr().accept(this);
 		return false;
 	}
 
