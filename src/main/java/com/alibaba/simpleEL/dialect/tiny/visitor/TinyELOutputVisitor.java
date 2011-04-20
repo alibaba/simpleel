@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNullExpr;
@@ -113,6 +114,16 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		
         out.print(x.getValue().toString());
         return false;
+	}
+	
+	@Override
+	public boolean visit(TinyELBooleanExpr x) {
+		if (x.getValue()) {
+			out.print("true");
+		} else {
+			out.print("false");
+		}
+		return false;
 	}
 
 	@Override
