@@ -6,6 +6,7 @@ import java.util.Collection;
 import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOperator;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
@@ -325,6 +326,14 @@ public class TinyELExprParser {
 			break;
 		case NEW:
 			throw new ELException("TODO");
+		case TRUE:
+			sTinyELExpr = new TinyELBooleanExpr(true);
+			lexer.nextToken();
+			break;
+		case FALSE:
+			sTinyELExpr = new TinyELBooleanExpr(false);
+			lexer.nextToken();
+			break;
 		case LITERAL_INT:
 			sTinyELExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
 			lexer.nextToken();

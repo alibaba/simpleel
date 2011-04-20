@@ -3,6 +3,7 @@ package com.alibaba.simpleEL.dialect.tiny.visitor;
 import java.io.PrintWriter;
 import java.util.List;
 
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
@@ -123,6 +124,15 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		} else {
 			out.print("false");
 		}
+		return false;
+	}
+	
+	@Override
+	public boolean visit(TinyELArrayAccessExpr x) {
+		x.getArray().accept(this);
+		out.print("[");
+		x.getIndex().accept(this);
+		out.print("]");
 		return false;
 	}
 
