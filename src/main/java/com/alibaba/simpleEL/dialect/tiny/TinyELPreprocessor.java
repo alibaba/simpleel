@@ -139,6 +139,20 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 	        out.print(x.getName());
 	        return false;
 		}
+		
+		private Class<?> getType(TinyELExpr expr) {
+			if (expr instanceof TinyELIdentifierExpr) {
+				TinyELIdentifierExpr ident = (TinyELIdentifierExpr) expr;
+				String name = ident.getName();
+				
+				Class<?> type = variantResolver.getType(name);
+				if (type != null) {
+					return type;
+				}
+				
+			}
+			return null;
+		}
 
 		@Override
 		public boolean visit(TinyELMethodInvokeExpr x) {
@@ -167,7 +181,13 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			            if (i != 0) {
 			                out.print(",");
 			            }
-			            visitMethodParameter(types[i], x.getParameters().get(i));
+			            
+			            TinyELExpr param = x.getParameters().get(i);
+			            if (types[i] == getType(param)) {
+			            	param.accept(this);
+			            } else {
+			            	visitMethodParameter(types[i], param);
+			            }
 			        }
 			        
 			        out.print(")");

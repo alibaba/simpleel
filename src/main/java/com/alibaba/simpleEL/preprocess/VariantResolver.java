@@ -21,4 +21,6 @@ package com.alibaba.simpleEL.preprocess;
  */
 public interface VariantResolver {
 	String resolve(String variant);
+	
+	Class<?> getType(String variant);
 }

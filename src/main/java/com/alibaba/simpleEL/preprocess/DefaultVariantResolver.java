@@ -9,6 +9,10 @@ import com.alibaba.simpleEL.ELException;
 
 public class DefaultVariantResolver implements VariantResolver {
 	private final Map<String, Class<?>> variants = new HashMap<String, Class<?>>();
+	
+	public Class<?> getType(String varaint) {
+		return variants.get(varaint);
+	}
 
 	@Override
 	public String resolve(String variant) {

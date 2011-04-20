@@ -35,6 +35,13 @@ public class ExpressEvalServiceTest extends TestCase {
             public String resolve(String variant) {
                 return "_int(ctx.get(\"" + variant + "\"))";
             }
+
+			@Override
+			public Class<?> getType(String variant) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+            
         });
 		
 		Map<String, Object> context = new HashMap<String, Object>();

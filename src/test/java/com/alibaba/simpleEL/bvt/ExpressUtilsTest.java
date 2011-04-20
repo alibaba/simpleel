@@ -30,6 +30,12 @@ public class ExpressUtilsTest extends TestCase {
 			public String resolve(String variant) {
 				return "ctx.get(\"" + variant + "\")";
 			}
+
+			@Override
+			public Class<?> getType(String variant) {
+				// TODO Auto-generated method stub
+				return null;
+			}
 			
 		});
 		
