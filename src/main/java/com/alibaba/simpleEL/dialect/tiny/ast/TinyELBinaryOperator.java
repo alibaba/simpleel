@@ -16,24 +16,21 @@ public enum TinyELBinaryOperator {
     BooleanXor("XOR", 150),
     Equality("==", 170),
     Assignment("=", 169),
+    MultiplyAndAssign("*=", 169),
+    DivideAndAssign("/=", 169),
     AddAndAssignment("+=", 169),
     SubtractAndAssignment("-=", 169),
     GreaterThan(">", 110),
     GreaterThanOrEqual(">=", 110),
-    Is("IS", 110),
     LessThan("<", 110),
     LessThanOrEqual("<=", 110),
-    LessThanOrEqualOrGreaterThan("<=>", 110),
     InstanceOf("instanceof", 110),
-    LessThanOrGreater("<>", 110),
     LeftShift("<<", 80),
     Like("LIKE", 110),
     RightShift(">>", 80),
     Modulus("%", 60),
     NotEqual("!=", 110),
-    NotLessThan("!<", 110),
-    NotGreaterThan("!>", 110);
-
+    ;
     public final String name;
     public final int priority;
 
