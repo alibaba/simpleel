@@ -18,6 +18,8 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOperator;
 
 public class TinyELExprParser {
 	protected final TinyELLexer lexer;
@@ -543,6 +545,10 @@ public class TinyELExprParser {
 				}
 			}
 
+			expr = primaryRest(expr);
+		} if (lexer.token() == TinyELToken.PLUSPLUS) {
+			lexer.nextToken();
+			expr = new TinyUnaryOpExpr(expr, TinyUnaryOperator.PostIncrement);
 			expr = primaryRest(expr);
 		} else if (lexer.token() == TinyELToken.LBRACKET) {
 			lexer.nextToken();

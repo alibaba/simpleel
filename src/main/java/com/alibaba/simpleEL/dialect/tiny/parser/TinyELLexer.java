@@ -262,6 +262,9 @@ public class TinyELLexer {
 			if (ch == '=') {
 				scanChar();
 				token = TinyELToken.PLUSEQ;
+			} else if (ch == '+') {
+					scanChar();
+					token = TinyELToken.PLUSPLUS;
 			} else {
 				token = TinyELToken.PLUS;
 			}

@@ -34,12 +34,6 @@ public enum TinyELBinaryOperator {
     NotLessThan("!<", 110),
     NotGreaterThan("!>", 110);
 
-    public static int getPriority(TinyELBinaryOperator operator) {
-        return 0;
-    }
-
-  
-
     public final String name;
     public final int priority;
 

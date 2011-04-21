@@ -57,15 +57,10 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 		} else {
 			TinyStatementParser parser = new TinyStatementParser(text);
 			List<TinyELStatement> statements = parser.statementList();
-			
-			TinyELPreprocessorContextDetectVisitor varDetectVisitor = new TinyELPreprocessorContextDetectVisitor();
-			for (TinyELStatement statement : statements) {
-				statement.accept(varDetectVisitor);
-			}
 
 			StringWriter out = new StringWriter();
 			JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
-			
+
 			visitor.incrementIndent();
 			for (TinyELStatement statement : statements) {
 				visitor.println();
@@ -76,7 +71,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			resolvedResult = out.toString();
 		}
 
-		// System.out.println(resolvedResult);
+		System.out.println(resolvedResult);
 
 		if (!allowMultiStatement) {
 			resolvedResult = "return " + resolvedResult + ";";
@@ -319,6 +314,35 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 
 		@Override
 		public boolean visit(TinyELBinaryOpExpr x) {
+			if (x.getLeft() instanceof TinyELIdentifierExpr) {
+				TinyELIdentifierExpr leftIdent = (TinyELIdentifierExpr) x.getLeft();
+				String varName = leftIdent.getName();
+				if (!localVariants.containsKey(varName)) {
+					switch (x.getOperator()) {
+					case Assignment:
+						print("ctx.put(\"");
+						print(varName);
+						print("\", ");
+						x.getRight().accept(this);
+						print(")");
+						return false;
+					case AddAndAssignment:
+						print("ctx.put(\"");
+						print(varName);
+						print("\", ");
+						leftIdent.accept(this);
+						print(" ");
+						print(TinyELBinaryOperator.Add.name);
+						print(" ");
+						x.getRight().accept(this);
+						print(")");
+						return false;
+					default:
+						break;
+					}
+				}
+			}
+			
 			if (x.getOperator() == TinyELBinaryOperator.InstanceOf) {
 				if (x.getLeft() instanceof TinyELIdentifierExpr) {
 					TinyELIdentifierExpr ident = (TinyELIdentifierExpr) x.getLeft();

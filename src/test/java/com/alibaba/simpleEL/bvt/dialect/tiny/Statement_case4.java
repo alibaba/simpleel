@@ -18,10 +18,10 @@ public class Statement_case4 extends TestCase {
 		ctx.put("a", 3);
 		ctx.put("b", 4);
 
-		Assert.assertEquals(null, service.eval(ctx, "int i = 0; while (i > 10) { a += i; } return a;"));
+		Assert.assertEquals(48, service.eval(ctx, "int i = 0; while (i < 10) { a += i++; } return a;"));
 		
-		Assert.assertEquals(4, ctx.get("a"));
-		Assert.assertEquals(3, ctx.get("b"));
+		Assert.assertEquals(48, ctx.get("a"));
+		Assert.assertEquals(4, ctx.get("b"));
 	}
 
 }

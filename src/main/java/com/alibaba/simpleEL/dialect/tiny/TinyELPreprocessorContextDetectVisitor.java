@@ -10,7 +10,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELAstVisitorAdapter;
 
-public class TinyELPreprocessorContextDetectVisitor extends TinyELAstVisitorAdapter {
+class TinyELPreprocessorContextDetectVisitor extends TinyELAstVisitorAdapter {
 	/**
 	 * 
 	 */
@@ -21,6 +21,10 @@ public class TinyELPreprocessorContextDetectVisitor extends TinyELAstVisitorAdap
 	public TinyELPreprocessorContextDetectVisitor() {
 	}
 
+	public Set<String> getUsedContextVariants() {
+		return usedContextVariants;
+	}
+	
 	public Set<String> getModifiedContextVariants() {
 		return modifiedContextVariants;
 	}

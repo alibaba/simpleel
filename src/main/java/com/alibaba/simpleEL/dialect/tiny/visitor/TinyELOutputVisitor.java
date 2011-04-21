@@ -3,6 +3,7 @@ package com.alibaba.simpleEL.dialect.tiny.visitor;
 import java.io.PrintWriter;
 import java.util.List;
 
+import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
@@ -16,6 +17,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELNumberLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELExprStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
@@ -363,6 +365,38 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		decrementIndent(); 
 		println();
 		print("}");
+		return false;
+	}
+	@Override
+	public boolean visit(TinyUnaryOpExpr x) {
+		switch (x.getOperator()) {
+		case Plus:
+			print("+");
+			x.getExpr().accept(this);
+			break;
+		case Minus:
+			print("-");
+			x.getExpr().accept(this);
+			break;
+		case PreIncrement:
+			print("++");
+			x.getExpr().accept(this);
+			break;
+		case PreDecrement:
+			print("--");
+			x.getExpr().accept(this);
+			break;
+		case PostIncrement:
+			x.getExpr().accept(this);
+			print("++");
+			break;
+		case PostDecrement:
+			x.getExpr().accept(this);
+			print("--");
+			break;
+		default:
+			throw new ELException("TOOD");
+		}
 		return false;
 	}
 
