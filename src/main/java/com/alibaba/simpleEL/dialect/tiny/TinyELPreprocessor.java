@@ -389,6 +389,13 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			case Minus:
 				return super.visit(x);
 			case PreIncrement:
+				print("putAndGet(ctx, \"");
+				print(varName);
+				print("\", ");
+				identExpr.accept(this);
+				print(" + 1");
+				print(")");
+				return false;
 			case PostIncrement:
 				print("ctx.put(\"");
 				print(varName);

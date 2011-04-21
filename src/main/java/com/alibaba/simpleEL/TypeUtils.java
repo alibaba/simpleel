@@ -3,6 +3,7 @@ package com.alibaba.simpleEL;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Map;
 
 public class TypeUtils {
 	public static boolean _bool(Object val) {
@@ -129,5 +130,10 @@ public class TypeUtils {
 		String className = clazz.getName();
 		className = className.replaceAll("\\$", "."); // inner class
 		return className;
+	}
+	
+	public static Object putAndGet(Map<String, Object> ctx, String name, Object value) {
+		ctx.put(name, value);
+		return value;
 	}
 }
