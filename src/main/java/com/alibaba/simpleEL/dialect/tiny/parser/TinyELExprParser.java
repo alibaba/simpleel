@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
-import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAssignExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOperator;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
@@ -272,10 +271,17 @@ public class TinyELExprParser {
 	public final TinyELExpr assignRest(TinyELExpr expr) {
 		if (lexer.token() == TinyELToken.EQ) {
 			lexer.nextToken();
-			TinyELExpr valueExpr = expr();
-			expr = new TinyELAssignExpr(expr, valueExpr);
+			TinyELExpr rightExp = assign();
+			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Assignment, rightExp);
 			expr = conditionalRest(expr);
 		}
+		
+		if (lexer.token() == TinyELToken.PLUSEQ) {
+			lexer.nextToken();
+			TinyELExpr rightExp = assign();
+			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.AddAndAssignment, rightExp);
+		}
+		
 		return expr;
 	}
 

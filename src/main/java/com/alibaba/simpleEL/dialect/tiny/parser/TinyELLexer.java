@@ -259,11 +259,21 @@ public class TinyELLexer {
 		switch (ch) {
 		case '+':
 			scanChar();
-			token = TinyELToken.PLUS;
+			if (ch == '=') {
+				scanChar();
+				token = TinyELToken.PLUSEQ;
+			} else {
+				token = TinyELToken.PLUS;
+			}
 			break;
 		case '-':
 			scanChar();
-			token = TinyELToken.SUB;
+			if (ch == '=') {
+				scanChar();
+				token = TinyELToken.SUBEQ;
+			} else {
+				token = TinyELToken.SUB;
+			}
 			break;
 		case '*':
 			scanChar();

@@ -1,7 +1,6 @@
 package com.alibaba.simpleEL.dialect.tiny.visitor;
 
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELArrayAccessExpr;
-import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAssignExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELAstNode;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBooleanExpr;
@@ -212,16 +211,6 @@ public class TinyELAstVisitorAdapter implements TinyELAstVisitor {
 	
 	@Override
 	public boolean visit(TinyELConditionalExpr x) {
-		return true;
-	}
-	
-	@Override
-	public void endVisit(TinyELAssignExpr x) {
-		
-	}
-	
-	@Override
-	public boolean visit(TinyELAssignExpr x) {
 		return true;
 	}
 	
