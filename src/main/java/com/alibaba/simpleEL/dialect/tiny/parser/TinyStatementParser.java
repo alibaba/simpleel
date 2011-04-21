@@ -104,6 +104,7 @@ public class TinyStatementParser {
 		String varName = exprParser.name().toString();
 
 		if (lexer.token() == TinyELToken.COLON) {
+			lexer.nextToken();
 			TinyELForEachStatement stmt = new TinyELForEachStatement();
 			stmt.setType(type);
 			stmt.setVariant(varName);
