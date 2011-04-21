@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.TypeUtils;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
@@ -18,6 +19,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
 import com.alibaba.simpleEL.dialect.tiny.parser.TinyELExprParser;
@@ -367,6 +369,46 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 			}
 
 			return super.visit(x);
+		}
+		
+		@Override
+		public boolean visit(TinyUnaryOpExpr x) {
+			if (!(x.getExpr() instanceof TinyELIdentifierExpr)) {
+				return super.visit(x);
+			}
+			
+			TinyELIdentifierExpr identExpr = (TinyELIdentifierExpr) x.getExpr();
+			String varName = identExpr.getName();
+			
+			if (localVariants.containsKey(varName)) {
+				return super.visit(x);
+			}
+			
+			switch (x.getOperator()) {
+			case Plus:
+			case Minus:
+				return super.visit(x);
+			case PreIncrement:
+			case PostIncrement:
+				print("ctx.put(\"");
+				print(varName);
+				print("\", ");
+				identExpr.accept(this);
+				print(" + 1");
+				print(")");
+				return false;
+			case PreDecrement:
+				print("--");
+				x.getExpr().accept(this);
+				break;
+			case PostDecrement:
+				x.getExpr().accept(this);
+				print("--");
+				break;
+			default:
+				throw new ELException("TOOD");
+			}
+			return false;
 		}
 	}
 }

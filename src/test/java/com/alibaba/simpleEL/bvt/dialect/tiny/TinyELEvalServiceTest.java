@@ -172,4 +172,19 @@ public class TinyELEvalServiceTest extends TestCase {
 		Assert.assertEquals(4, service.eval(ctx, "a > b ? a : b"));
 		Assert.assertEquals(true, service.eval(ctx, "a instanceof Number"));
 	}
+	
+	public void test_13() throws Exception {
+		TinyELEvalService service = new TinyELEvalService();
+		
+		service.regsiterVariant(int.class, "a", "b");
+		
+		Map<String, Object> ctx = new HashMap<String, Object>();
+		ctx.put("a", 3);
+		ctx.put("b", 4);
+		
+		Assert.assertEquals(3, service.eval(ctx, "a++"));
+		Assert.assertEquals(4, ctx.get("a"));
+		Assert.assertEquals(5, service.eval(ctx, "++a"));
+		Assert.assertEquals(5, ctx.get("a"));
+	}
 }

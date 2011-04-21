@@ -389,19 +389,24 @@ public class TinyELExprParser {
 	}
 
 	public TinyELExpr primary() {
-		TinyELExpr sTinyELExpr = null;
+		TinyELExpr primaryExpr = null;
 
 		final TinyELToken tok = lexer.token();
 
 		switch (tok) {
 		case LPAREN:
 			lexer.nextToken();
-			sTinyELExpr = expr();
+			primaryExpr = expr();
 			accept(TinyELToken.RPAREN);
 			break;
 		case IDENTIFIER:
-			sTinyELExpr = new TinyELIdentifierExpr(lexer.stringVal());
+			primaryExpr = new TinyELIdentifierExpr(lexer.stringVal());
 			lexer.nextToken();
+			break;
+		case PLUSPLUS:
+			lexer.nextToken();
+			primaryExpr = expr();
+			primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.PreIncrement);
 			break;
 		case NEW:
 			lexer.nextToken();
@@ -423,23 +428,23 @@ public class TinyELExprParser {
 			}
 			throw new ELException("TODO " + lexer.token());
 		case TRUE:
-			sTinyELExpr = new TinyELBooleanExpr(true);
+			primaryExpr = new TinyELBooleanExpr(true);
 			lexer.nextToken();
 			break;
 		case FALSE:
-			sTinyELExpr = new TinyELBooleanExpr(false);
+			primaryExpr = new TinyELBooleanExpr(false);
 			lexer.nextToken();
 			break;
 		case LITERAL_INT:
-			sTinyELExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
+			primaryExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
 			lexer.nextToken();
 			break;
 		case LITERAL_FLOAT:
-			sTinyELExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
+			primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
 			lexer.nextToken();
 			break;
 		case LITERAL_STRING:
-			sTinyELExpr = new TinyELStringExpr(lexer.stringVal());
+			primaryExpr = new TinyELStringExpr(lexer.stringVal());
 			lexer.nextToken();
 			break;
 		case SUB:
@@ -464,11 +469,11 @@ public class TinyELExprParser {
 				} else {
 					integerValue = ((BigInteger) integerValue).negate();
 				}
-				sTinyELExpr = new TinyELNumberLiteralExpr(integerValue);
+				primaryExpr = new TinyELNumberLiteralExpr(integerValue);
 				lexer.nextToken();
 				break;
 			case LITERAL_FLOAT:
-				sTinyELExpr = new TinyELNumberLiteralExpr(lexer.decimalValue().negate());
+				primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue().negate());
 				lexer.nextToken();
 				break;
 			default:
@@ -479,11 +484,11 @@ public class TinyELExprParser {
 			lexer.nextToken();
 			switch (lexer.token()) {
 			case LITERAL_INT:
-				sTinyELExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
+				primaryExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
 				lexer.nextToken();
 				break;
 			case LITERAL_FLOAT:
-				sTinyELExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
+				primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
 				lexer.nextToken();
 				break;
 			default:
@@ -492,22 +497,22 @@ public class TinyELExprParser {
 			break;
 		case QUES:
 			lexer.nextToken();
-			sTinyELExpr = new TinyELVariantRefExpr("?");
+			primaryExpr = new TinyELVariantRefExpr("?");
 			break;
 		case NULL:
-			sTinyELExpr = new TinyELNullExpr();
+			primaryExpr = new TinyELNullExpr();
 			lexer.nextToken();
 			break;
 		case VARIANT:
 			String varName = lexer.stringVal();
-			sTinyELExpr = new TinyELVariantRefExpr(varName);
+			primaryExpr = new TinyELVariantRefExpr(varName);
 			lexer.nextToken();
 			break;
 		default:
 			throw new ELException("ERROR. token : " + tok);
 		}
 
-		return primaryRest(sTinyELExpr);
+		return primaryRest(primaryExpr);
 	}
 
 	public TinyELExpr primaryRest(TinyELExpr expr) throws ELException {
@@ -546,9 +551,13 @@ public class TinyELExprParser {
 			}
 
 			expr = primaryRest(expr);
-		} if (lexer.token() == TinyELToken.PLUSPLUS) {
+		} else if (lexer.token() == TinyELToken.PLUSPLUS) {
 			lexer.nextToken();
 			expr = new TinyUnaryOpExpr(expr, TinyUnaryOperator.PostIncrement);
+			expr = primaryRest(expr);
+		} else if (lexer.token() == TinyELToken.SUBSUB) {
+			lexer.nextToken();
+			expr = new TinyUnaryOpExpr(expr, TinyUnaryOperator.PostDecrement);
 			expr = primaryRest(expr);
 		} else if (lexer.token() == TinyELToken.LBRACKET) {
 			lexer.nextToken();

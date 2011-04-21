@@ -274,6 +274,9 @@ public class TinyELLexer {
 			if (ch == '=') {
 				scanChar();
 				token = TinyELToken.SUBEQ;
+			} else if (ch == '-') {
+				scanChar();
+				token = TinyELToken.SUBSUB;
 			} else {
 				token = TinyELToken.SUB;
 			}

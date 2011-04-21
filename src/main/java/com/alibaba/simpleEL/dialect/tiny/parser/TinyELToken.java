@@ -88,6 +88,7 @@ public enum TinyELToken {
 	PLUS("+"),
 	PLUSPLUS("++"),
 	SUB("-"),
+	SUBSUB("--"),
 	STAR("*"),
 	SLASH("/"),
 	AMP("&"),

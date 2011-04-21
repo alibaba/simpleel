@@ -367,6 +367,7 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		print("}");
 		return false;
 	}
+	
 	@Override
 	public boolean visit(TinyUnaryOpExpr x) {
 		switch (x.getOperator()) {
