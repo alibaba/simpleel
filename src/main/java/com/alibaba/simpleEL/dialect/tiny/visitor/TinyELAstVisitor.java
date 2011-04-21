@@ -15,6 +15,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELExprStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForEachStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
@@ -111,4 +112,8 @@ public interface TinyELAstVisitor {
     void endVisit(TinyUnaryOpExpr x);
     
     boolean visit(TinyUnaryOpExpr x);
+    
+    void endVisit(TinyELForEachStatement x);
+    
+    boolean visit(TinyELForEachStatement x);
 }
