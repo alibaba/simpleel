@@ -405,17 +405,24 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 				print(")");
 				return false;
 			case PreDecrement:
-				print("--");
-				x.getExpr().accept(this);
-				break;
+				print("putAndGet(ctx, \"");
+				print(varName);
+				print("\", ");
+				identExpr.accept(this);
+				print(" - 1");
+				print(")");
+				return false;
 			case PostDecrement:
-				x.getExpr().accept(this);
-				print("--");
-				break;
+				print("ctx.put(\"");
+				print(varName);
+				print("\", ");
+				identExpr.accept(this);
+				print(" - 1");
+				print(")");
+				return false;
 			default:
 				throw new ELException("TOOD");
 			}
-			return false;
 		}
 	}
 }

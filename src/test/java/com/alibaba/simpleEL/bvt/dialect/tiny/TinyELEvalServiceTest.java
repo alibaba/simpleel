@@ -186,5 +186,7 @@ public class TinyELEvalServiceTest extends TestCase {
 		Assert.assertEquals(4, ctx.get("a"));
 		Assert.assertEquals(5, service.eval(ctx, "++a"));
 		Assert.assertEquals(5, ctx.get("a"));
+		Assert.assertEquals(4, service.eval(ctx, "--a"));
+		Assert.assertEquals(4, ctx.get("a"));
 	}
 }
