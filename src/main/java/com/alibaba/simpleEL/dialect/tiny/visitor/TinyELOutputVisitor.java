@@ -20,14 +20,15 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELExprStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForEachStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELVariantDeclareItem;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELWhileStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
-import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELVariantDeclareItem;
 
 public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 	protected PrintWriter out;
@@ -64,7 +65,7 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 	public void print(String text) {
 		out.print(text);
 	}
-	
+
 	public void print(char ch) {
 		out.print(ch);
 	}
@@ -185,7 +186,7 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		print(x.getValue().toString());
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyELConditionalExpr x) {
 		x.getCondition().accept(this);
@@ -195,7 +196,7 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		x.getFalseExpr().accept(this);
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyELExprStatement x) {
 		x.getExpr().accept(this);
@@ -278,31 +279,31 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		print(" else {");
 		incrementIndent();
 		println();
-		
+
 		printAndAccept(x.getStatementList());
-		
+
 		decrementIndent();
 		println();
 		print("}");
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(ElseIf x) {
 		print(" else if (");
 		x.getCondition().accept(this);
 		print(") {");
 		incrementIndent();
-		
+
 		println();
 		printAndAccept(x.getStatementList());
-		
+
 		decrementIndent();
 		println();
 		print("}");
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyELIfStatement x) {
 		print(" if (");
@@ -310,24 +311,24 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		print(") {");
 		incrementIndent();
 		println();
-		
+
 		printAndAccept(x.getStatementList());
-		
-		decrementIndent(); 
+
+		decrementIndent();
 		println();
 		print("}");
-		
+
 		for (ElseIf elseIf : x.getElseIfList()) {
 			elseIf.accept(this);
 		}
-		
+
 		if (x.getElse() != null) {
 			x.getElse().accept(this);
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyLocalVarDeclareStatement x) {
 		print(x.getType());
@@ -339,10 +340,10 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 			x.getVariants().get(i).accept(this);
 		}
 		print(";");
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyELVariantDeclareItem x) {
 		print(x.getName());
@@ -352,7 +353,7 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyELWhileStatement x) {
 		print("while(");
@@ -360,15 +361,15 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		print(") {");
 		incrementIndent();
 		println();
-		
+
 		printAndAccept(x.getStatementList());
-		
-		decrementIndent(); 
+
+		decrementIndent();
 		println();
 		print("}");
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(TinyELForEachStatement x) {
 		print("for(");
@@ -380,15 +381,48 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 		print(") {");
 		incrementIndent();
 		println();
-		
+
 		printAndAccept(x.getStatementList());
-		
-		decrementIndent(); 
+
+		decrementIndent();
 		println();
 		print("}");
 		return false;
 	}
-	
+
+	@Override
+	public boolean visit(TinyELForStatement x) {
+		print("for(");
+		if (x.getVariants().size() != 0) {
+			print(x.getType());
+			print(' ');
+			for (int i = 0, size = x.getVariants().size(); i < size; ++i) {
+				if (i != 0) {
+					print(", ");
+				}
+				x.getVariants().get(i).accept(this);
+			}
+		}
+		print("; ");
+		if (x.getCondition() != null) {
+			x.getCondition().accept(this);
+		}
+		print("; ");
+		if (x.getPostExpr() != null) {
+			x.getPostExpr().accept(this);
+		}
+		print(") {");
+		incrementIndent();
+		println();
+
+		printAndAccept(x.getStatementList());
+
+		decrementIndent();
+		println();
+		print("}");
+		return false;
+	}
+
 	@Override
 	public boolean visit(TinyUnaryOpExpr x) {
 		switch (x.getOperator()) {

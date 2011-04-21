@@ -54,6 +54,7 @@ public class TinyELForEachStatement extends TinyELStatement {
 	protected void accept0(TinyELAstVisitor visitor) {
 		if (visitor.visit(this)) {
 			acceptChild(visitor, targetExpr);
+			acceptChild(visitor, statementList);
 		}
 		visitor.endVisit(this);
 	}

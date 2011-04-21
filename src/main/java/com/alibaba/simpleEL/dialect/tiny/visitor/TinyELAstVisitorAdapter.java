@@ -16,13 +16,14 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELExprStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForEachStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELVariantDeclareItem;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELWhileStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
-import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELVariantDeclareItem;
 
 public class TinyELAstVisitorAdapter implements TinyELAstVisitor {
 
@@ -253,6 +254,16 @@ public class TinyELAstVisitorAdapter implements TinyELAstVisitor {
 	
 	@Override
 	public boolean visit(TinyELForEachStatement x) {
+		return true;
+	}
+	
+	@Override
+	public void endVisit(TinyELForStatement x) {
+		
+	}
+	
+	@Override
+	public boolean visit(TinyELForStatement x) {
 		return true;
 	}
 

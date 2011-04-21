@@ -7,6 +7,7 @@ import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELExprStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForEachStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
@@ -107,7 +108,7 @@ public class TinyStatementParser {
 			stmt.setType(type);
 			stmt.setVariant(varName);
 			stmt.setTargetExpr(exprParser.expr());
-			
+
 			accept(TinyELToken.RPAREN);
 
 			statementListBody(stmt.getStatementList());
@@ -115,7 +116,49 @@ public class TinyStatementParser {
 			return stmt;
 		}
 
-		throw new ELException("TODO " + lexer.token().toString());
+		TinyELForStatement stmt = new TinyELForStatement();
+		stmt.setType(type);
+		accept(TinyELToken.EQ);
+		{
+			TinyELVariantDeclareItem var = new TinyELVariantDeclareItem(varName);
+			var.setInitValue(exprParser.expr());
+			stmt.getVariants().add(var);
+		}
+
+		while (lexer.token() == TinyELToken.COMMA) {
+			lexer.nextToken();
+
+			if (lexer.token() != TinyELToken.IDENTIFIER) {
+				throw new ELException("parse error : " + lexer.token());
+			}
+
+			varName = lexer.stringVal();
+			lexer.nextToken();
+
+			TinyELVariantDeclareItem var = new TinyELVariantDeclareItem(varName);
+			stmt.getVariants().add(var);
+
+			if (lexer.token() == TinyELToken.EQ) {
+				lexer.nextToken();
+				var.setInitValue(exprParser.expr());
+			}
+		}
+
+		accept(TinyELToken.SEMI);
+
+		if (lexer.token() != TinyELToken.SEMI) {
+			stmt.setCondition(exprParser.expr());
+		}
+		accept(TinyELToken.SEMI);
+
+		if (lexer.token() != TinyELToken.RPAREN) {
+			stmt.setPostExpr(exprParser.expr());
+		}
+		accept(TinyELToken.RPAREN);
+
+		statementListBody(stmt.getStatementList());
+
+		return stmt;
 	}
 
 	public TinyLocalVarDeclareStatement parseVarDecl() {

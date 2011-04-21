@@ -20,6 +20,8 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForEachStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
 import com.alibaba.simpleEL.dialect.tiny.parser.TinyELExprParser;
@@ -368,6 +370,22 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 				localVariants.put(varName, x.getType());
 			}
 
+			return super.visit(x);
+		}
+		
+		@Override
+		public boolean visit(TinyELForStatement x) {
+			for (int i = 0, size = x.getVariants().size(); i < size; ++i) {
+				String varName = x.getVariants().get(i).getName();
+				localVariants.put(varName, x.getType());
+			}
+
+			return super.visit(x);
+		}
+		
+		@Override
+		public boolean visit(TinyELForEachStatement x) {
+			localVariants.put(x.getVariant(), x.getType());
 			return super.visit(x);
 		}
 		

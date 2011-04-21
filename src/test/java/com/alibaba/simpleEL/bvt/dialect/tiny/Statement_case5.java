@@ -18,7 +18,7 @@ public class Statement_case5 extends TestCase {
 		ctx.put("a", 3);
 		ctx.put("b", 4);
 
-		Assert.assertEquals(48, service.eval(ctx, "for (int i = 0; i < 10; ++i) { a += i; } return a + b;"));
+		Assert.assertEquals(52, service.eval(ctx, "for (int i = 0; i < 10; ++i) { a += i; } return a + b;"));
 		
 		Assert.assertEquals(48, ctx.get("a"));
 		Assert.assertEquals(4, ctx.get("b"));
