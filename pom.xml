@@ -6,6 +6,14 @@
 	<artifactId>SimpleEL</artifactId>
 	<version>0.0.1</version>
 	<name>SimpleEL</name>
+	
+	<developers>
+		<developer>
+			<id>wenshao</id>
+			<name>wenshao</name>
+			<email>szujobs@hotmail.com</email>
+		</developer>
+	</developers>
 
 	<build>
 		<plugins>
