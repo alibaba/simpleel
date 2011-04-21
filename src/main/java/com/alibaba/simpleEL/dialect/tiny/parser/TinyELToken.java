@@ -66,6 +66,8 @@ public enum TinyELToken {
 	COMMA(","),
 	DOT("."),
 	EQ("="),
+	PLUSEQ("+="),
+	SUBEQ("-="),
 	GT(">"),
 	LT("<"),
 	BANG("!"),

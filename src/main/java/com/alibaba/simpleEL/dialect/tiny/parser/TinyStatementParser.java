@@ -11,6 +11,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELWhileStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement.VariantDeclareItem;
 
@@ -57,6 +58,10 @@ public class TinyStatementParser {
 	public TinyELStatement statement() {
 		if (lexer.token() == TinyELToken.IF) {
 			return parseIf();
+		}
+		
+		if (lexer.token() == TinyELToken.WHILE) {
+			return parseWhile();
 		}
 
 		if (lexer.token() == TinyELToken.RETURN) {
@@ -160,6 +165,20 @@ public class TinyStatementParser {
 
 		TinyELReturnStatement stmt = new TinyELReturnStatement();
 		stmt.setExpr(exprParser.expr());
+		return stmt;
+	}
+	
+	public TinyELWhileStatement parseWhile() {
+		accept(TinyELToken.WHILE);
+		
+		TinyELWhileStatement stmt = new TinyELWhileStatement();
+		
+		accept(TinyELToken.LPAREN);
+		stmt.setCondition(exprParser.expr());
+		accept(TinyELToken.RPAREN);
+		
+		statementListBody(stmt.getStatementList());
+		
 		return stmt;
 	}
 

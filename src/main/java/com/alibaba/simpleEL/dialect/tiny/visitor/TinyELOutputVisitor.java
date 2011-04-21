@@ -23,6 +23,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELWhileStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement.VariantDeclareItem;
 
@@ -355,6 +356,22 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 			print(" = ");
 			x.getInitValue().accept(this);
 		}
+		return false;
+	}
+	
+	@Override
+	public boolean visit(TinyELWhileStatement x) {
+		print("while(");
+		x.getCondition().accept(this);
+		print(") {");
+		incrementIndent();
+		println();
+		
+		printAndAccept(x.getStatementList());
+		
+		decrementIndent(); 
+		println();
+		print("}");
 		return false;
 	}
 
