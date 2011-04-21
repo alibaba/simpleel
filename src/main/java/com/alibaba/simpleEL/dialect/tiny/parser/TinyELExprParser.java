@@ -180,11 +180,6 @@ public class TinyELExprParser {
 
 			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Add, rightExp);
 			expr = additiveRest(expr);
-		} else if (lexer.token() == TinyELToken.BARBAR) {
-			lexer.nextToken();
-			TinyELExpr rightExp = multiplicative();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Concat, rightExp);
-			expr = additiveRest(expr);
 		} else if (lexer.token() == TinyELToken.SUB) {
 			lexer.nextToken();
 			TinyELExpr rightExp = multiplicative();
@@ -297,7 +292,7 @@ public class TinyELExprParser {
 		TinyELExpr rightExp;
 		if (lexer.token() == TinyELToken.LT) {
 			lexer.nextToken();
-			rightExp = bitOr();
+			rightExp = shift();
 
 			rightExp = relationalRest(rightExp);
 
