@@ -6,6 +6,7 @@ import java.util.List;
 import com.alibaba.simpleEL.ELException;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELExprStatement;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForEachStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.Else;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
@@ -13,7 +14,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELWhileStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
-import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement.VariantDeclareItem;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELVariantDeclareItem;
 
 public class TinyStatementParser {
 	protected final TinyELLexer lexer;
@@ -43,23 +44,23 @@ public class TinyStatementParser {
 			if (lexer.token() == TinyELToken.RBRACE) {
 				break;
 			}
-			
+
 			if (lexer.token() == TinyELToken.EOF) {
 				break;
 			}
-			
+
 			TinyELStatement stmt = statement();
 			if (stmt != null) {
 				statements.add(stmt);
 			}
 		}
 	}
-	
+
 	public TinyELStatement statement() {
 		if (lexer.token() == TinyELToken.IF) {
 			return parseIf();
 		}
-		
+
 		if (lexer.token() == TinyELToken.WHILE) {
 			return parseWhile();
 		}
@@ -67,12 +68,16 @@ public class TinyStatementParser {
 		if (lexer.token() == TinyELToken.RETURN) {
 			return parseReturn();
 		}
-		
+
+		if (lexer.token() == TinyELToken.FOR) {
+			return parseFor();
+		}
+
 		if (lexer.token() == TinyELToken.SEMI) {
 			lexer.nextToken();
 			return null;
 		}
-		
+
 		switch (lexer.token()) {
 		case BYTE:
 		case SHORT:
@@ -84,15 +89,38 @@ public class TinyStatementParser {
 		default:
 			break;
 		}
-		
+
 		TinyELExpr expr = exprParser.expr();
 		accept(TinyELToken.SEMI);
 		return new TinyELExprStatement(expr);
 	}
-	
+
+	public TinyELStatement parseFor() {
+		accept(TinyELToken.FOR);
+
+		accept(TinyELToken.LPAREN);
+		String type = exprParser.type();
+		String varName = exprParser.name().toString();
+
+		if (lexer.token() == TinyELToken.COLON) {
+			TinyELForEachStatement stmt = new TinyELForEachStatement();
+			stmt.setType(type);
+			stmt.setVariant(varName);
+			stmt.setTargetExpr(exprParser.expr());
+			
+			accept(TinyELToken.RPAREN);
+
+			statementListBody(stmt.getStatementList());
+
+			return stmt;
+		}
+
+		throw new ELException("TODO " + lexer.token().toString());
+	}
+
 	public TinyLocalVarDeclareStatement parseVarDecl() {
 		TinyLocalVarDeclareStatement stmt = new TinyLocalVarDeclareStatement();
-		
+
 		switch (lexer.token()) {
 		case BYTE:
 		case SHORT:
@@ -106,51 +134,51 @@ public class TinyStatementParser {
 		default:
 			throw new ELException("parse error, TODO : " + lexer.token());
 		}
-		
+
 		for (;;) {
 			if (lexer.token() != TinyELToken.IDENTIFIER) {
 				throw new ELException("parse error : " + lexer.token());
 			}
-			
+
 			String varName = lexer.stringVal();
 			lexer.nextToken();
-			
-			VariantDeclareItem var = new VariantDeclareItem(varName);
+
+			TinyELVariantDeclareItem var = new TinyELVariantDeclareItem(varName);
 			stmt.getVariants().add(var);
-			
+
 			if (lexer.token() == TinyELToken.EQ) {
 				lexer.nextToken();
 				var.setInitValue(exprParser.expr());
 			}
-			
+
 			if (lexer.token() == TinyELToken.COMMA) {
 				lexer.nextToken();
 				continue;
 			}
-			
+
 			break;
 		}
-		
+
 		accept(TinyELToken.SEMI);
-		
+
 		return stmt;
 	}
-	
+
 	public void statementListBody(List<TinyELStatement> statements) {
 		if (lexer.token() == TinyELToken.LBRACE) {
 			lexer.nextToken();
-			
+
 			for (;;) {
 				TinyELStatement stmt = statement();
 				if (stmt != null) {
 					statements.add(stmt);
 				}
-				
+
 				if (lexer.token() == TinyELToken.RBRACE) {
 					break;
 				}
 			}
-			
+
 			accept(TinyELToken.RBRACE);
 		} else {
 			TinyELStatement stmt = statement();
@@ -167,18 +195,18 @@ public class TinyStatementParser {
 		stmt.setExpr(exprParser.expr());
 		return stmt;
 	}
-	
+
 	public TinyELWhileStatement parseWhile() {
 		accept(TinyELToken.WHILE);
-		
+
 		TinyELWhileStatement stmt = new TinyELWhileStatement();
-		
+
 		accept(TinyELToken.LPAREN);
 		stmt.setCondition(exprParser.expr());
 		accept(TinyELToken.RPAREN);
-		
+
 		statementListBody(stmt.getStatementList());
-		
+
 		return stmt;
 	}
 
@@ -186,27 +214,27 @@ public class TinyStatementParser {
 		accept(TinyELToken.IF);
 
 		TinyELIfStatement stmt = new TinyELIfStatement();
-		
+
 		accept(TinyELToken.LPAREN);
 		stmt.setCondition(exprParser.expr());
 		accept(TinyELToken.RPAREN);
-		
+
 		statementListBody(stmt.getStatementList());
-		
+
 		for (;;) {
 			if (lexer.token() == TinyELToken.ELSE) {
 				lexer.nextToken();
-				
+
 				if (lexer.token() == TinyELToken.IF) {
 					lexer.nextToken();
 					ElseIf elseIf = new ElseIf();
-					
+
 					accept(TinyELToken.LPAREN);
 					elseIf.setCondition(exprParser.expr());
 					accept(TinyELToken.RPAREN);
-					
+
 					statementListBody(elseIf.getStatementList());
-					
+
 					stmt.getElseIfList().add(elseIf);
 				} else {
 					Else elseItem = new Else();
@@ -214,7 +242,7 @@ public class TinyStatementParser {
 					stmt.setElse(elseItem);
 				}
 			}
-			
+
 			break;
 		}
 

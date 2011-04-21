@@ -332,7 +332,7 @@ public class TinyELExprParser {
 
 	public final TinyELExpr name() throws ELException {
 		if (lexer.token() != TinyELToken.IDENTIFIER) {
-			throw new ELException("error");
+			throw new ELException("error : " + lexer.token());
 		}
 
 		String identName = lexer.stringVal();
@@ -345,7 +345,7 @@ public class TinyELExprParser {
 			lexer.nextToken();
 
 			if (lexer.token() != TinyELToken.IDENTIFIER) {
-				throw new ELException("error");
+				throw new ELException("error : " + lexer.token());
 			}
 
 			name = new TinyELPropertyExpr(name, lexer.stringVal());
@@ -353,6 +353,22 @@ public class TinyELExprParser {
 		}
 
 		return name;
+	}
+	
+	public String type() {
+		final TinyELToken tok = lexer.token();
+		switch (tok) {
+		case BYTE:
+		case SHORT:
+		case INT:
+		case LONG:
+		case FLOAT:
+		case DOUBLE:
+			lexer.nextToken();
+			return tok.name;
+		default:
+			return name().toString();
+		}
 	}
 
 	public TinyELExpr primary() {

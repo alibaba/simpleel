@@ -22,7 +22,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELIfStatement.ElseIf;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELReturnStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELWhileStatement;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement;
-import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyLocalVarDeclareStatement.VariantDeclareItem;
+import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELVariantDeclareItem;
 
 public class TinyELAstVisitorAdapter implements TinyELAstVisitor {
 
@@ -187,12 +187,12 @@ public class TinyELAstVisitorAdapter implements TinyELAstVisitor {
 	}
 	
 	@Override
-	public void endVisit(VariantDeclareItem x) {
+	public void endVisit(TinyELVariantDeclareItem x) {
 		
 	}
 	
 	@Override
-	public boolean visit(VariantDeclareItem x) {
+	public boolean visit(TinyELVariantDeclareItem x) {
 		return true;
 	}
 	
