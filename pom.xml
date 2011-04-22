@@ -6,6 +6,11 @@
 	<artifactId>SimpleEL</artifactId>
 	<version>0.0.1</version>
 	<name>SimpleEL</name>
+	<packaging>jar</packaging>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	
 	<developers>
 		<developer>
@@ -14,8 +19,28 @@
 			<email>szujobs@hotmail.com</email>
 		</developer>
 	</developers>
-
+	
+	<distributionManagement>
+		<repository>
+			<id>opensesame</id>
+			<name>opensesame</name>
+			<url>dav:http://code.alibabatech.com/mvn/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>opensesame</id>
+			<name>opensesame</name>
+			<url>dav:http://code.alibabatech.com/mvn/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
 	<build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+        </extensions>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -25,6 +50,12 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.5</version>
 			</plugin>
 			
 			<plugin>
@@ -106,12 +137,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.googlecode.aviator</groupId>
-			<artifactId>aviator</artifactId>
-			<version>1.0.1</version>
 			<scope>test</scope>
 		</dependency>
 		
