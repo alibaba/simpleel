@@ -345,6 +345,32 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 						break;
 					}
 				}
+				
+				Class<?> type = variantResolver.getType(varName);
+				if (type == BigDecimal.class) {
+					switch (x.getOperator()) {
+					case Add:
+						x.getLeft().accept(this);
+						print(".add(");
+						x.getRight().accept(this);
+						print(")");
+						return false;
+					case GreaterThan:
+						x.getLeft().accept(this);
+						print(".compareTo(");
+						x.getRight().accept(this);
+						print(") > 0");
+						return false;
+					case LessThan:
+						x.getLeft().accept(this);
+						print(".compareTo(");
+						x.getRight().accept(this);
+						print(") < 0");
+						return false;
+					default:
+						break;
+					}
+				}
 			}
 			
 			if (x.getOperator() == TinyELBinaryOperator.InstanceOf) {
