@@ -351,21 +351,33 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 					switch (x.getOperator()) {
 					case Add:
 						x.getLeft().accept(this);
-						print(".add(");
+						print(".add(_decimal(");
 						x.getRight().accept(this);
-						print(")");
+						print("))");
 						return false;
 					case GreaterThan:
 						x.getLeft().accept(this);
-						print(".compareTo(");
+						print(".compareTo(_decimal(");
 						x.getRight().accept(this);
-						print(") > 0");
+						print(")) > 0");
+						return false;
+					case GreaterThanOrEqual:
+						x.getLeft().accept(this);
+						print(".compareTo(_decimal(");
+						x.getRight().accept(this);
+						print(")) >＝ 0");
 						return false;
 					case LessThan:
 						x.getLeft().accept(this);
-						print(".compareTo(");
+						print(".compareTo(_decimal(");
 						x.getRight().accept(this);
-						print(") < 0");
+						print(")) < 0");
+						return false;
+					case LessThanOrEqual:
+						x.getLeft().accept(this);
+						print(".compareTo(_decimal(");
+						x.getRight().accept(this);
+						print(")) <＝ 0");
 						return false;
 					default:
 						break;

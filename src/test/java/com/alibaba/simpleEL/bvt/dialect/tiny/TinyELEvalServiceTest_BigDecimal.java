@@ -21,6 +21,7 @@ public class TinyELEvalServiceTest_BigDecimal extends TestCase {
 
 		Assert.assertEquals(new BigDecimal("7"), service.eval(ctx, "a + b"));
 		Assert.assertEquals(true, service.eval(ctx, "a < b"));
+		Assert.assertEquals(true, service.eval(ctx, "a < 4"));
 	}
 
 
