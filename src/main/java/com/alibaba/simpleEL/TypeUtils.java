@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.Map;
 
 public class TypeUtils {
-	public static boolean _bool(Object val) {
+	public static Boolean _bool(Object val) {
 		if (val == null) {
-			return false;
+			return null;
 		}
 
 		return (Boolean) val;
