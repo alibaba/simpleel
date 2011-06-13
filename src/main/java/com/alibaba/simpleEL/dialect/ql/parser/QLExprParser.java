@@ -240,7 +240,7 @@ public class QLExprParser extends AbstractQLParser {
     }
 
     public final QLExpr xor() {
-        QLExpr expr = and();
+        QLExpr expr = multiplicative();
         return xorRest(expr);
     }
 
