@@ -220,11 +220,14 @@ public class TinyELExprParser {
 	}
 
 	public final TinyELExpr andRest(TinyELExpr expr) {
-		while (lexer.token() == TinyELToken.AMPAMP) {
-			lexer.nextToken();
-			TinyELExpr rightExp = equality();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BooleanAnd, rightExp);
-		}
+        if (lexer.token() == TinyELToken.AMPAMP) {
+            lexer.nextToken();
+            TinyELExpr rightExp = relational();
+
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BooleanAnd, rightExp);
+            expr = andRest(expr);
+        }
+        
 		return expr;
 	}
 
@@ -234,11 +237,14 @@ public class TinyELExprParser {
 	}
 
 	public final TinyELExpr orRest(TinyELExpr expr) {
-		while (lexer.token() == TinyELToken.BARBAR) {
-			lexer.nextToken();
-			TinyELExpr rightExp = and();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BooleanOr, rightExp);
-		}
+        if (lexer.token() == TinyELToken.BARBAR) {
+            lexer.nextToken();
+            TinyELExpr rightExp = and();
+
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BooleanOr, rightExp);
+            expr = orRest(expr);
+        }
+        
 		return expr;
 	}
 	
