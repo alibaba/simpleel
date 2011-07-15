@@ -159,15 +159,14 @@ public class DefaultExpressEvalService implements ExpressEvalService,
 		}
 
 		JavaSource javaSource = preprocessor.handle(ctx, expr);
-
+		
 		Class<? extends Expr> exprClass = compiler.compile(javaSource);
 
 		Expr compiledExpr = exprClass.newInstance();
 
 		if (cacheProvider != null) {
 			if (profileEnable) {
-				cacheProvider.putIfAbsent(ctx, expr, new CompiledExprWrapper(
-						expr, compiledExpr));
+				cacheProvider.putIfAbsent(ctx, expr, new CompiledExprWrapper(expr, compiledExpr));
 			} else {
 				cacheProvider.putIfAbsent(ctx, expr, compiledExpr);
 			}

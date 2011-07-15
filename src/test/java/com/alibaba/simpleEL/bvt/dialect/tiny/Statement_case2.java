@@ -9,16 +9,28 @@ import junit.framework.TestCase;
 import com.alibaba.simpleEL.dialect.tiny.TinyELEvalService;
 
 public class Statement_case2 extends TestCase {
-	public void test_0() throws Exception {
-		TinyELEvalService service = new TinyELEvalService();
-		service.setAllowMultiStatement(true);
-		service.regsiterVariant(int.class, "a", "b");
 
-		Map<String, Object> ctx = new HashMap<String, Object>();
-		ctx.put("a", 3);
-		ctx.put("b", 4);
+    public void test_0() throws Exception {
+        TinyELEvalService service = new TinyELEvalService();
+        service.setAllowMultiStatement(true);
+        service.regsiterVariant(int.class, "a", "b");
 
-		Assert.assertEquals(70, service.eval(ctx, "int i = 10; return a * i + b * i;"));
-	}
+        Map<String, Object> ctx = new HashMap<String, Object>();
+        ctx.put("a", 3);
+        ctx.put("b", 4);
 
+        Assert.assertEquals(70, service.eval(ctx, "int i = 10; return a * i + b * i;"));
+    }
+
+    public void test_1() throws Exception {
+        TinyELEvalService service = new TinyELEvalService();
+        service.setAllowMultiStatement(true);
+        service.regsiterVariant(int.class, "a", "b");
+
+        Map<String, Object> ctx = new HashMap<String, Object>();
+        ctx.put("a", 3);
+        ctx.put("b", 4);
+
+        Assert.assertEquals(70, service.eval(ctx, "int i = 10; return @a * i + @b * i;"));
+    }
 }

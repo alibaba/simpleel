@@ -30,455 +30,576 @@ import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELOutputVisitor;
 import com.alibaba.simpleEL.preprocess.TemplatePreProcessor;
 
 public class TinyELPreprocessor extends TemplatePreProcessor {
-	public final static String DEFAULT_PACKAGE_NAME = "com.alibaba.simpleEL.dialect.tiny.gen";
 
-	private final Map<String, Method> functions = new HashMap<String, Method>();
+    public final static String        DEFAULT_PACKAGE_NAME = "com.alibaba.simpleEL.dialect.tiny.gen";
 
-	public TinyELPreprocessor() {
-		this.packageName = DEFAULT_PACKAGE_NAME;
-	}
+    private final Map<String, Method> functions            = new HashMap<String, Method>();
 
-	public Map<String, Method> getFunctions() {
-		return this.functions;
-	}
+    public TinyELPreprocessor(){
+        this.packageName = DEFAULT_PACKAGE_NAME;
+    }
 
-	@Override
-	public JavaSource handle(Map<String, Object> context, String text) {
-		if (variantResolver == null) {
-			throw new IllegalStateException("variantResolver is null");
-		}
+    public Map<String, Method> getFunctions() {
+        return this.functions;
+    }
 
-		String resolvedResult;
-		if (!allowMultiStatement) {
-			TinyELExprParser parser = new TinyELExprParser(text);
-			TinyELExpr expr = parser.expr();
+    @Override
+    public JavaSource handle(Map<String, Object> context, String text) {
+        if (variantResolver == null) {
+            throw new IllegalStateException("variantResolver is null");
+        }
 
-			StringWriter out = new StringWriter();
-			JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
-			expr.accept(visitor);
+        String resolvedResult;
+        if (!allowMultiStatement) {
+            TinyELExprParser parser = new TinyELExprParser(text);
+            TinyELExpr expr = parser.expr();
 
-			resolvedResult = out.toString();
-		} else {
-			TinyStatementParser parser = new TinyStatementParser(text);
-			List<TinyELStatement> statements = parser.statementList();
+            StringWriter out = new StringWriter();
+            JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
+            expr.accept(visitor);
 
-			StringWriter out = new StringWriter();
-			JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
+            resolvedResult = out.toString();
+        } else {
+            TinyStatementParser parser = new TinyStatementParser(text);
+            List<TinyELStatement> statements = parser.statementList();
 
-			visitor.incrementIndent();
-			for (TinyELStatement statement : statements) {
-				visitor.println();
-				statement.accept(visitor);
-			}
-			visitor.decrementIndent();
+            StringWriter out = new StringWriter();
+            JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
 
-			resolvedResult = out.toString();
-		}
+            visitor.incrementIndent();
+            for (TinyELStatement statement : statements) {
+                visitor.println();
+                statement.accept(visitor);
+            }
+            visitor.decrementIndent();
 
-		//System.out.println(resolvedResult);
+            resolvedResult = out.toString();
+        }
 
-		if (!allowMultiStatement) {
-			resolvedResult = "return " + resolvedResult + ";";
-		}
+        // System.out.println(resolvedResult);
 
-		final String className = "GenClass_" + digits();
+        if (!allowMultiStatement) {
+            resolvedResult = "return " + resolvedResult + ";";
+        }
 
-		String source = template.replace("$packageName", packageName)//
-				.replace("$className", className)//
-				.replace("$expression", resolvedResult);
+        final String className = "GenClass_" + digits();
 
-		JavaSource javaSource = new JavaSource(packageName, className, source);
+        String source = template.replace("$packageName", packageName)//
+        .replace("$className", className)//
+        .replace("$expression", resolvedResult);
 
-		return javaSource;
-	}
+        JavaSource javaSource = new JavaSource(packageName, className, source);
 
-	public class JavaSourceGenVisitor extends TinyELOutputVisitor {
-		private Map<String, Object> localVariants = new HashMap<String, Object>();
+        return javaSource;
+    }
 
-		public JavaSourceGenVisitor(PrintWriter out) {
-			super(out);
-		}
+    public class JavaSourceGenVisitor extends TinyELOutputVisitor {
 
-		@Override
-		public boolean visit(TinyELIdentifierExpr x) {
-			String ident = x.getName();
+        private Map<String, Object> localVariants = new HashMap<String, Object>();
 
-			if (localVariants.containsKey(ident)) {
-				out.print(ident);
-				return false;
-			}
+        public JavaSourceGenVisitor(PrintWriter out){
+            super(out);
+        }
 
-			{
-				String fullName = "java.lang." + ident;
-				if (isClassName(fullName)) {
-					out.print(ident);
-					return false;
-				}
-			}
-			{
-				String fullName = "java.util." + ident;
-				if (isClassName(fullName)) {
-					out.print(fullName);
-					return false;
-				}
-			}
+        @Override
+        public boolean visit(TinyELIdentifierExpr x) {
+            String ident = x.getName();
 
-			String result = variantResolver.resolve(ident);
-			out.print(result);
-			return false;
-		}
+            if (localVariants.containsKey(ident)) {
+                out.print(ident);
+                return false;
+            }
 
-		@Override
-		public boolean visit(TinyELVariantRefExpr x) {
-			String ident = x.getName();
-			String result = variantResolver.resolve(ident);
-			out.print(result);
-			return false;
-		}
+            {
+                String fullName = "java.lang." + ident;
+                if (isClassName(fullName)) {
+                    out.print(ident);
+                    return false;
+                }
+            }
+            {
+                String fullName = "java.util." + ident;
+                if (isClassName(fullName)) {
+                    out.print(fullName);
+                    return false;
+                }
+            }
 
-		public boolean isClassName(String fullName) {
-			try {
-				Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(fullName);
+            String result = variantResolver.resolve(ident);
+            out.print(result);
+            return false;
+        }
 
-				if (clazz != null) {
-					return true;
-				}
-			} catch (ClassNotFoundException e) {
-				return false;
-			}
+        @Override
+        public boolean visit(TinyELVariantRefExpr x) {
+            String ident = x.getName();
+            String result = variantResolver.resolve(ident);
+            out.print(result);
+            return false;
+        }
 
-			return false;
-		}
+        public boolean isClassName(String fullName) {
+            try {
+                Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(fullName);
 
-		@Override
-		public boolean visit(TinyELPropertyExpr x) {
-			if (x.getOwner() instanceof TinyELBinaryOpExpr) {
-				out.print('(');
-				x.getOwner().accept(this);
-				out.print(')');
-				out.print(".");
-				out.print(x.getName());
+                if (clazz != null) {
+                    return true;
+                }
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
 
-				return false;
-			}
+            return false;
+        }
 
-			String fullName = x.toString();
-			if (isClassName(fullName)) {
-				out.print(fullName);
-				return false;
-			}
+        @Override
+        public boolean visit(TinyELPropertyExpr x) {
+            if (x.getOwner() instanceof TinyELBinaryOpExpr) {
+                out.print('(');
+                x.getOwner().accept(this);
+                out.print(')');
+                out.print(".");
+                out.print(x.getName());
 
-			x.getOwner().accept(this);
+                return false;
+            }
 
-			out.print(".");
-			out.print(x.getName());
-			return false;
-		}
+            String fullName = x.toString();
+            if (isClassName(fullName)) {
+                out.print(fullName);
+                return false;
+            }
 
-		private Class<?> getType(TinyELExpr expr) {
-			if (expr instanceof TinyELIdentifierExpr) {
-				TinyELIdentifierExpr ident = (TinyELIdentifierExpr) expr;
-				String name = ident.getName();
+            x.getOwner().accept(this);
 
-				Class<?> type = variantResolver.getType(name);
-				if (type != null) {
-					return type;
-				}
+            out.print(".");
+            out.print(x.getName());
+            return false;
+        }
 
-			}
-			return null;
-		}
+        private Class<?> getType(TinyELExpr expr) {
+            if (expr instanceof TinyELIdentifierExpr) {
+                TinyELIdentifierExpr ident = (TinyELIdentifierExpr) expr;
+                String name = ident.getName();
 
-		@Override
-		public boolean visit(TinyELMethodInvokeExpr x) {
-			if (x.getOwner() == null) {
-				String methodName = x.getMethodName();
-				Method method = functions.get(methodName);
+                Class<?> type = variantResolver.getType(name);
+                if (type != null) {
+                    return type;
+                }
 
-				if (method == null) {
-					return super.visit(x);
-				}
+            }
+            return null;
+        }
 
-				Class<?>[] types = method.getParameterTypes();
-				if (!method.isVarArgs()) {
-					if (types.length != x.getParameters().size()) {
-						return super.visit(x);
-					}
+        @Override
+        public boolean visit(TinyELMethodInvokeExpr x) {
+            if (x.getOwner() == null) {
+                String methodName = x.getMethodName();
+                Method method = functions.get(methodName);
 
-					String className = method.getDeclaringClass().getName();
-					className = className.replaceAll("\\$", "."); // inner class
-					out.print(className);
-					out.print(".");
-					out.print(method.getName());
+                if (method == null) {
+                    return super.visit(x);
+                }
 
-					out.print("(");
-					for (int i = 0, size = x.getParameters().size(); i < size; ++i) {
-						if (i != 0) {
-							out.print(",");
-						}
+                Class<?>[] types = method.getParameterTypes();
+                if (!method.isVarArgs()) {
+                    if (types.length != x.getParameters().size()) {
+                        return super.visit(x);
+                    }
 
-						TinyELExpr param = x.getParameters().get(i);
-						if (types[i] == getType(param)) {
-							param.accept(this);
-						} else {
-							visitMethodParameter(types[i], param);
-						}
-					}
+                    String className = method.getDeclaringClass().getName();
+                    className = className.replaceAll("\\$", "."); // inner class
+                    out.print(className);
+                    out.print(".");
+                    out.print(method.getName());
 
-					out.print(")");
-					return false;
-				} else {
-					if (types.length > x.getParameters().size()) {
-						return super.visit(x);
-					}
+                    out.print("(");
+                    for (int i = 0, size = x.getParameters().size(); i < size; ++i) {
+                        if (i != 0) {
+                            out.print(",");
+                        }
 
-					String className = method.getDeclaringClass().getName();
-					className = className.replaceAll("\\$", "."); // inner class
-					out.print(className);
-					out.print(".");
-					out.print(method.getName());
+                        TinyELExpr param = x.getParameters().get(i);
+                        if (types[i] == getType(param)) {
+                            param.accept(this);
+                        } else {
+                            visitMethodParameter(types[i], param);
+                        }
+                    }
 
-					out.print("(");
-					for (int i = 0, size = x.getParameters().size(); i < size; ++i) {
-						if (i != 0) {
-							out.print(",");
-						}
+                    out.print(")");
+                    return false;
+                } else {
+                    if (types.length > x.getParameters().size()) {
+                        return super.visit(x);
+                    }
 
-						Class<?> type;
-						if (i >= types.length) {
-							type = types[types.length - 1];
-						} else {
-							type = types[i];
-						}
-						visitMethodParameter(type, x.getParameters().get(i));
-					}
+                    String className = method.getDeclaringClass().getName();
+                    className = className.replaceAll("\\$", "."); // inner class
+                    out.print(className);
+                    out.print(".");
+                    out.print(method.getName());
 
-					out.print(")");
-				}
-			}
+                    out.print("(");
+                    for (int i = 0, size = x.getParameters().size(); i < size; ++i) {
+                        if (i != 0) {
+                            out.print(",");
+                        }
 
-			return super.visit(x);
-		}
+                        Class<?> type;
+                        if (i >= types.length) {
+                            type = types[types.length - 1];
+                        } else {
+                            type = types[i];
+                        }
+                        visitMethodParameter(type, x.getParameters().get(i));
+                    }
 
-		public void visitMethodParameter(Class<?> type, TinyELExpr exp) {
-			if (boolean.class == type) {
-				out.print("_bool(");
-				exp.accept(this);
-				out.print(")");
-			} else if (String.class == type) {
-				out.print("_string(");
-				exp.accept(this);
-				out.print(")");
-			} else if (byte.class == type) {
-				out.print("_byte(");
-				exp.accept(this);
-				out.print(")");
-			} else if (short.class == type) {
-				out.print("_short(");
-				exp.accept(this);
-				out.print(")");
-			} else if (int.class == type) {
-				out.print("_int(");
-				exp.accept(this);
-				out.print(")");
-			} else if (long.class == type) {
-				out.print("_long(");
-				exp.accept(this);
-				out.print(")");
-			} else if (float.class == type) {
-				out.print("_float(");
-				exp.accept(this);
-				out.print(")");
-			} else if (double.class == type) {
-				out.print("_double(");
-				exp.accept(this);
-				out.print(")");
-			} else if (BigInteger.class == type) {
-				out.print("_bigInt(");
-				exp.accept(this);
-				out.print(")");
-			} else if (BigDecimal.class == type) {
-				out.print("_decimal(");
-				exp.accept(this);
-				out.print(")");
-			} else if (java.util.Date.class == type) {
-				out.print("_date(");
-				exp.accept(this);
-				out.print(")");
-			} else if (Object.class == type) {
-				exp.accept(this);
-			} else {
-				String className = TypeUtils.getClassName(type);
+                    out.print(")");
+                }
+            }
 
-				out.print("(" + className + ")");
-				exp.accept(this);
-			}
+            return super.visit(x);
+        }
 
-		}
+        public void visitMethodParameter(Class<?> type, TinyELExpr exp) {
+            if (boolean.class == type) {
+                out.print("_bool(");
+                exp.accept(this);
+                out.print(")");
+            } else if (String.class == type) {
+                out.print("_string(");
+                exp.accept(this);
+                out.print(")");
+            } else if (byte.class == type) {
+                out.print("_byte(");
+                exp.accept(this);
+                out.print(")");
+            } else if (short.class == type) {
+                out.print("_short(");
+                exp.accept(this);
+                out.print(")");
+            } else if (int.class == type) {
+                out.print("_int(");
+                exp.accept(this);
+                out.print(")");
+            } else if (long.class == type) {
+                out.print("_long(");
+                exp.accept(this);
+                out.print(")");
+            } else if (float.class == type) {
+                out.print("_float(");
+                exp.accept(this);
+                out.print(")");
+            } else if (double.class == type) {
+                out.print("_double(");
+                exp.accept(this);
+                out.print(")");
+            } else if (BigInteger.class == type) {
+                out.print("_bigInt(");
+                exp.accept(this);
+                out.print(")");
+            } else if (BigDecimal.class == type) {
+                out.print("_decimal(");
+                exp.accept(this);
+                out.print(")");
+            } else if (java.util.Date.class == type) {
+                out.print("_date(");
+                exp.accept(this);
+                out.print(")");
+            } else if (Object.class == type) {
+                exp.accept(this);
+            } else {
+                String className = TypeUtils.getClassName(type);
 
-		@Override
-		public boolean visit(TinyELBinaryOpExpr x) {
-			if (x.getLeft() instanceof TinyELIdentifierExpr) {
-				TinyELIdentifierExpr leftIdent = (TinyELIdentifierExpr) x.getLeft();
-				String varName = leftIdent.getName();
-				if (!localVariants.containsKey(varName)) {
-					switch (x.getOperator()) {
-					case Assignment:
-						print("ctx.put(\"");
-						print(varName);
-						print("\", ");
-						x.getRight().accept(this);
-						print(")");
-						return false;
-					case AddAndAssignment:
-						print("ctx.put(\"");
-						print(varName);
-						print("\", ");
-						leftIdent.accept(this);
-						print(" ");
-						print(TinyELBinaryOperator.Add.name);
-						print(" ");
-						x.getRight().accept(this);
-						print(")");
-						return false;
-					default:
-						break;
-					}
-				}
-				
-				Class<?> type = variantResolver.getType(varName);
-				if (type == BigDecimal.class) {
-					switch (x.getOperator()) {
-					case Add:
-						x.getLeft().accept(this);
-						print(".add(_decimal(");
-						x.getRight().accept(this);
-						print("))");
-						return false;
-					case GreaterThan:
-						x.getLeft().accept(this);
-						print(".compareTo(_decimal(");
-						x.getRight().accept(this);
-						print(")) > 0");
-						return false;
-					case GreaterThanOrEqual:
-						x.getLeft().accept(this);
-						print(".compareTo(_decimal(");
-						x.getRight().accept(this);
-						print(")) >＝ 0");
-						return false;
-					case LessThan:
-						x.getLeft().accept(this);
-						print(".compareTo(_decimal(");
-						x.getRight().accept(this);
-						print(")) < 0");
-						return false;
-					case LessThanOrEqual:
-						x.getLeft().accept(this);
-						print(".compareTo(_decimal(");
-						x.getRight().accept(this);
-						print(")) <＝ 0");
-						return false;
-					default:
-						break;
-					}
-				}
-			}
-			
-			if (x.getOperator() == TinyELBinaryOperator.InstanceOf) {
-				if (x.getLeft() instanceof TinyELIdentifierExpr) {
-					TinyELIdentifierExpr ident = (TinyELIdentifierExpr) x.getLeft();
-					String varName = ident.getName();
-					if (!localVariants.containsKey(varName)) {
-						print("ctx.get(\"");
-						print(varName);
-						print("\") instanceof ");
-					}
-					x.getRight().accept(this);
-					return false;
-				}
-			}
-			return super.visit(x);
-		}
+                out.print("(" + className + ")");
+                exp.accept(this);
+            }
 
-		@Override
-		public boolean visit(TinyLocalVarDeclareStatement x) {
-			for (int i = 0, size = x.getVariants().size(); i < size; ++i) {
-				String varName = x.getVariants().get(i).getName();
-				localVariants.put(varName, x.getType());
-			}
+        }
 
-			return super.visit(x);
-		}
-		
-		@Override
-		public boolean visit(TinyELForStatement x) {
-			for (int i = 0, size = x.getVariants().size(); i < size; ++i) {
-				String varName = x.getVariants().get(i).getName();
-				localVariants.put(varName, x.getType());
-			}
+        @Override
+        public boolean visit(TinyELBinaryOpExpr x) {
+            x.getLeft().setParentExpr(x);
+            x.getRight().setParentExpr(x);
+            
+            if (x.getLeft() instanceof TinyELIdentifierExpr) {
+                TinyELIdentifierExpr leftIdent = (TinyELIdentifierExpr) x.getLeft();
+                String varName = leftIdent.getName();
+                if (!localVariants.containsKey(varName)) {
+                    switch (x.getOperator()) {
+                        case Assignment:
+                            print("ctx.put(\"");
+                            print(varName);
+                            print("\", ");
+                            x.getRight().accept(this);
+                            print(")");
+                            return false;
+                        case AddAndAssignment:
+                            print("ctx.put(\"");
+                            print(varName);
+                            print("\", ");
+                            leftIdent.accept(this);
+                            print(" ");
+                            print(TinyELBinaryOperator.Add.name);
+                            print(" ");
+                            x.getRight().accept(this);
+                            print(")");
+                            return false;
+                        default:
+                            break;
+                    }
+                }
 
-			return super.visit(x);
-		}
-		
-		@Override
-		public boolean visit(TinyELForEachStatement x) {
-			localVariants.put(x.getVariant(), x.getType());
-			return super.visit(x);
-		}
-		
-		@Override
-		public boolean visit(TinyUnaryOpExpr x) {
-			if (!(x.getExpr() instanceof TinyELIdentifierExpr)) {
-				return super.visit(x);
-			}
-			
-			TinyELIdentifierExpr identExpr = (TinyELIdentifierExpr) x.getExpr();
-			String varName = identExpr.getName();
-			
-			if (localVariants.containsKey(varName)) {
-				return super.visit(x);
-			}
-			
-			switch (x.getOperator()) {
-			case Plus:
-			case Minus:
-				return super.visit(x);
-			case PreIncrement:
-				print("putAndGet(ctx, \"");
-				print(varName);
-				print("\", ");
-				identExpr.accept(this);
-				print(" + 1");
-				print(")");
-				return false;
-			case PostIncrement:
-				print("ctx.put(\"");
-				print(varName);
-				print("\", ");
-				identExpr.accept(this);
-				print(" + 1");
-				print(")");
-				return false;
-			case PreDecrement:
-				print("putAndGet(ctx, \"");
-				print(varName);
-				print("\", ");
-				identExpr.accept(this);
-				print(" - 1");
-				print(")");
-				return false;
-			case PostDecrement:
-				print("ctx.put(\"");
-				print(varName);
-				print("\", ");
-				identExpr.accept(this);
-				print(" - 1");
-				print(")");
-				return false;
-			default:
-				throw new ELException("TOOD");
-			}
-		}
-	}
+                Class<?> type = variantResolver.getType(varName);
+                if (type == BigDecimal.class) {
+                    switch (x.getOperator()) {
+                        case Add:
+                            x.getLeft().accept(this);
+                            print(".add(_decimal(");
+                            x.getRight().accept(this);
+                            print("))");
+                            return false;
+                        case GreaterThan:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) > 0");
+                            return false;
+                        case GreaterThanOrEqual:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) >＝ 0");
+                            return false;
+                        case LessThan:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) < 0");
+                            return false;
+                        case LessThanOrEqual:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) <＝ 0");
+                            return false;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (x.getLeft() instanceof TinyELVariantRefExpr) {
+                TinyELVariantRefExpr var = (TinyELVariantRefExpr) x.getLeft();
+                String varName = var.getName();
+                if (!localVariants.containsKey(varName)) {
+                    switch (x.getOperator()) {
+                        case Assignment:
+                            print("ctx.put(\"");
+                            print(varName);
+                            print("\", ");
+                            x.getRight().accept(this);
+                            print(")");
+                            return false;
+                        case AddAndAssignment:
+                            print("ctx.put(\"");
+                            print(varName);
+                            print("\", ");
+                            var.accept(this);
+                            print(" ");
+                            print(TinyELBinaryOperator.Add.name);
+                            print(" ");
+                            x.getRight().accept(this);
+                            print(")");
+                            return false;
+                        default:
+                            break;
+                    }
+                }
+
+                Class<?> type = variantResolver.getType(varName);
+                if (type == BigDecimal.class) {
+                    switch (x.getOperator()) {
+                        case Add:
+                            x.getLeft().accept(this);
+                            print(".add(_decimal(");
+                            x.getRight().accept(this);
+                            print("))");
+                            return false;
+                        case GreaterThan:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) > 0");
+                            return false;
+                        case GreaterThanOrEqual:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) >＝ 0");
+                            return false;
+                        case LessThan:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) < 0");
+                            return false;
+                        case LessThanOrEqual:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) <＝ 0");
+                            return false;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (x.getOperator() == TinyELBinaryOperator.InstanceOf) {
+                if (x.getLeft() instanceof TinyELIdentifierExpr) {
+                    TinyELIdentifierExpr ident = (TinyELIdentifierExpr) x.getLeft();
+                    String varName = ident.getName();
+                    if (!localVariants.containsKey(varName)) {
+                        print("ctx.get(\"");
+                        print(varName);
+                        print("\") instanceof ");
+                    }
+                    x.getRight().accept(this);
+                    return false;
+                }
+            }
+            return super.visit(x);
+        }
+
+        @Override
+        public boolean visit(TinyLocalVarDeclareStatement x) {
+            for (int i = 0, size = x.getVariants().size(); i < size; ++i) {
+                String varName = x.getVariants().get(i).getName();
+                localVariants.put(varName, x.getType());
+            }
+
+            return super.visit(x);
+        }
+
+        @Override
+        public boolean visit(TinyELForStatement x) {
+            for (int i = 0, size = x.getVariants().size(); i < size; ++i) {
+                String varName = x.getVariants().get(i).getName();
+                localVariants.put(varName, x.getType());
+            }
+
+            return super.visit(x);
+        }
+
+        @Override
+        public boolean visit(TinyELForEachStatement x) {
+            localVariants.put(x.getVariant(), x.getType());
+            return super.visit(x);
+        }
+
+        @Override
+        public boolean visit(TinyUnaryOpExpr x) {
+            if (x.getExpr() instanceof TinyELIdentifierExpr) {
+                TinyELIdentifierExpr identExpr = (TinyELIdentifierExpr) x.getExpr();
+                String varName = identExpr.getName();
+
+                if (localVariants.containsKey(varName)) {
+                    return super.visit(x);
+                }
+
+                switch (x.getOperator()) {
+                    case Plus:
+                    case Minus:
+                        return super.visit(x);
+                    case PreIncrement:
+                        print("putAndGet(ctx, \"");
+                        print(varName);
+                        print("\", ");
+                        identExpr.accept(this);
+                        print(" + 1");
+                        print(")");
+                        return false;
+                    case PostIncrement:
+                        print("ctx.put(\"");
+                        print(varName);
+                        print("\", ");
+                        identExpr.accept(this);
+                        print(" + 1");
+                        print(")");
+                        return false;
+                    case PreDecrement:
+                        print("putAndGet(ctx, \"");
+                        print(varName);
+                        print("\", ");
+                        identExpr.accept(this);
+                        print(" - 1");
+                        print(")");
+                        return false;
+                    case PostDecrement:
+                        print("ctx.put(\"");
+                        print(varName);
+                        print("\", ");
+                        identExpr.accept(this);
+                        print(" - 1");
+                        print(")");
+                        return false;
+                    default:
+                        throw new ELException("TOOD");
+                }
+            }
+            
+            if (x.getExpr() instanceof TinyELVariantRefExpr) {
+                TinyELVariantRefExpr var = (TinyELVariantRefExpr) x.getExpr();
+                String varName = var.getName();
+
+                if (localVariants.containsKey(varName)) {
+                    return super.visit(x);
+                }
+
+                switch (x.getOperator()) {
+                    case Plus:
+                    case Minus:
+                        return super.visit(x);
+                    case PreIncrement:
+                        print("putAndGet(ctx, \"");
+                        print(varName);
+                        print("\", ");
+                        var.accept(this);
+                        print(" + 1");
+                        print(")");
+                        return false;
+                    case PostIncrement:
+                        print("ctx.put(\"");
+                        print(varName);
+                        print("\", ");
+                        var.accept(this);
+                        print(" + 1");
+                        print(")");
+                        return false;
+                    case PreDecrement:
+                        print("putAndGet(ctx, \"");
+                        print(varName);
+                        print("\", ");
+                        var.accept(this);
+                        print(" - 1");
+                        print(")");
+                        return false;
+                    case PostDecrement:
+                        print("ctx.put(\"");
+                        print(varName);
+                        print("\", ");
+                        var.accept(this);
+                        print(" - 1");
+                        print(")");
+                        return false;
+                    default:
+                        throw new ELException("TOOD");
+                }
+            }
+            
+            return super.visit(x);
+        }
+    }
 }

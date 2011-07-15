@@ -17,6 +17,14 @@ public class DefaultVariantResolver implements VariantResolver {
 
 	@Override
 	public String resolve(String variant) {
+	    if (variant == null) {
+	        throw new IllegalArgumentException();
+	    }
+	    
+	    if (variant.startsWith("@")) {
+	        variant = variant.substring(1);
+	    }
+	    
 		Class<?> type = variants.get(variant);
 		
 		if (type == null) {

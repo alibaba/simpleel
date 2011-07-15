@@ -24,4 +24,18 @@ public class Statement_case3 extends TestCase {
 		Assert.assertEquals(3, ctx.get("b"));
 	}
 
+	   public void test_1() throws Exception {
+	        TinyELEvalService service = new TinyELEvalService();
+	        service.setAllowMultiStatement(true);
+	        service.regsiterVariant(int.class, "a", "b");
+
+	        Map<String, Object> ctx = new HashMap<String, Object>();
+	        ctx.put("a", 3);
+	        ctx.put("b", 4);
+
+	        Assert.assertEquals(null, service.eval(ctx, "int temp; temp = @a; @a = @b; @b = temp; return null;"));
+	        
+	        Assert.assertEquals(4, ctx.get("a"));
+	        Assert.assertEquals(3, ctx.get("b"));
+	    }
 }

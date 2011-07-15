@@ -22,221 +22,227 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOperator;
 
 public class TinyELExprParser {
-	protected final TinyELLexer lexer;
 
-	public TinyELExprParser(TinyELLexer lexer) {
-		super();
-		this.lexer = lexer;
-	}
+    protected final TinyELLexer lexer;
 
-	public TinyELExprParser(String input) {
-		this(new TinyELLexer(input));
-		this.lexer.nextToken();
-	}
+    public TinyELExprParser(TinyELLexer lexer){
+        super();
+        this.lexer = lexer;
+    }
 
-	public TinyELLexer getLexer() {
-		return lexer;
-	}
+    public TinyELExprParser(String input){
+        this(new TinyELLexer(input));
+        this.lexer.nextToken();
+    }
 
-	public void accept(TinyELToken token) {
-		if (lexer.token() == token) {
-			lexer.nextToken();
-		} else {
-			throw new ELException("syntax error, expect " + token + ", actual " + lexer.token());
-		}
-	}
+    public TinyELLexer getLexer() {
+        return lexer;
+    }
 
-	public TinyELExpr expr() {
-		TinyELExpr expr = primary();
+    public void accept(TinyELToken token) {
+        if (lexer.token() == token) {
+            lexer.nextToken();
+        } else {
+            throw new ELException("syntax error, expect " + token + ", actual " + lexer.token());
+        }
+    }
 
-		if (lexer.token() == TinyELToken.COMMA) {
-			return expr;
-		}
+    public TinyELExpr expr() {
+        TinyELExpr expr = primary();
 
-		return exprRest(expr);
-	}
+        if (lexer.token() == TinyELToken.COMMA) {
+            return expr;
+        }
 
-	public TinyELExpr exprRest(TinyELExpr expr) {
-		expr = bitXorRest(expr);
-		expr = multiplicativeRest(expr);
-		expr = additiveRest(expr);
-		expr = shiftRest(expr);
-		expr = bitAndRest(expr);
-		expr = bitOrRest(expr);
-		expr = relationalRest(expr);
-		expr = equalityRest(expr);
-		expr = andRest(expr);
-		expr = orRest(expr);
-		expr = conditionalRest(expr);
-		expr = assignRest(expr);
+        return exprRest(expr);
+    }
 
-		return expr;
-	}
+    public TinyELExpr exprRest(TinyELExpr expr) {
 
-	public final TinyELExpr bitXor() {
-		TinyELExpr expr = primary();
-		return bitXorRest(expr);
-	}
+        expr = multiplicativeRest(expr);
+        expr = additiveRest(expr);
+        expr = shiftRest(expr);
+        expr = relationalRest(expr);
+        expr = equalityRest(expr);
+        expr = bitAndRest(expr);
+        expr = bitXorRest(expr);
+        expr = bitOrRest(expr);
+        expr = andRest(expr);
+        expr = orRest(expr);
+        expr = conditionalRest(expr);
+        expr = assignRest(expr);
 
-	public TinyELExpr bitXorRest(TinyELExpr expr) {
-		if (lexer.token() == TinyELToken.CARET) {
-			lexer.nextToken();
-			TinyELExpr rightExp = primary();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BitwiseXor, rightExp);
-			expr = bitXorRest(expr);
-		}
+        return expr;
+    }
 
-		return expr;
-	}
+    // ^
+    public final TinyELExpr bitXor() {
+        TinyELExpr expr = bitAnd();
+        return bitXorRest(expr);
+    }
 
-	public final TinyELExpr multiplicative() {
-		TinyELExpr expr = bitXor();
-		return multiplicativeRest(expr);
-	}
+    // ^
+    public TinyELExpr bitXorRest(TinyELExpr expr) {
+        if (lexer.token() == TinyELToken.CARET) {
+            lexer.nextToken();
+            TinyELExpr rightExp = bitAnd();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BitwiseXor, rightExp);
+            expr = bitXorRest(expr);
+        }
 
-	public TinyELExpr multiplicativeRest(TinyELExpr expr) {
-		if (lexer.token() == TinyELToken.STAR) {
-			lexer.nextToken();
-			TinyELExpr rightExp = primary();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Multiply, rightExp);
-			expr = multiplicativeRest(expr);
-		} else if (lexer.token() == TinyELToken.SLASH) {
-			lexer.nextToken();
-			TinyELExpr rightExp = primary();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Divide, rightExp);
-			expr = multiplicativeRest(expr);
-		} else if (lexer.token() == TinyELToken.PERCENT) {
-			lexer.nextToken();
-			TinyELExpr rightExp = primary();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Modulus, rightExp);
-			expr = multiplicativeRest(expr);
-		}
-		return expr;
-	}
+        return expr;
+    }
 
-	public final TinyELExpr bitAnd() {
-		TinyELExpr expr = shift();
-		return orRest(expr);
-	}
+    public final TinyELExpr multiplicative() {
+        TinyELExpr expr = primary();
+        return multiplicativeRest(expr);
+    }
 
-	public final TinyELExpr bitAndRest(TinyELExpr expr) {
-		while (lexer.token() == TinyELToken.AMP) {
-			lexer.nextToken();
-			TinyELExpr rightExp = shift();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BitwiseAnd, rightExp);
-		}
-		return expr;
-	}
+    public TinyELExpr multiplicativeRest(TinyELExpr expr) {
+        if (lexer.token() == TinyELToken.STAR) {
+            lexer.nextToken();
+            TinyELExpr rightExp = multiplicative();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Multiply, rightExp);
+            expr = multiplicativeRest(expr);
+        } else if (lexer.token() == TinyELToken.SLASH) {
+            lexer.nextToken();
+            TinyELExpr rightExp = multiplicative();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Divide, rightExp);
+            expr = multiplicativeRest(expr);
+        } else if (lexer.token() == TinyELToken.PERCENT) {
+            lexer.nextToken();
+            TinyELExpr rightExp = multiplicative();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Modulus, rightExp);
+            expr = multiplicativeRest(expr);
+        }
+        return expr;
+    }
 
-	public final TinyELExpr bitOr() {
-		TinyELExpr expr = bitAnd();
-		return orRest(expr);
-	}
+    // &
+    public final TinyELExpr bitAnd() {
+        TinyELExpr expr = equality();
+        return orRest(expr);
+    }
 
-	public final TinyELExpr bitOrRest(TinyELExpr expr) {
-		while (lexer.token() == TinyELToken.BAR) {
-			lexer.nextToken();
-			TinyELExpr rightExp = bitAnd();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BitwiseOr, rightExp);
-		}
-		return expr;
-	}
+    public final TinyELExpr bitAndRest(TinyELExpr expr) {
+        while (lexer.token() == TinyELToken.AMP) {
+            lexer.nextToken();
+            TinyELExpr rightExp = equality();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BitwiseAnd, rightExp);
+        }
+        return expr;
+    }
 
-	public final TinyELExpr equality() {
-		TinyELExpr expr = relational();
-		return equalityRest(expr);
-	}
+    // |
+    public final TinyELExpr bitOr() {
+        TinyELExpr expr = bitXor();
+        return orRest(expr);
+    }
 
-	public final TinyELExpr equalityRest(TinyELExpr expr) {
-		TinyELExpr rightExp;
-		if (lexer.token() == TinyELToken.EQEQ) {
-			lexer.nextToken();
-			rightExp = assign();
+    // |
+    public final TinyELExpr bitOrRest(TinyELExpr expr) {
+        while (lexer.token() == TinyELToken.BAR) {
+            lexer.nextToken();
+            TinyELExpr rightExp = bitXor();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BitwiseOr, rightExp);
+        }
+        return expr;
+    }
 
-			rightExp = equalityRest(rightExp);
+    public final TinyELExpr equality() {
+        TinyELExpr expr = relational();
+        return equalityRest(expr);
+    }
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Equality, rightExp);
-		} else if (lexer.token() == TinyELToken.BANGEQ) {
-			lexer.nextToken();
-			rightExp = assign();
+    public final TinyELExpr equalityRest(TinyELExpr expr) {
+        TinyELExpr rightExp;
+        if (lexer.token() == TinyELToken.EQEQ) {
+            lexer.nextToken();
+            rightExp = equality();
 
-			rightExp = equalityRest(rightExp);
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Equality, rightExp);
+        } else if (lexer.token() == TinyELToken.BANGEQ) {
+            lexer.nextToken();
+            rightExp = equality();
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.NotEqual, rightExp);
-		}
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.NotEqual, rightExp);
+        }
 
-		return expr;
-	}
+        return expr;
+    }
 
-	public final TinyELExpr additive() {
-		TinyELExpr expr = multiplicative();
-		return additiveRest(expr);
-	}
+    public final TinyELExpr additive() {
+        TinyELExpr expr = multiplicative();
+        return additiveRest(expr);
+    }
 
-	public TinyELExpr additiveRest(TinyELExpr expr) {
-		if (lexer.token() == TinyELToken.PLUS) {
-			lexer.nextToken();
-			TinyELExpr rightExp = multiplicative();
+    // + -
+    public TinyELExpr additiveRest(TinyELExpr expr) {
+        if (lexer.token() == TinyELToken.PLUS) {
+            lexer.nextToken();
+            TinyELExpr rightExp = additive();
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Add, rightExp);
-			expr = additiveRest(expr);
-		} else if (lexer.token() == TinyELToken.SUB) {
-			lexer.nextToken();
-			TinyELExpr rightExp = multiplicative();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Add, rightExp);
+            expr = additiveRest(expr);
+        } else if (lexer.token() == TinyELToken.SUB) {
+            lexer.nextToken();
+            TinyELExpr rightExp = additive();
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Subtract, rightExp);
-			expr = additiveRest(expr);
-		}
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Subtract, rightExp);
+            expr = additiveRest(expr);
+        }
 
-		return expr;
-	}
+        return expr;
+    }
 
-	public final TinyELExpr shift() {
-		TinyELExpr expr = additive();
-		return shiftRest(expr);
-	}
+    public final TinyELExpr shift() {
+        TinyELExpr expr = additive();
+        return shiftRest(expr);
+    }
 
-	public TinyELExpr shiftRest(TinyELExpr expr) {
-		if (lexer.token() == TinyELToken.LTLT) {
-			lexer.nextToken();
-			TinyELExpr rightExp = multiplicative();
+    public TinyELExpr shiftRest(TinyELExpr expr) {
+        if (lexer.token() == TinyELToken.LTLT) {
+            lexer.nextToken();
+            TinyELExpr rightExp = shift();
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LeftShift, rightExp);
-			expr = shiftRest(expr);
-		} else if (lexer.token() == TinyELToken.GTGT) {
-			lexer.nextToken();
-			TinyELExpr rightExp = multiplicative();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LeftShift, rightExp);
+            expr = shiftRest(expr);
+        } else if (lexer.token() == TinyELToken.GTGT) {
+            lexer.nextToken();
+            TinyELExpr rightExp = shift();
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.RightShift, rightExp);
-			expr = shiftRest(expr);
-		}
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.RightShift, rightExp);
+            expr = shiftRest(expr);
+        }
 
-		return expr;
-	}
+        return expr;
+    }
 
-	public final TinyELExpr and() {
-		TinyELExpr expr = equality();
-		return andRest(expr);
-	}
+    public final TinyELExpr and() {
+        TinyELExpr expr = bitOr();
+        return andRest(expr);
+    }
 
-	public final TinyELExpr andRest(TinyELExpr expr) {
+    // &&
+    public final TinyELExpr andRest(TinyELExpr expr) {
         if (lexer.token() == TinyELToken.AMPAMP) {
             lexer.nextToken();
-            TinyELExpr rightExp = relational();
+            TinyELExpr rightExp = bitOr();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BooleanAnd, rightExp);
             expr = andRest(expr);
         }
-        
-		return expr;
-	}
 
-	public final TinyELExpr or() {
-		TinyELExpr expr = and();
-		return orRest(expr);
-	}
+        return expr;
+    }
 
-	public final TinyELExpr orRest(TinyELExpr expr) {
+    public final TinyELExpr or() {
+        TinyELExpr expr = and();
+        return orRest(expr);
+    }
+
+    // ||
+    public final TinyELExpr orRest(TinyELExpr expr) {
         if (lexer.token() == TinyELToken.BARBAR) {
             lexer.nextToken();
             TinyELExpr rightExp = and();
@@ -244,366 +250,360 @@ public class TinyELExprParser {
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.BooleanOr, rightExp);
             expr = orRest(expr);
         }
-        
-		return expr;
-	}
-	
-	public final TinyELExpr conditional() {
-		TinyELExpr expr = or();
-		return conditionalRest(expr);
-	}
-	
-	public final TinyELExpr conditionalRest(TinyELExpr expr) {
-		if (lexer.token() == TinyELToken.QUES) {
-			lexer.nextToken();
-			TinyELExpr trueExpr = expr();
-			accept(TinyELToken.COLON);
-			TinyELExpr falseExpr = expr();
-			expr = new TinyELConditionalExpr(expr, trueExpr, falseExpr);
-			
-			expr = conditionalRest(expr);
-		}
-		return expr;
-	}
-	
-	public final TinyELExpr assign() {
-		TinyELExpr expr = conditional();
-		return assignRest(expr);
-	}
-	
-	public final TinyELExpr assignRest(TinyELExpr expr) {
-		if (lexer.token() == TinyELToken.EQ) {
-			lexer.nextToken();
-			TinyELExpr rightExp = assign();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Assignment, rightExp);
-			expr = conditionalRest(expr);
-		}
-		
-		if (lexer.token() == TinyELToken.PLUSEQ) {
-			lexer.nextToken();
-			TinyELExpr rightExp = assign();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.AddAndAssignment, rightExp);
-		}
-		
-		return expr;
-	}
 
-	public final TinyELExpr relational() {
-		TinyELExpr expr = bitOr();
+        return expr;
+    }
 
-		return relationalRest(expr);
-	}
+    public final TinyELExpr conditional() {
+        TinyELExpr expr = or();
+        return conditionalRest(expr);
+    }
 
-	public TinyELExpr relationalRest(TinyELExpr expr) {
-		TinyELExpr rightExp;
-		if (lexer.token() == TinyELToken.LT) {
-			lexer.nextToken();
-			rightExp = shift();
+    // ?:
+    public final TinyELExpr conditionalRest(TinyELExpr expr) {
+        if (lexer.token() == TinyELToken.QUES) {
+            lexer.nextToken();
+            TinyELExpr trueExpr = expr();
+            accept(TinyELToken.COLON);
+            TinyELExpr falseExpr = expr();
+            expr = new TinyELConditionalExpr(expr, trueExpr, falseExpr);
 
-			rightExp = relationalRest(rightExp);
+            expr = conditionalRest(expr);
+        }
+        return expr;
+    }
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LessThan, rightExp);
-		} else if (lexer.token() == TinyELToken.LTEQ) {
-			lexer.nextToken();
-			rightExp = shift();
+    public final TinyELExpr assign() {
+        TinyELExpr expr = conditional();
+        return assignRest(expr);
+    }
 
-			rightExp = relationalRest(rightExp);
+    // = += -= *= /= %= &= |= ^= ~= <<= >>= >>>=
+    public final TinyELExpr assignRest(TinyELExpr expr) {
+        if (lexer.token() == TinyELToken.EQ) {
+            lexer.nextToken();
+            TinyELExpr rightExp = conditional();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Assignment, rightExp);
+            expr = assignRest(expr);
+        }
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LessThanOrEqual, rightExp);
-		} else if (lexer.token() == TinyELToken.GT) {
-			lexer.nextToken();
-			rightExp = shift();
+        if (lexer.token() == TinyELToken.PLUSEQ) {
+            lexer.nextToken();
+            TinyELExpr rightExp = conditional();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.AddAndAssignment, rightExp);
 
-			rightExp = relationalRest(rightExp);
+            expr = assignRest(expr);
+        }
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.GreaterThan, rightExp);
-		} else if (lexer.token() == TinyELToken.GTEQ) {
-			lexer.nextToken();
-			rightExp = shift();
+        return expr;
+    }
 
-			rightExp = relationalRest(rightExp);
+    public final TinyELExpr relational() {
+        TinyELExpr expr = shift();
 
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.GreaterThanOrEqual, rightExp);
-		} else if (lexer.token() == TinyELToken.INSTNACEOF) {
-			lexer.nextToken();
-			rightExp = shift();
-			
-			rightExp = relationalRest(rightExp);
-			
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.InstanceOf, rightExp);
-		}
+        return relationalRest(expr);
+    }
 
-		return expr;
-	}
+    public TinyELExpr relationalRest(TinyELExpr expr) {
+        TinyELExpr rightExp;
+        if (lexer.token() == TinyELToken.LT) {
+            lexer.nextToken();
+            rightExp = relational();
 
-	public final TinyELExpr name() throws ELException {
-		if (lexer.token() != TinyELToken.IDENTIFIER) {
-			throw new ELException("error : " + lexer.token());
-		}
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LessThan, rightExp);
+        } else if (lexer.token() == TinyELToken.LTEQ) {
+            lexer.nextToken();
+            rightExp = relational();
 
-		String identName = lexer.stringVal();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LessThanOrEqual, rightExp);
+        } else if (lexer.token() == TinyELToken.GT) {
+            lexer.nextToken();
+            rightExp = relational();
 
-		lexer.nextToken();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.GreaterThan, rightExp);
+        } else if (lexer.token() == TinyELToken.GTEQ) {
+            lexer.nextToken();
+            rightExp = relational();
 
-		TinyELExpr name = new TinyELIdentifierExpr(identName);
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.GreaterThanOrEqual, rightExp);
+        } else if (lexer.token() == TinyELToken.INSTNACEOF) {
+            lexer.nextToken();
+            rightExp = relational();
 
-		while (lexer.token() == TinyELToken.DOT) {
-			lexer.nextToken();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.InstanceOf, rightExp);
+        }
 
-			if (lexer.token() != TinyELToken.IDENTIFIER) {
-				throw new ELException("error : " + lexer.token());
-			}
+        return expr;
+    }
 
-			name = new TinyELPropertyExpr(name, lexer.stringVal());
-			lexer.nextToken();
-		}
+    public final TinyELExpr name() throws ELException {
+        if (lexer.token() != TinyELToken.IDENTIFIER) {
+            throw new ELException("error : " + lexer.token());
+        }
 
-		return name;
-	}
-	
-	public String type() {
-		final TinyELToken tok = lexer.token();
-		switch (tok) {
-		case BYTE:
-		case SHORT:
-		case INT:
-		case LONG:
-		case FLOAT:
-		case DOUBLE:
-			lexer.nextToken();
-			return tok.name;
-		default:
-			return name().toString();
-		}
-	}
+        String identName = lexer.stringVal();
 
-	public TinyELExpr primary() {
-		TinyELExpr primaryExpr = null;
+        lexer.nextToken();
 
-		final TinyELToken tok = lexer.token();
+        TinyELExpr name = new TinyELIdentifierExpr(identName);
 
-		switch (tok) {
-		case LPAREN:
-			lexer.nextToken();
-			primaryExpr = expr();
-			accept(TinyELToken.RPAREN);
-			break;
-		case IDENTIFIER:
-			primaryExpr = new TinyELIdentifierExpr(lexer.stringVal());
-			lexer.nextToken();
-			break;
-		case PLUSPLUS:
-			lexer.nextToken();
-			primaryExpr = expr();
-			primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.PreIncrement);
-			break;
-		case SUBSUB:
-			lexer.nextToken();
-			primaryExpr = expr();
-			primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.PreDecrement);
-			break;
-		case NEW:
-			lexer.nextToken();
+        while (lexer.token() == TinyELToken.DOT) {
+            lexer.nextToken();
 
-			TinyELExpr name = name();
-			String typeName = name.toString();
+            if (lexer.token() != TinyELToken.IDENTIFIER) {
+                throw new ELException("error : " + lexer.token());
+            }
 
-			if (lexer.token() == TinyELToken.LPAREN) {
-				lexer.nextToken();
+            name = new TinyELPropertyExpr(name, lexer.stringVal());
+            lexer.nextToken();
+        }
 
-				TinyELNewExpr newExpr = new TinyELNewExpr(typeName);
-				if (lexer.token() != TinyELToken.RPAREN) {
-					exprList(newExpr.getParameters());
-				}
+        return name;
+    }
 
-				accept(TinyELToken.RPAREN);
+    public String type() {
+        final TinyELToken tok = lexer.token();
+        switch (tok) {
+            case BYTE:
+            case SHORT:
+            case INT:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+                lexer.nextToken();
+                return tok.name;
+            default:
+                return name().toString();
+        }
+    }
 
-				return primaryRest(newExpr);
-			}
-			throw new ELException("TODO " + lexer.token());
-		case TRUE:
-			primaryExpr = new TinyELBooleanExpr(true);
-			lexer.nextToken();
-			break;
-		case FALSE:
-			primaryExpr = new TinyELBooleanExpr(false);
-			lexer.nextToken();
-			break;
-		case LITERAL_INT:
-			primaryExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
-			lexer.nextToken();
-			break;
-		case LITERAL_FLOAT:
-			primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
-			lexer.nextToken();
-			break;
-		case LITERAL_STRING:
-			primaryExpr = new TinyELStringExpr(lexer.stringVal());
-			lexer.nextToken();
-			break;
-		case SUB:
-			lexer.nextToken();
-			switch (lexer.token()) {
-			case LITERAL_INT:
-				Number integerValue = lexer.integerValue();
-				if (integerValue instanceof Integer) {
-					int intVal = ((Integer) integerValue).intValue();
-					if (intVal == Integer.MIN_VALUE) {
-						integerValue = Long.valueOf(((long) intVal) * -1);
-					} else {
-						integerValue = Integer.valueOf(intVal * -1);
-					}
-				} else if (integerValue instanceof Long) {
-					long longVal = ((Long) integerValue).longValue();
-					if (longVal == 2147483648L) {
-						integerValue = Integer.valueOf((int) (((long) longVal) * -1));
-					} else {
-						integerValue = Long.valueOf(longVal * -1);
-					}
-				} else {
-					integerValue = ((BigInteger) integerValue).negate();
-				}
-				primaryExpr = new TinyELNumberLiteralExpr(integerValue);
-				lexer.nextToken();
-				break;
-			case LITERAL_FLOAT:
-				primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue().negate());
-				lexer.nextToken();
-				break;
-			default:
-				throw new ELException("TODO");
-			}
-			break;
-		case PLUS:
-			lexer.nextToken();
-			switch (lexer.token()) {
-			case LITERAL_INT:
-				primaryExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
-				lexer.nextToken();
-				break;
-			case LITERAL_FLOAT:
-				primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
-				lexer.nextToken();
-				break;
-			default:
-				throw new ELException("TODO");
-			}
-			break;
-		case QUES:
-			lexer.nextToken();
-			primaryExpr = new TinyELVariantRefExpr("?");
-			break;
-		case NULL:
-			primaryExpr = new TinyELNullExpr();
-			lexer.nextToken();
-			break;
-		case VARIANT:
-			String varName = lexer.stringVal();
-			primaryExpr = new TinyELVariantRefExpr(varName);
-			lexer.nextToken();
-			break;
-		default:
-			throw new ELException("ERROR. token : " + tok);
-		}
+    public TinyELExpr primary() {
+        TinyELExpr primaryExpr = null;
 
-		return primaryRest(primaryExpr);
-	}
+        final TinyELToken tok = lexer.token();
 
-	public TinyELExpr primaryRest(TinyELExpr expr) throws ELException {
-		if (expr == null) {
-			throw new IllegalArgumentException("expr");
-		}
+        switch (tok) {
+            case LPAREN:
+                lexer.nextToken();
+                primaryExpr = expr();
+                accept(TinyELToken.RPAREN);
+                break;
+            case IDENTIFIER:
+                primaryExpr = new TinyELIdentifierExpr(lexer.stringVal());
+                lexer.nextToken();
+                break;
+            case PLUSPLUS:
+                lexer.nextToken();
+                primaryExpr = expr();
+                primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.PreIncrement);
+                break;
+            case SUBSUB:
+                lexer.nextToken();
+                primaryExpr = expr();
+                primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.PreDecrement);
+                break;
+            case NEW:
+                lexer.nextToken();
 
-		if (lexer.token() == TinyELToken.DOT) {
-			lexer.nextToken();
+                TinyELExpr name = name();
+                String typeName = name.toString();
 
-			if (lexer.token() == TinyELToken.STAR) {
-				lexer.nextToken();
-				expr = new TinyELPropertyExpr(expr, "*");
-			} else {
-				if (lexer.token() != TinyELToken.IDENTIFIER) {
-					throw new ELException("error");
-				}
+                if (lexer.token() == TinyELToken.LPAREN) {
+                    lexer.nextToken();
 
-				String name = lexer.stringVal();
-				lexer.nextToken();
+                    TinyELNewExpr newExpr = new TinyELNewExpr(typeName);
+                    if (lexer.token() != TinyELToken.RPAREN) {
+                        exprList(newExpr.getParameters());
+                    }
 
-				if (lexer.token() == TinyELToken.LPAREN) {
-					lexer.nextToken();
+                    accept(TinyELToken.RPAREN);
 
-					TinyELMethodInvokeExpr methodInvokeExpr = new TinyELMethodInvokeExpr(name, expr);
-					if (lexer.token() == TinyELToken.RPAREN) {
-						lexer.nextToken();
-					} else {
-						exprList(methodInvokeExpr.getParameters());
-						accept(TinyELToken.RPAREN);
-					}
-					expr = methodInvokeExpr;
-				} else {
-					expr = new TinyELPropertyExpr(expr, name);
-				}
-			}
+                    return primaryRest(newExpr);
+                }
+                throw new ELException("TODO " + lexer.token());
+            case TRUE:
+                primaryExpr = new TinyELBooleanExpr(true);
+                lexer.nextToken();
+                break;
+            case FALSE:
+                primaryExpr = new TinyELBooleanExpr(false);
+                lexer.nextToken();
+                break;
+            case LITERAL_INT:
+                primaryExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
+                lexer.nextToken();
+                break;
+            case LITERAL_FLOAT:
+                primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
+                lexer.nextToken();
+                break;
+            case LITERAL_STRING:
+                primaryExpr = new TinyELStringExpr(lexer.stringVal());
+                lexer.nextToken();
+                break;
+            case SUB:
+                lexer.nextToken();
+                switch (lexer.token()) {
+                    case LITERAL_INT:
+                        Number integerValue = lexer.integerValue();
+                        if (integerValue instanceof Integer) {
+                            int intVal = ((Integer) integerValue).intValue();
+                            if (intVal == Integer.MIN_VALUE) {
+                                integerValue = Long.valueOf(((long) intVal) * -1);
+                            } else {
+                                integerValue = Integer.valueOf(intVal * -1);
+                            }
+                        } else if (integerValue instanceof Long) {
+                            long longVal = ((Long) integerValue).longValue();
+                            if (longVal == 2147483648L) {
+                                integerValue = Integer.valueOf((int) (((long) longVal) * -1));
+                            } else {
+                                integerValue = Long.valueOf(longVal * -1);
+                            }
+                        } else {
+                            integerValue = ((BigInteger) integerValue).negate();
+                        }
+                        primaryExpr = new TinyELNumberLiteralExpr(integerValue);
+                        lexer.nextToken();
+                        break;
+                    case LITERAL_FLOAT:
+                        primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue().negate());
+                        lexer.nextToken();
+                        break;
+                    default:
+                        throw new ELException("TODO");
+                }
+                break;
+            case PLUS:
+                lexer.nextToken();
+                switch (lexer.token()) {
+                    case LITERAL_INT:
+                        primaryExpr = new TinyELNumberLiteralExpr(lexer.integerValue());
+                        lexer.nextToken();
+                        break;
+                    case LITERAL_FLOAT:
+                        primaryExpr = new TinyELNumberLiteralExpr(lexer.decimalValue());
+                        lexer.nextToken();
+                        break;
+                    default:
+                        throw new ELException("TODO");
+                }
+                break;
+            case QUES:
+                lexer.nextToken();
+                primaryExpr = new TinyELVariantRefExpr("?");
+                break;
+            case NULL:
+                primaryExpr = new TinyELNullExpr();
+                lexer.nextToken();
+                break;
+            case VARIANT:
+                String varName = lexer.stringVal();
+                primaryExpr = new TinyELVariantRefExpr(varName);
+                lexer.nextToken();
+                break;
+            default:
+                throw new ELException("ERROR. token : " + tok);
+        }
 
-			expr = primaryRest(expr);
-		} else if (lexer.token() == TinyELToken.PLUSPLUS) {
-			lexer.nextToken();
-			expr = new TinyUnaryOpExpr(expr, TinyUnaryOperator.PostIncrement);
-			expr = primaryRest(expr);
-		} else if (lexer.token() == TinyELToken.SUBSUB) {
-			lexer.nextToken();
-			expr = new TinyUnaryOpExpr(expr, TinyUnaryOperator.PostDecrement);
-			expr = primaryRest(expr);
-		} else if (lexer.token() == TinyELToken.LBRACKET) {
-			lexer.nextToken();
-			TinyELExpr indexExpr = expr();
-			accept(TinyELToken.RBRACKET);
-			expr = new TinyELArrayAccessExpr(expr, indexExpr);
-			expr = primaryRest(expr);
-		} else if (lexer.token() == TinyELToken.COLONEQ) {
-			lexer.nextToken();
-			TinyELExpr rightExp = primary();
-			expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Assignment, rightExp);
-		} else {
-			if (lexer.token() == TinyELToken.LPAREN) {
-				if (expr instanceof TinyELIdentifierExpr) {
-					TinyELIdentifierExpr identExpr = (TinyELIdentifierExpr) expr;
-					String method_name = identExpr.getName();
-					lexer.nextToken();
+        return primaryRest(primaryExpr);
+    }
 
-					TinyELMethodInvokeExpr methodInvokeExpr = new TinyELMethodInvokeExpr(method_name);
-					if (lexer.token() != TinyELToken.RPAREN) {
-						exprList(methodInvokeExpr.getParameters());
-					}
+    public TinyELExpr primaryRest(TinyELExpr expr) throws ELException {
+        if (expr == null) {
+            throw new IllegalArgumentException("expr");
+        }
 
-					accept(TinyELToken.RPAREN);
+        if (lexer.token() == TinyELToken.DOT) {
+            lexer.nextToken();
 
-					return primaryRest(methodInvokeExpr);
-				}
+            if (lexer.token() == TinyELToken.STAR) {
+                lexer.nextToken();
+                expr = new TinyELPropertyExpr(expr, "*");
+            } else {
+                if (lexer.token() != TinyELToken.IDENTIFIER) {
+                    throw new ELException("error");
+                }
 
-				throw new ELException("not support token:");
-			}
-		}
+                String name = lexer.stringVal();
+                lexer.nextToken();
 
-		return expr;
-	}
+                if (lexer.token() == TinyELToken.LPAREN) {
+                    lexer.nextToken();
 
-	public final void exprList(Collection<TinyELExpr> exprCol) throws ELException {
-		if (lexer.token() == TinyELToken.RPAREN) {
-			return;
-		}
+                    TinyELMethodInvokeExpr methodInvokeExpr = new TinyELMethodInvokeExpr(name, expr);
+                    if (lexer.token() == TinyELToken.RPAREN) {
+                        lexer.nextToken();
+                    } else {
+                        exprList(methodInvokeExpr.getParameters());
+                        accept(TinyELToken.RPAREN);
+                    }
+                    expr = methodInvokeExpr;
+                } else {
+                    expr = new TinyELPropertyExpr(expr, name);
+                }
+            }
 
-		if (lexer.token() == TinyELToken.EOF) {
-			return;
-		}
+            expr = primaryRest(expr);
+        } else if (lexer.token() == TinyELToken.PLUSPLUS) {
+            lexer.nextToken();
+            expr = new TinyUnaryOpExpr(expr, TinyUnaryOperator.PostIncrement);
+            expr = primaryRest(expr);
+        } else if (lexer.token() == TinyELToken.SUBSUB) {
+            lexer.nextToken();
+            expr = new TinyUnaryOpExpr(expr, TinyUnaryOperator.PostDecrement);
+            expr = primaryRest(expr);
+        } else if (lexer.token() == TinyELToken.LBRACKET) {
+            lexer.nextToken();
+            TinyELExpr indexExpr = expr();
+            accept(TinyELToken.RBRACKET);
+            expr = new TinyELArrayAccessExpr(expr, indexExpr);
+            expr = primaryRest(expr);
+        } else if (lexer.token() == TinyELToken.COLONEQ) {
+            lexer.nextToken();
+            TinyELExpr rightExp = primary();
+            expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Assignment, rightExp);
+        } else {
+            if (lexer.token() == TinyELToken.LPAREN) {
+                if (expr instanceof TinyELIdentifierExpr) {
+                    TinyELIdentifierExpr identExpr = (TinyELIdentifierExpr) expr;
+                    String method_name = identExpr.getName();
+                    lexer.nextToken();
 
-		TinyELExpr expr = expr();
-		exprCol.add(expr);
+                    TinyELMethodInvokeExpr methodInvokeExpr = new TinyELMethodInvokeExpr(method_name);
+                    if (lexer.token() != TinyELToken.RPAREN) {
+                        exprList(methodInvokeExpr.getParameters());
+                    }
 
-		while (lexer.token() == TinyELToken.COMMA) {
-			lexer.nextToken();
-			expr = expr();
-			exprCol.add(expr);
-		}
-	}
+                    accept(TinyELToken.RPAREN);
+
+                    return primaryRest(methodInvokeExpr);
+                }
+
+                throw new ELException("not support token:");
+            }
+        }
+
+        return expr;
+    }
+
+    public final void exprList(Collection<TinyELExpr> exprCol) throws ELException {
+        if (lexer.token() == TinyELToken.RPAREN) {
+            return;
+        }
+
+        if (lexer.token() == TinyELToken.EOF) {
+            return;
+        }
+
+        TinyELExpr expr = expr();
+        exprCol.add(expr);
+
+        while (lexer.token() == TinyELToken.COMMA) {
+            lexer.nextToken();
+            expr = expr();
+            exprCol.add(expr);
+        }
+    }
 
 }

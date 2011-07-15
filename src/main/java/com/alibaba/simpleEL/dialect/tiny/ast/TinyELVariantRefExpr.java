@@ -10,6 +10,9 @@ public class TinyELVariantRefExpr extends TinyELExpr {
 	}
 
 	public TinyELVariantRefExpr(String name) {
+        if (name.startsWith("@")) {
+            name = name.substring(1);
+        }
 		this.name = name;
 	}
 
@@ -18,6 +21,9 @@ public class TinyELVariantRefExpr extends TinyELExpr {
 	}
 
 	public void setName(String name) {
+        if (name.startsWith("@")) {
+            name = name.substring(1);
+        }
 		this.name = name;
 	}
 
