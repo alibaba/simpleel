@@ -55,7 +55,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
             TinyELExpr expr = parser.expr();
 
             StringWriter out = new StringWriter();
-            JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
+            TinyELOutputVisitor visitor = createVisitor(out);
             expr.accept(visitor);
 
             resolvedResult = out.toString();
@@ -64,7 +64,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
             List<TinyELStatement> statements = parser.statementList();
 
             StringWriter out = new StringWriter();
-            JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
+            TinyELOutputVisitor visitor = createVisitor(out);
 
             visitor.incrementIndent();
             for (TinyELStatement statement : statements) {
@@ -91,6 +91,11 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
         JavaSource javaSource = new JavaSource(packageName, className, source);
 
         return javaSource;
+    }
+
+    protected TinyELOutputVisitor createVisitor(StringWriter out) {
+        JavaSourceGenVisitor visitor = new JavaSourceGenVisitor(new PrintWriter(out));
+        return visitor;
     }
 
     public class JavaSourceGenVisitor extends TinyELOutputVisitor {

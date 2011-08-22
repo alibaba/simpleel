@@ -15,7 +15,7 @@ public class TinyELEvalService extends DefaultExpressEvalService {
 	}
 	
 	@Override
-	public TinyELPreprocessor getPreprocessor() {
+    public TinyELPreprocessor getPreprocessor() {
 		return (TinyELPreprocessor) preprocessor;
 	}
 	
