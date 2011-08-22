@@ -4,7 +4,7 @@
 
 	<groupId>com.alibaba</groupId>
 	<artifactId>SimpleEL</artifactId>
-	<version>0.1.1</version>
+	<version>0.1.2</version>
 	<name>SimpleEL</name>
 	<packaging>jar</packaging>
 	
