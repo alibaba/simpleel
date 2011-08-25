@@ -180,6 +180,42 @@ public class TypeUtils {
 	    throw new IllegalArgumentException();
 	}
 	
+	public static Object _div(Object a, Object b) {
+        if (a == null) {
+            return b;
+        }
+        
+        if (b == null) {
+            return a;
+        }
+        
+        if (a instanceof BigDecimal || b instanceof BigDecimal) {
+            return _decimal(a).divide(_decimal(b));
+        }
+        
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            return _bigInt(a).divide(_bigInt(b));
+        }
+        
+        if (a instanceof Long || b instanceof Long) {
+            return _long(a) / _long(b);
+        }
+        
+        if (a instanceof Integer || b instanceof Integer) {
+            return _int(a) / _int(b);
+        }
+        
+        if (a instanceof Short || b instanceof Short) {
+            return _short(a) / _short(b);
+        }
+        
+        if (a instanceof Byte || b instanceof Byte) {
+            return _byte(a) / _byte(b);
+        }
+        
+        throw new IllegalArgumentException();
+    }
+	
 	public static String getClassName(Class<?> clazz) {
 		if (clazz.isArray()) {
 			return getClassName(clazz.getComponentType()) + "[]";
