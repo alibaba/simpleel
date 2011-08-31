@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELVariantRefExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyUnaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.stmt.TinyELForEachStatement;
@@ -327,7 +329,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
         public boolean visit(TinyELBinaryOpExpr x) {
             x.getLeft().setParentExpr(x);
             x.getRight().setParentExpr(x);
-            
+
             if (x.getLeft() instanceof TinyELIdentifierExpr) {
                 TinyELIdentifierExpr leftIdent = (TinyELIdentifierExpr) x.getLeft();
                 String varName = leftIdent.getName();
@@ -371,6 +373,12 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             x.getRight().accept(this);
                             print(")) > 0");
                             return false;
+                        case Equality:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_decimal(");
+                            x.getRight().accept(this);
+                            print(")) == 0");
+                            return false;
                         case GreaterThanOrEqual:
                             x.getLeft().accept(this);
                             print(".compareTo(_decimal(");
@@ -389,6 +397,22 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             x.getRight().accept(this);
                             print(")) <＝ 0");
                             return false;
+                        default:
+                            break;
+                    }
+                } else if (type == Date.class) {
+                    switch (x.getOperator()) {
+                        case Equality:
+                            if (x.getRight() instanceof TinyELStringExpr) {
+                                x.getLeft().accept(this);
+                                print(".equals(_date(");
+                                x.getRight().accept(this);
+                                print(", \"yyyy-MM-dd HH:mm:ss\"))");
+                                return false;
+                            } else {
+                                break;
+                            }
+                 
                         default:
                             break;
                     }
@@ -554,7 +578,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                         throw new ELException("TOOD");
                 }
             }
-            
+
             if (x.getExpr() instanceof TinyELVariantRefExpr) {
                 TinyELVariantRefExpr var = (TinyELVariantRefExpr) x.getExpr();
                 String varName = var.getName();
@@ -603,7 +627,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                         throw new ELException("TOOD");
                 }
             }
-            
+
             return super.visit(x);
         }
     }

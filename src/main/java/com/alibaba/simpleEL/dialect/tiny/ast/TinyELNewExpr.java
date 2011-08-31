@@ -6,7 +6,6 @@ import java.util.List;
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELAstVisitor;
 
 public class TinyELNewExpr extends TinyELExpr {
-	   private static final long serialVersionUID = 1L;
 	    private String type;
 	    private TinyELExpr owner;
 	    private final List<TinyELExpr> parameters = new ArrayList<TinyELExpr>();

@@ -4,7 +4,6 @@ import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELAstVisitor;
 
 
 public class TinyELPropertyExpr extends TinyELExpr implements TinyELName {
-    private static final long serialVersionUID = 1L;
 
     private TinyELExpr owner;
     private String name;

@@ -3,7 +3,6 @@ package com.alibaba.simpleEL.dialect.tiny.ast;
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELAstVisitor;
 
 public class TinyELBinaryOpExpr extends TinyELExpr {
-	  private static final long serialVersionUID = 1L;
 	    public TinyELExpr left;
 	    public TinyELExpr right;
 	    public TinyELBinaryOperator operator;

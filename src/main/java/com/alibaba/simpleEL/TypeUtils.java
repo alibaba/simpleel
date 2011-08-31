@@ -2,6 +2,8 @@ package com.alibaba.simpleEL;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -127,6 +129,19 @@ public class TypeUtils {
 
 		throw new ELException("");
 	}
+	
+    public static Date _date(String val, String format) {
+        if (val == null || val.length() == 0) {
+            return null;
+        }
+
+        try {
+            return new SimpleDateFormat(format).parse(val);
+        } catch (ParseException e) {
+            throw new ELException("format : " + format + ", value : " + val);
+        }
+    }
+
 
 	public static BigDecimal _decimal(Object val) {
 		if (val == null) {
