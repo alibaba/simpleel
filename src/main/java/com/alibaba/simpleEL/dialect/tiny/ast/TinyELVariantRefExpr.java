@@ -10,10 +10,14 @@ public class TinyELVariantRefExpr extends TinyELExpr {
 	}
 
 	public TinyELVariantRefExpr(String name) {
-        if (name.startsWith("@")) {
+        if (name.startsWith("@@")) {
+            this.name = name;
+        } else if (name.startsWith("@")) {
             name = name.substring(1);
+            this.name = name;
+        } else {
+            this.name = name;
         }
-		this.name = name;
 	}
 
 	public String getName() {
@@ -21,10 +25,14 @@ public class TinyELVariantRefExpr extends TinyELExpr {
 	}
 
 	public void setName(String name) {
-        if (name.startsWith("@")) {
+        if (name.startsWith("@@")) {
+            this.name = name;
+        } else if (name.startsWith("@")) {
             name = name.substring(1);
+            this.name = name;
+        } else {
+            this.name = name;
         }
-		this.name = name;
 	}
 
     public void output(StringBuffer buf) {
