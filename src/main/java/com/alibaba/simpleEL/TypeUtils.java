@@ -130,15 +130,23 @@ public class TypeUtils {
 		throw new ELException("");
 	}
 	
-    public static Date _date(String val, String format) {
-        if (val == null || val.length() == 0) {
+    public static Date _date(String text) {
+        if (text == null || text.length() == 0) {
             return null;
         }
-
+        
+        String format;
+        
+        if (text.length() == "yyyy-MM-dd".length()) {
+            format = "yyyy-MM-dd";
+        } else {
+            format = "yyyy-MM-dd HH:mm:ss";
+        }
+        
         try {
-            return new SimpleDateFormat(format).parse(val);
+            return new SimpleDateFormat(format).parse(text);
         } catch (ParseException e) {
-            throw new ELException("format : " + format + ", value : " + val);
+            throw new ELException("format : " + format + ", value : " + text);
         }
     }
 

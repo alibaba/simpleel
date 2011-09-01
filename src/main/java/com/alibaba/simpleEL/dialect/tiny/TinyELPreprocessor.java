@@ -407,7 +407,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                                 x.getLeft().accept(this);
                                 print(".equals(_date(");
                                 x.getRight().accept(this);
-                                print(", \"yyyy-MM-dd HH:mm:ss\"))");
+                                print("))");
                                 return false;
                             } else {
                                 break;
