@@ -265,6 +265,22 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                     out.print(")");
                 }
             }
+            
+            
+            if (x.getOwner() instanceof TinyELIdentifierExpr && x.getMethodName().equals("equals") && x.getParameters().size() == 1) {
+                TinyELIdentifierExpr leftIdent = (TinyELIdentifierExpr) x.getOwner();
+                String varName = leftIdent.getName();
+
+                TinyELExpr param = x.getParameters().get(0);
+                Class<?> type = variantResolver.getType(varName);
+                if (type == Date.class && param instanceof TinyELStringExpr) {
+                    x.getOwner().accept(this);
+                    print(".equals(_date(");
+                    param.accept(this);
+                    print("))");
+                    return false;
+                }
+            }
 
             return super.visit(x);
         }
@@ -412,7 +428,30 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             } else {
                                 break;
                             }
-                 
+                        case GreaterThan:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_date(");
+                            x.getRight().accept(this);
+                            print(")) > 0");
+                            return false;
+                        case GreaterThanOrEqual:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_date(");
+                            x.getRight().accept(this);
+                            print(")) >= 0");
+                            return false;
+                        case LessThan:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_date(");
+                            x.getRight().accept(this);
+                            print(")) < 0");
+                            return false;
+                        case LessThanOrEqual:
+                            x.getLeft().accept(this);
+                            print(".compareTo(_date(");
+                            x.getRight().accept(this);
+                            print(")) <= 0");
+                            return false;
                         default:
                             break;
                     }
