@@ -594,6 +594,11 @@ public class TinyELLexer {
 		np = bp;
 		sp = 1;
 		char ch;
+		if (buf[bp + 1] == '@') {
+		    hash = 31 * hash + '@';
+		    bp++;
+            sp++;
+		}
 		for (;;) {
 			ch = buf[++bp];
 

@@ -72,6 +72,39 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 
 	@Override
 	public boolean visit(TinyELBinaryOpExpr x) {
+	    switch (x.getOperator()) {
+            case Add:
+                print(" _add(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
+            case Multiply:
+                print(" _multi(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
+            case Divide:
+                print(" _div(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
+            case Subtract:
+                print(" _sub(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
+            default:
+                break;
+        }
+	    
 		if (x.getLeft() instanceof TinyELBinaryOpExpr) {
 			TinyELBinaryOpExpr left = (TinyELBinaryOpExpr) x.getLeft();
 			if (left.getOperator().priority > x.getOperator().priority) {

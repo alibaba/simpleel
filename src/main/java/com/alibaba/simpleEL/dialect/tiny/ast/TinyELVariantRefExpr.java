@@ -3,13 +3,13 @@ package com.alibaba.simpleEL.dialect.tiny.ast;
 import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELAstVisitor;
 
 public class TinyELVariantRefExpr extends TinyELExpr {
-	private String name;
+    private String name;
 
-	public TinyELVariantRefExpr() {
+    public TinyELVariantRefExpr() {
 
-	}
+    }
 
-	public TinyELVariantRefExpr(String name) {
+    public TinyELVariantRefExpr(String name) {
         if (name.startsWith("@@")) {
             this.name = name;
         } else if (name.startsWith("@")) {
@@ -18,13 +18,13 @@ public class TinyELVariantRefExpr extends TinyELExpr {
         } else {
             this.name = name;
         }
-	}
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
+    public void setName(String name) {
         if (name.startsWith("@@")) {
             this.name = name;
         } else if (name.startsWith("@")) {
@@ -33,7 +33,7 @@ public class TinyELVariantRefExpr extends TinyELExpr {
         } else {
             this.name = name;
         }
-	}
+    }
 
     public void output(StringBuffer buf) {
         buf.append(this.name);

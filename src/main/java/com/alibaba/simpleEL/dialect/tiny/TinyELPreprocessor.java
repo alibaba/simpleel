@@ -102,7 +102,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 
     public class JavaSourceGenVisitor extends TinyELOutputVisitor {
 
-        private Map<String, Object> localVariants = new HashMap<String, Object>();
+        protected Map<String, Object> localVariants = new HashMap<String, Object>();
 
         public JavaSourceGenVisitor(PrintWriter out){
             super(out);
@@ -285,58 +285,63 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
             return super.visit(x);
         }
 
-        public void visitMethodParameter(Class<?> type, TinyELExpr exp) {
+        public void visitMethodParameter(Class<?> type, TinyELExpr expr) {
+            if (type == String.class && expr instanceof TinyELStringExpr) {
+                expr.accept(this);
+                return;
+            }
+            
             if (boolean.class == type) {
                 out.print("_bool(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (String.class == type) {
                 out.print("_string(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (byte.class == type) {
                 out.print("_byte(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (short.class == type) {
                 out.print("_short(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (int.class == type) {
                 out.print("_int(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (long.class == type) {
                 out.print("_long(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (float.class == type) {
                 out.print("_float(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (double.class == type) {
                 out.print("_double(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (BigInteger.class == type) {
                 out.print("_bigInt(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (BigDecimal.class == type) {
                 out.print("_decimal(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (java.util.Date.class == type) {
                 out.print("_date(");
-                exp.accept(this);
+                expr.accept(this);
                 out.print(")");
             } else if (Object.class == type) {
-                exp.accept(this);
+                expr.accept(this);
             } else {
                 String className = TypeUtils.getClassName(type);
 
                 out.print("(" + className + ")");
-                exp.accept(this);
+                expr.accept(this);
             }
 
         }
@@ -389,12 +394,6 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             x.getRight().accept(this);
                             print(")) > 0");
                             return false;
-                        case Equality:
-                            x.getLeft().accept(this);
-                            print(".compareTo(_decimal(");
-                            x.getRight().accept(this);
-                            print(")) == 0");
-                            return false;
                         case GreaterThanOrEqual:
                             x.getLeft().accept(this);
                             print(".compareTo(_decimal(");
@@ -412,45 +411,6 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             print(".compareTo(_decimal(");
                             x.getRight().accept(this);
                             print(")) <＝ 0");
-                            return false;
-                        default:
-                            break;
-                    }
-                } else if (type == Date.class) {
-                    switch (x.getOperator()) {
-                        case Equality:
-                            if (x.getRight() instanceof TinyELStringExpr) {
-                                x.getLeft().accept(this);
-                                print(".equals(_date(");
-                                x.getRight().accept(this);
-                                print("))");
-                                return false;
-                            } else {
-                                break;
-                            }
-                        case GreaterThan:
-                            x.getLeft().accept(this);
-                            print(".compareTo(_date(");
-                            x.getRight().accept(this);
-                            print(")) > 0");
-                            return false;
-                        case GreaterThanOrEqual:
-                            x.getLeft().accept(this);
-                            print(".compareTo(_date(");
-                            x.getRight().accept(this);
-                            print(")) >= 0");
-                            return false;
-                        case LessThan:
-                            x.getLeft().accept(this);
-                            print(".compareTo(_date(");
-                            x.getRight().accept(this);
-                            print(")) < 0");
-                            return false;
-                        case LessThanOrEqual:
-                            x.getLeft().accept(this);
-                            print(".compareTo(_date(");
-                            x.getRight().accept(this);
-                            print(")) <= 0");
                             return false;
                         default:
                             break;
@@ -523,8 +483,9 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             break;
                     }
                 }
+             
             }
-
+            
             if (x.getOperator() == TinyELBinaryOperator.InstanceOf) {
                 if (x.getLeft() instanceof TinyELIdentifierExpr) {
                     TinyELIdentifierExpr ident = (TinyELIdentifierExpr) x.getLeft();

@@ -8,141 +8,142 @@ import java.util.Date;
 import java.util.Map;
 
 public class TypeUtils {
-	public static Boolean _bool(Object val) {
-		if (val == null) {
-			return null;
-		}
 
-		return (Boolean) val;
-	}
+    public static Boolean _bool(Object val) {
+        if (val == null) {
+            return null;
+        }
 
-	public static String _string(Object val) {
-		Object value = val;
+        return (Boolean) val;
+    }
 
-		if (value == null) {
-			return null;
-		}
+    public static String _string(Object val) {
+        Object value = val;
 
-		return value.toString();
-	}
+        if (value == null) {
+            return null;
+        }
 
-	public static Byte _byte(Object val) {
-		if (val == null) {
-			return null;
-		}
-		
-		if (val instanceof Byte) {
-			return (Byte) val;
-		}
+        return value.toString();
+    }
 
-		return ((Number) val).byteValue();
-	}
+    public static Byte _byte(Object val) {
+        if (val == null) {
+            return null;
+        }
 
-	public static Short _short(Object val) {
-		if (val == null) {
-			return null;
-		}
+        if (val instanceof Byte) {
+            return (Byte) val;
+        }
 
-		if (val instanceof Short) {
-			return (Short) val;
-		}
+        return ((Number) val).byteValue();
+    }
 
-		return ((Number) val).shortValue();
-	}
+    public static Short _short(Object val) {
+        if (val == null) {
+            return null;
+        }
 
-	public static Integer _int(Object val) {
-		if (val == null) {
-			return null;
-		}
+        if (val instanceof Short) {
+            return (Short) val;
+        }
 
-		if (val instanceof Integer) {
-			return (Integer) val;
-		}
+        return ((Number) val).shortValue();
+    }
 
-		return ((Number) val).intValue();
-	}
+    public static Integer _int(Object val) {
+        if (val == null) {
+            return null;
+        }
 
-	public static Long _long(Object val) {
-		if (val == null) {
-			return null;
-		}
+        if (val instanceof Integer) {
+            return (Integer) val;
+        }
 
-		if (val instanceof Long) {
-			return (Long) val;
-		}
+        return ((Number) val).intValue();
+    }
 
-		return ((Number) val).longValue();
-	}
+    public static Long _long(Object val) {
+        if (val == null) {
+            return null;
+        }
 
-	public static Float _float(Object val) {
-		if (val == null) {
-			return null;
-		}
+        if (val instanceof Long) {
+            return (Long) val;
+        }
 
-		if (val instanceof Float) {
-			return (Float) val;
-		}
+        return ((Number) val).longValue();
+    }
 
-		return ((Number) val).floatValue();
-	}
+    public static Float _float(Object val) {
+        if (val == null) {
+            return null;
+        }
 
-	public static Double _double(Object val) {
-		if (val == null) {
-			return null;
-		}
-		
-		if (val instanceof Double) {
-			return (Double) val;
-		}
+        if (val instanceof Float) {
+            return (Float) val;
+        }
 
-		return ((Number) val).doubleValue();
-	}
+        return ((Number) val).floatValue();
+    }
 
-	public static BigInteger _bigInt(Object val) {
-		if (val == null) {
-			return null;
-		}
+    public static Double _double(Object val) {
+        if (val == null) {
+            return null;
+        }
 
-		if (val instanceof BigInteger) {
-			return (BigInteger) val;
-		}
+        if (val instanceof Double) {
+            return (Double) val;
+        }
 
-		if (val instanceof String) {
-			return new BigInteger((String) val);
-		}
+        return ((Number) val).doubleValue();
+    }
 
-		return BigInteger.valueOf(((Number) val).longValue());
-	}
+    public static BigInteger _bigInt(Object val) {
+        if (val == null) {
+            return null;
+        }
 
-	public static Date _date(Object val) {
-		if (val == null) {
-			return null;
-		}
+        if (val instanceof BigInteger) {
+            return (BigInteger) val;
+        }
 
-		if (val instanceof Date) {
-			return (Date) val;
-		}
+        if (val instanceof String) {
+            return new BigInteger((String) val);
+        }
 
-		if (val instanceof Number) {
-			return new Date(((Number) val).longValue());
-		}
+        return BigInteger.valueOf(((Number) val).longValue());
+    }
 
-		throw new ELException("");
-	}
-	
+    public static Date _date(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Date) {
+            return (Date) val;
+        }
+
+        if (val instanceof Number) {
+            return new Date(((Number) val).longValue());
+        }
+
+        throw new ELException("");
+    }
+
     public static Date _date(String text) {
         if (text == null || text.length() == 0) {
             return null;
         }
-        
+
         String format;
-        
+
         if (text.length() == "yyyy-MM-dd".length()) {
             format = "yyyy-MM-dd";
         } else {
             format = "yyyy-MM-dd HH:mm:ss";
         }
-        
+
         try {
             return new SimpleDateFormat(format).parse(text);
         } catch (ParseException e) {
@@ -150,107 +151,206 @@ public class TypeUtils {
         }
     }
 
-
-	public static BigDecimal _decimal(Object val) {
-		if (val == null) {
-			return null;
-		}
-
-		if (val instanceof BigDecimal) {
-			return (BigDecimal) val;
-		}
-
-		if (val instanceof String) {
-			return new BigDecimal((String) val);
-		}
-
-		return BigDecimal.valueOf(((Number) val).longValue());
-	}
-	
-	public static Object _sum(Object a, Object b) {
-	    if (a == null) {
-	        return b;
-	    }
-	    
-	    if (b == null) {
-	        return a;
-	    }
-	    
-	    if (a instanceof BigDecimal || b instanceof BigDecimal) {
-	        return _decimal(a).add(_decimal(b));
-	    }
-	    
-	    if (a instanceof BigInteger || b instanceof BigInteger) {
-            return _bigInt(a).add(_bigInt(b));
+    public static BigDecimal _decimal(Object val) {
+        if (val == null) {
+            return null;
         }
-	    
-	    if (a instanceof Long || b instanceof Long) {
-	        return _long(a) + _long(b);
-	    }
-	    
-	    if (a instanceof Integer || b instanceof Integer) {
-	        return _int(a) + _int(b);
-	    }
-	    
-	    if (a instanceof Short || b instanceof Short) {
-	        return _short(a) + _short(b);
-	    }
-	    
-	    if (a instanceof Byte || b instanceof Byte) {
-	        return _byte(a) + _byte(b);
-	    }
-	    
-	    throw new IllegalArgumentException();
-	}
-	
-	public static Object _div(Object a, Object b) {
+
+        if (val instanceof BigDecimal) {
+            return (BigDecimal) val;
+        }
+
+        if (val instanceof String) {
+            return new BigDecimal((String) val);
+        }
+
+        return BigDecimal.valueOf(((Number) val).longValue());
+    }
+
+    public static Object _sum(Object a, Object b) {
         if (a == null) {
             return b;
         }
-        
+
         if (b == null) {
             return a;
         }
-        
+
+        if (a instanceof BigDecimal || b instanceof BigDecimal) {
+            return _decimal(a).add(_decimal(b));
+        }
+
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            return _bigInt(a).add(_bigInt(b));
+        }
+
+        if (a instanceof Long || b instanceof Long) {
+            return _long(a) + _long(b);
+        }
+
+        if (a instanceof Integer || b instanceof Integer) {
+            return _int(a) + _int(b);
+        }
+
+        if (a instanceof Short || b instanceof Short) {
+            return _short(a) + _short(b);
+        }
+
+        if (a instanceof Byte || b instanceof Byte) {
+            return _byte(a) + _byte(b);
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    public static Object _div(Object a, Object b) {
+        if (a == null || b == null) {
+            return null;
+        }
+
         if (a instanceof BigDecimal || b instanceof BigDecimal) {
             return _decimal(a).divide(_decimal(b));
         }
-        
+
         if (a instanceof BigInteger || b instanceof BigInteger) {
             return _bigInt(a).divide(_bigInt(b));
         }
-        
+
         if (a instanceof Long || b instanceof Long) {
             return _long(a) / _long(b);
         }
-        
+
         if (a instanceof Integer || b instanceof Integer) {
             return _int(a) / _int(b);
         }
-        
+
         if (a instanceof Short || b instanceof Short) {
             return _short(a) / _short(b);
         }
-        
+
         if (a instanceof Byte || b instanceof Byte) {
             return _byte(a) / _byte(b);
         }
-        
+
         throw new IllegalArgumentException();
     }
-	
-	public static String getClassName(Class<?> clazz) {
-		if (clazz.isArray()) {
-			return getClassName(clazz.getComponentType()) + "[]";
-		}
 
-		String className = clazz.getName();
-		className = className.replaceAll("\\$", "."); // inner class
-		return className;
-	}
+    public static Object _add(Object a, Object b) {
+        if (a == null) {
+            return b;
+        }
 
-	public static Object putAndGet(Map<String, Object> ctx, String name, Object value) {
-		ctx.put(name, value);
-		return value;
-	}
+        if (b == null) {
+            return a;
+        }
+
+        if (a instanceof BigDecimal || b instanceof BigDecimal) {
+            return _decimal(a).add(_decimal(b));
+        }
+
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            return _bigInt(a).add(_bigInt(b));
+        }
+
+        if (a instanceof Long || b instanceof Long) {
+            return _long(a) + _long(b);
+        }
+
+        if (a instanceof Integer || b instanceof Integer) {
+            return _int(a) + _int(b);
+        }
+
+        if (a instanceof Short || b instanceof Short) {
+            return _short(a) + _short(b);
+        }
+
+        if (a instanceof Byte || b instanceof Byte) {
+            return _byte(a) + _byte(b);
+        }
+
+        throw new IllegalArgumentException();
+    }
+    
+    public static Object _sub(Object a, Object b) {
+        if (a == null) {
+            return null;
+        }
+
+        if (b == null) {
+            return a;
+        }
+
+        if (a instanceof BigDecimal || b instanceof BigDecimal) {
+            return _decimal(a).subtract(_decimal(b));
+        }
+
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            return _bigInt(a).subtract(_bigInt(b));
+        }
+
+        if (a instanceof Long || b instanceof Long) {
+            return _long(a) - _long(b);
+        }
+
+        if (a instanceof Integer || b instanceof Integer) {
+            return _int(a) - _int(b);
+        }
+
+        if (a instanceof Short || b instanceof Short) {
+            return _short(a) - _short(b);
+        }
+
+        if (a instanceof Byte || b instanceof Byte) {
+            return _byte(a) - _byte(b);
+        }
+
+        throw new IllegalArgumentException();
+    }
+    
+    public static Object _multi(Object a, Object b) {
+        if (a == null || b == null) {
+            return null;
+        }
+
+        if (a instanceof BigDecimal || b instanceof BigDecimal) {
+            return _decimal(a).multiply(_decimal(b));
+        }
+
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            return _bigInt(a).multiply(_bigInt(b));
+        }
+
+        if (a instanceof Long || b instanceof Long) {
+            return _long(a) * _long(b);
+        }
+
+        if (a instanceof Integer || b instanceof Integer) {
+            return _int(a) * _int(b);
+        }
+
+        if (a instanceof Short || b instanceof Short) {
+            return _short(a) * _short(b);
+        }
+
+        if (a instanceof Byte || b instanceof Byte) {
+            return _byte(a) * _byte(b);
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    public static String getClassName(Class<?> clazz) {
+        if (clazz.isArray()) {
+            return getClassName(clazz.getComponentType()) + "[]";
+        }
+
+        String className = clazz.getName();
+        className = className.replaceAll("\\$", "."); // inner class
+        return className;
+    }
+
+    public static Object putAndGet(Map<String, Object> ctx, String name, Object value) {
+        ctx.put(name, value);
+        return value;
+    }
 }
