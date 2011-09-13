@@ -127,6 +127,10 @@ public class TypeUtils {
         if (val instanceof Number) {
             return new Date(((Number) val).longValue());
         }
+        
+        if (val instanceof String) {
+            return _date((String) val);
+        }
 
         throw new ELException("");
     }
@@ -267,6 +271,25 @@ public class TypeUtils {
         if (a instanceof Byte || b instanceof Byte) {
             return _byte(a) > _byte(b);
         }
+        
+        if (a instanceof Date || b instanceof Date) {
+            Date d1 = _date(a);
+            Date d2 = _date(b);
+            
+            if (d1 == d2) {
+                return false;
+            }
+            
+            if (d1 == null) {
+                return false;
+            }
+            
+            if (d2 == null) {
+                return true;
+            }
+            
+            return d1.compareTo(d2) > 0;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -310,6 +333,25 @@ public class TypeUtils {
 
         if (a instanceof Byte || b instanceof Byte) {
             return _byte(a) < _byte(b);
+        }
+        
+        if (a instanceof Date || b instanceof Date) {
+            Date d1 = _date(a);
+            Date d2 = _date(b);
+            
+            if (d1 == d2) {
+                return false;
+            }
+            
+            if (d1 == null) {
+                return true;
+            }
+            
+            if (d2 == null) {
+                return false;
+            }
+            
+            return d1.compareTo(d2) < 0;
         }
 
         throw new IllegalArgumentException();
@@ -358,6 +400,21 @@ public class TypeUtils {
 
         if (a instanceof Byte || b instanceof Byte) {
             return _byte(a) == _byte(b);
+        }
+        
+        if (a instanceof Date || b instanceof Date) {
+            Date d1 = _date(a);
+            Date d2 = _date(b);
+            
+            if (d1 == d2) {
+                return true;
+            }
+            
+            if (d1 == null || d2 == null) {
+                return false;
+            }
+            
+            return d1.equals(d2);
         }
 
         throw new IllegalArgumentException();
