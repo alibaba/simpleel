@@ -101,6 +101,41 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
                 x.getRight().accept(this);
                 print(")");
                 return false;
+            case GreaterThan:
+                print(" _gt(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
+            case GreaterThanOrEqual:
+                print(" _gteq(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
+            case LessThan:
+                print(" _lt(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
+            case LessThanOrEqual:
+                print(" _lteq(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
+            case Equality:
+                print(" _eq(");
+                x.getLeft().accept(this);
+                print(", ");
+                x.getRight().accept(this);
+                print(")");
+                return false;
             default:
                 break;
         }

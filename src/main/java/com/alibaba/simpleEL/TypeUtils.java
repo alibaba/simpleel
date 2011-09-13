@@ -234,6 +234,134 @@ public class TypeUtils {
 
         throw new IllegalArgumentException();
     }
+    
+    public static boolean _gt(Object a, Object b) {
+        if (a == null) {
+            return false;
+        }
+        
+        if (b == null) {
+            return true;
+        }
+
+        if (a instanceof BigDecimal || b instanceof BigDecimal) {
+            return _decimal(a).compareTo(_decimal(b)) > 0;
+        }
+
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            return _bigInt(a).compareTo(_bigInt(b)) > 0;
+        }
+
+        if (a instanceof Long || b instanceof Long) {
+            return _long(a) > _long(b);
+        }
+
+        if (a instanceof Integer || b instanceof Integer) {
+            return _int(a) > _int(b);
+        }
+
+        if (a instanceof Short || b instanceof Short) {
+            return _short(a) > _short(b);
+        }
+
+        if (a instanceof Byte || b instanceof Byte) {
+            return _byte(a) > _byte(b);
+        }
+
+        throw new IllegalArgumentException();
+    }
+    
+    public static boolean _gteq(Object a, Object b) {
+        if (_eq(a, b)) {
+            return true;
+        }
+        
+        return _gt(a, b);
+    }
+    
+    public static boolean _lt(Object a, Object b) {
+        if (a == null) {
+            return true;
+        }
+        
+        if (b == null) {
+            return false;
+        }
+
+        if (a instanceof BigDecimal || b instanceof BigDecimal) {
+            return _decimal(a).compareTo(_decimal(b)) < 0;
+        }
+
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            return _bigInt(a).compareTo(_bigInt(b)) < 0;
+        }
+
+        if (a instanceof Long || b instanceof Long) {
+            return _long(a) < _long(b);
+        }
+
+        if (a instanceof Integer || b instanceof Integer) {
+            return _int(a) < _int(b);
+        }
+
+        if (a instanceof Short || b instanceof Short) {
+            return _short(a) < _short(b);
+        }
+
+        if (a instanceof Byte || b instanceof Byte) {
+            return _byte(a) < _byte(b);
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    public static boolean _lteq(Object a, Object b) {
+        if (_eq(a, b)) {
+            return true;
+        }
+        
+        return _lt(a, b);
+    }
+    
+    public static boolean _eq(Object a, Object b) {
+        if (a == b) {
+            return true;
+        }
+        
+        if (b == null || b == null) {
+            return false;
+        }
+        
+        if (a.equals(b)) {
+            return true;
+        }
+
+        if (a instanceof BigDecimal || b instanceof BigDecimal) {
+            return _decimal(a).compareTo(_decimal(b)) == 0;
+        }
+
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            return _bigInt(a).compareTo(_bigInt(b)) == 0;
+        }
+
+        if (a instanceof Long || b instanceof Long) {
+            return _long(a) == _long(b);
+        }
+
+        if (a instanceof Integer || b instanceof Integer) {
+            return _int(a) == _int(b);
+        }
+
+        if (a instanceof Short || b instanceof Short) {
+            return _short(a) == _short(b);
+        }
+
+        if (a instanceof Byte || b instanceof Byte) {
+            return _byte(a) == _byte(b);
+        }
+
+        throw new IllegalArgumentException();
+    }
 
     public static Object _add(Object a, Object b) {
         if (a == null) {

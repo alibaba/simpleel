@@ -23,7 +23,7 @@ import com.alibaba.simpleEL.dialect.tiny.visitor.TinyELOutputVisitor;
 public class SumTest extends TestCase {
     private final static ThreadLocal<List<Map<String, Object>>> dataListLocal = new ThreadLocal<List<Map<String, Object>>>();
     
-    public void test_0() throws Exception {
+    public void test_sum() throws Exception {
         TinyELEvalService service = new TinyELEvalService();
         service.setPreprocessor(new MyTinyELPrerocessor());
 
