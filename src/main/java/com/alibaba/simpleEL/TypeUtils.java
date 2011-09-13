@@ -395,6 +395,10 @@ public class TypeUtils {
         if (a instanceof Byte || b instanceof Byte) {
             return _byte(a) + _byte(b);
         }
+        
+        if (a instanceof String || b instanceof String) {
+            return _string(a) + _string(b);
+        }
 
         throw new IllegalArgumentException();
     }

@@ -350,6 +350,15 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
         public boolean visit(TinyELBinaryOpExpr x) {
             x.getLeft().setParentExpr(x);
             x.getRight().setParentExpr(x);
+            
+            if (getType(x.getLeft()) == String.class || getType(x.getRight()) == String.class) {
+                out.print("(");
+                x.getLeft().accept(this);
+                out.print(" + ");
+                x.getRight().accept(this);
+                out.print(")");
+                return false;
+            }
 
             if (x.getLeft() instanceof TinyELIdentifierExpr) {
                 TinyELIdentifierExpr leftIdent = (TinyELIdentifierExpr) x.getLeft();
