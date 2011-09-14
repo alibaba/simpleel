@@ -240,14 +240,14 @@ public class QLExprParser extends AbstractQLParser {
     }
 
     public final QLExpr xor() {
-        QLExpr expr = multiplicative();
+        QLExpr expr = and();
         return xorRest(expr);
     }
 
     public final QLExpr xorRest(QLExpr expr) {
         while (lexer.token() == QLToken.XOR) {
             lexer.nextToken();
-            QLExpr rightExp = and();
+            QLExpr rightExp = xor();
             expr = new QLBinaryOpExpr(expr, QLBinaryOperator.BooleanXor, rightExp);
         }
         return expr;
@@ -261,7 +261,7 @@ public class QLExprParser extends AbstractQLParser {
     public final QLExpr orRest(QLExpr expr) {
         while (lexer.token() == QLToken.OR) {
             lexer.nextToken();
-            QLExpr rightExp = xor();
+            QLExpr rightExp = or();
             expr = new QLBinaryOpExpr(expr, QLBinaryOperator.BooleanOr, rightExp);
         }
         return expr;

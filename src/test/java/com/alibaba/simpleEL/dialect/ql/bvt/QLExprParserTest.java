@@ -66,9 +66,9 @@ public class QLExprParserTest extends TestCase {
     }
     
     public void test_9() throws Exception {
-        QLExprParser parser = new QLExprParser("a <= -1 and b >= +1");
+        QLExprParser parser = new QLExprParser("a <= -1 and b >= +1 and c < +1.2 and D > -7.1");
         QLExpr expr = parser.expr();
-        Assert.assertEquals("a <= -1 AND b >= 1", expr.toString());
+        Assert.assertEquals("a <= -1 AND b >= 1 AND c < 1.2 AND D > -7.1", expr.toString());
     }
     
     public void test_10() throws Exception {
@@ -87,5 +87,17 @@ public class QLExprParserTest extends TestCase {
         QLExprParser parser = new QLExprParser("a not like 'aaa'");
         QLExpr expr = parser.expr();
         Assert.assertEquals("a NOT LIKE 'aaa'", expr.toString());
+    }
+    
+    public void test_13() throws Exception {
+        QLExprParser parser = new QLExprParser("a <= b or c >= d");
+        QLExpr expr = parser.expr();
+        Assert.assertEquals("a <= b OR c >= d", expr.toString());
+    }
+    
+    public void test_14() throws Exception {
+        QLExprParser parser = new QLExprParser("a <= b xor c >= d");
+        QLExpr expr = parser.expr();
+        Assert.assertEquals("a <= b XOR c >= d", expr.toString());
     }
 }
