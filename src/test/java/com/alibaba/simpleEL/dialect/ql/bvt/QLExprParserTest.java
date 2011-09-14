@@ -53,9 +53,9 @@ public class QLExprParserTest extends TestCase {
     
     
     public void test_7() throws Exception {
-        QLExprParser parser = new QLExprParser("age >= 30");
+        QLExprParser parser = new QLExprParser("age >= 30.23");
         QLExpr expr = parser.expr();
-        Assert.assertEquals("age >= 30", expr.toString());
+        Assert.assertEquals("age >= 30.23", expr.toString());
     }
     
     
@@ -63,5 +63,29 @@ public class QLExprParserTest extends TestCase {
         QLExprParser parser = new QLExprParser("a <= b and c >= d");
         QLExpr expr = parser.expr();
         Assert.assertEquals("a <= b AND c >= d", expr.toString());
+    }
+    
+    public void test_9() throws Exception {
+        QLExprParser parser = new QLExprParser("a <= -1 and b >= +1");
+        QLExpr expr = parser.expr();
+        Assert.assertEquals("a <= -1 AND b >= 1", expr.toString());
+    }
+    
+    public void test_10() throws Exception {
+        QLExprParser parser = new QLExprParser("a IS NULL");
+        QLExpr expr = parser.expr();
+        Assert.assertEquals("a IS NULL", expr.toString());
+    }
+    
+    public void test_11() throws Exception {
+        QLExprParser parser = new QLExprParser("a like 'aaa'");
+        QLExpr expr = parser.expr();
+        Assert.assertEquals("a LIKE 'aaa'", expr.toString());
+    }
+    
+    public void test_12() throws Exception {
+        QLExprParser parser = new QLExprParser("a not like 'aaa'");
+        QLExpr expr = parser.expr();
+        Assert.assertEquals("a NOT LIKE 'aaa'", expr.toString());
     }
 }
