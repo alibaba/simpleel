@@ -370,7 +370,7 @@ public class TypeUtils {
             return true;
         }
         
-        if (b == null || b == null) {
+        if (a == null || b == null) {
             return false;
         }
         
