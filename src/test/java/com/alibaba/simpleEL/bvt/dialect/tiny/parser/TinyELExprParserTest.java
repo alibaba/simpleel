@@ -132,11 +132,11 @@ public class TinyELExprParserTest extends TestCase {
     }
     
     public void test_sub() throws Exception {
-        String text = "1 + 2.0 + -1 + -1.3";
+        String text = "+1 + +2.0 + -1 + -1.3";
         TinyELExprParser parser = new TinyELExprParser(text);
         TinyELExpr expr = parser.expr();
 
-        Assert.assertEquals(expr.toString(), text);
+        Assert.assertEquals("1 + 2.0 + -1 + -1.3", expr.toString());
 
     }
 }
