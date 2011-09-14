@@ -1,9 +1,11 @@
-package com.alibaba.simpleEL.dialect.ql;
+package com.alibaba.simpleEL.dialect.ql.bvt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.alibaba.simpleEL.dialect.ql.QLEvalService;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -25,7 +27,7 @@ public class QLServiceTest extends TestCase {
 		public void setName(String name) {this.name = name;}
 	}
 
-	public void test_0 () throws Exception {
+	public void test_select() throws Exception {
 		QLEvalService service = new QLEvalService();
 		
 		List<Person> srcCollection = new ArrayList<Person>();
