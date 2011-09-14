@@ -100,4 +100,10 @@ public class QLExprParserTest extends TestCase {
         QLExpr expr = parser.expr();
         Assert.assertEquals("a <= b XOR c >= d", expr.toString());
     }
+    
+    public void test_15() throws Exception {
+        QLExprParser parser = new QLExprParser("(a + b) / c");
+        QLExpr expr = parser.expr();
+        Assert.assertEquals("(a + b) / c", expr.toString());
+    }
 }

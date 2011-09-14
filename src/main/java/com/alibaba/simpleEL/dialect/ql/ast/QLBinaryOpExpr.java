@@ -1,10 +1,13 @@
 package com.alibaba.simpleEL.dialect.ql.ast;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
+import com.alibaba.simpleEL.dialect.ql.visitor.QLOutputAstVisitor;
 
 
 public class QLBinaryOpExpr extends QLExpr {
-	  private static final long serialVersionUID = 1L;
 	    public QLExpr left;
 	    public QLExpr right;
 	    public QLBinaryOperator operator;
@@ -52,11 +55,15 @@ public class QLBinaryOpExpr extends QLExpr {
 	    }
 	    
 	    public void output(StringBuffer buf) {
-	        this.left.output(buf);
-	        buf.append(" ");
-	        buf.append(this.operator.name);
-	        buf.append(" ");
-	        this.right.output(buf);
+	        StringWriter out = new StringWriter();
+	        PrintWriter printOut = new PrintWriter(out);
+	        
+	        QLOutputAstVisitor visitor = new QLOutputAstVisitor(printOut);
+	        this.accept(visitor);
+	        
+	        printOut.flush();
+	        
+	        buf.append(out.toString());
 	    }
 
 	    protected void accept0(QLAstVisitor visitor) {
