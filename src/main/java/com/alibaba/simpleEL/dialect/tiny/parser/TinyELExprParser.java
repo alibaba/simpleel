@@ -180,13 +180,13 @@ public class TinyELExprParser {
     public TinyELExpr additiveRest(TinyELExpr expr) {
         if (lexer.token() == TinyELToken.PLUS) {
             lexer.nextToken();
-            TinyELExpr rightExp = additive();
+            TinyELExpr rightExp = multiplicative();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Add, rightExp);
             expr = additiveRest(expr);
         } else if (lexer.token() == TinyELToken.SUB) {
             lexer.nextToken();
-            TinyELExpr rightExp = additive();
+            TinyELExpr rightExp = multiplicative();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Subtract, rightExp);
             expr = additiveRest(expr);
