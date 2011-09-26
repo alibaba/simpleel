@@ -101,17 +101,17 @@ public class TinyELExprParser {
     public TinyELExpr multiplicativeRest(TinyELExpr expr) {
         if (lexer.token() == TinyELToken.STAR) {
             lexer.nextToken();
-            TinyELExpr rightExp = multiplicative();
+            TinyELExpr rightExp = primary();
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Multiply, rightExp);
             expr = multiplicativeRest(expr);
         } else if (lexer.token() == TinyELToken.SLASH) {
             lexer.nextToken();
-            TinyELExpr rightExp = multiplicative();
+            TinyELExpr rightExp = primary();
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Divide, rightExp);
             expr = multiplicativeRest(expr);
         } else if (lexer.token() == TinyELToken.PERCENT) {
             lexer.nextToken();
-            TinyELExpr rightExp = multiplicative();
+            TinyELExpr rightExp = primary();
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Modulus, rightExp);
             expr = multiplicativeRest(expr);
         }
