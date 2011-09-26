@@ -158,12 +158,12 @@ public class TinyELExprParser {
         TinyELExpr rightExp;
         if (lexer.token() == TinyELToken.EQEQ) {
             lexer.nextToken();
-            rightExp = equality();
+            rightExp = relational();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.Equality, rightExp);
         } else if (lexer.token() == TinyELToken.BANGEQ) {
             lexer.nextToken();
-            rightExp = equality();
+            rightExp = relational();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.NotEqual, rightExp);
         }
@@ -203,13 +203,13 @@ public class TinyELExprParser {
     public TinyELExpr shiftRest(TinyELExpr expr) {
         if (lexer.token() == TinyELToken.LTLT) {
             lexer.nextToken();
-            TinyELExpr rightExp = shift();
+            TinyELExpr rightExp = additive();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LeftShift, rightExp);
             expr = shiftRest(expr);
         } else if (lexer.token() == TinyELToken.GTGT) {
             lexer.nextToken();
-            TinyELExpr rightExp = shift();
+            TinyELExpr rightExp = additive();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.RightShift, rightExp);
             expr = shiftRest(expr);
@@ -308,27 +308,27 @@ public class TinyELExprParser {
         TinyELExpr rightExp;
         if (lexer.token() == TinyELToken.LT) {
             lexer.nextToken();
-            rightExp = relational();
+            rightExp = shift();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LessThan, rightExp);
         } else if (lexer.token() == TinyELToken.LTEQ) {
             lexer.nextToken();
-            rightExp = relational();
+            rightExp = shift();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.LessThanOrEqual, rightExp);
         } else if (lexer.token() == TinyELToken.GT) {
             lexer.nextToken();
-            rightExp = relational();
+            rightExp = shift();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.GreaterThan, rightExp);
         } else if (lexer.token() == TinyELToken.GTEQ) {
             lexer.nextToken();
-            rightExp = relational();
+            rightExp = shift();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.GreaterThanOrEqual, rightExp);
         } else if (lexer.token() == TinyELToken.INSTNACEOF) {
             lexer.nextToken();
-            rightExp = relational();
+            rightExp = shift();
 
             expr = new TinyELBinaryOpExpr(expr, TinyELBinaryOperator.InstanceOf, rightExp);
         }
