@@ -402,6 +402,11 @@ public class TinyELExprParser {
                 primaryExpr = expr();
                 primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.PreDecrement);
                 break;
+            case BANG:
+                lexer.nextToken();
+                primaryExpr = expr();
+                primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.Not);
+                break;
             case NEW:
                 lexer.nextToken();
 

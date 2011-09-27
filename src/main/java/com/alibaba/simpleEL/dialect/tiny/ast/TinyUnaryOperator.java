@@ -1,6 +1,7 @@
 package com.alibaba.simpleEL.dialect.tiny.ast;
 
 public enum TinyUnaryOperator {
+    Not,
 	Plus,
 	Minus,
 	PreIncrement,

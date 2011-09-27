@@ -2,6 +2,7 @@ package com.alibaba.simpleEL;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -206,8 +207,23 @@ public class TypeUtils {
 
         throw new IllegalArgumentException();
     }
-
+    
     public static Object _div(Object a, Object b) {
+        if (a == null || b == null) {
+            return null;
+        }
+        
+        BigDecimal decimalA = _decimal(a);
+        BigDecimal decimalB = _decimal(b);
+
+        try {
+            return decimalA.divide(decimalB);
+        } catch (ArithmeticException ex) {
+            return decimalA.divide(decimalB, 4, RoundingMode.CEILING);
+        }
+    }
+
+    public static Object _div2(Object a, Object b) {
         if (a == null || b == null) {
             return null;
         }
