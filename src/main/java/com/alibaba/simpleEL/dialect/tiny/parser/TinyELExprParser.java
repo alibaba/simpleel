@@ -476,7 +476,6 @@ public class TinyELExprParser {
                         lexer.nextToken();
                         break;
                     default:
-                        lexer.nextToken();
                         primaryExpr = expr();
                         primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.Minus);
                         break;
@@ -494,7 +493,9 @@ public class TinyELExprParser {
                         lexer.nextToken();
                         break;
                     default:
-                        throw new ELException("TODO");
+                        primaryExpr = expr();
+                        primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.Plus);
+                        break;
                 }
                 break;
             case QUES:

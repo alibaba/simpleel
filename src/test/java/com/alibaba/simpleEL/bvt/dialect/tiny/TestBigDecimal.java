@@ -33,6 +33,7 @@ public class TestBigDecimal extends TestCase {
         Assert.assertEquals(new BigDecimal("100"), service.eval(ctx, "c++"));
         Assert.assertEquals(new BigDecimal("101"), service.eval(ctx, "c--"));
         Assert.assertEquals(new BigDecimal("100"), service.eval(ctx, "c"));
+        Assert.assertEquals(new BigDecimal("100"), service.eval(ctx, "+c"));
         
         Assert.assertEquals(Boolean.FALSE, service.eval(ctx, "@a > @b"));
         Assert.assertEquals(Boolean.FALSE, service.eval(ctx, "@a >= @b"));
