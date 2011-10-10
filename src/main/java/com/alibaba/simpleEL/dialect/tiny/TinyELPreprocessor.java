@@ -17,6 +17,7 @@ import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOpExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELBinaryOperator;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELIdentifierExpr;
+import com.alibaba.simpleEL.dialect.tiny.ast.TinyELLiteralExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELMethodInvokeExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELPropertyExpr;
 import com.alibaba.simpleEL.dialect.tiny.ast.TinyELStringExpr;
@@ -195,6 +196,17 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                 }
 
             }
+            
+            if (expr instanceof TinyELBinaryOpExpr) {
+                TinyELBinaryOpExpr binaryExpr = (TinyELBinaryOpExpr) expr;
+                Class<?> leftType = getType(binaryExpr.getLeft());
+                Class<?> rightType = getType(binaryExpr.getRight());
+                
+                if (leftType != null && leftType.equals(rightType)) {
+                    return leftType;
+                }
+            }
+            
             return null;
         }
 
@@ -265,9 +277,9 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                     out.print(")");
                 }
             }
-            
-            
-            if (x.getOwner() instanceof TinyELIdentifierExpr && x.getMethodName().equals("equals") && x.getParameters().size() == 1) {
+
+            if (x.getOwner() instanceof TinyELIdentifierExpr && x.getMethodName().equals("equals")
+                && x.getParameters().size() == 1) {
                 TinyELIdentifierExpr leftIdent = (TinyELIdentifierExpr) x.getOwner();
                 String varName = leftIdent.getName();
 
@@ -290,7 +302,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                 expr.accept(this);
                 return;
             }
-            
+
             if (boolean.class == type) {
                 out.print("_bool(");
                 expr.accept(this);
@@ -350,7 +362,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
         public boolean visit(TinyELBinaryOpExpr x) {
             x.getLeft().setParentExpr(x);
             x.getRight().setParentExpr(x);
-            
+
             if (getType(x.getLeft()) == String.class || getType(x.getRight()) == String.class) {
                 out.print("(");
                 x.getLeft().accept(this);
@@ -394,6 +406,12 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                         case Add:
                             x.getLeft().accept(this);
                             print(".add(_decimal(");
+                            x.getRight().accept(this);
+                            print("))");
+                            return false;
+                        case Subtract:
+                            x.getLeft().accept(this);
+                            print(".subtract(_decimal(");
                             x.getRight().accept(this);
                             print("))");
                             return false;
@@ -492,9 +510,9 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             break;
                     }
                 }
-             
+
             }
-            
+
             if (x.getOperator() == TinyELBinaryOperator.InstanceOf) {
                 if (x.getLeft() instanceof TinyELIdentifierExpr) {
                     TinyELIdentifierExpr ident = (TinyELIdentifierExpr) x.getLeft();
@@ -539,7 +557,32 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 
         @Override
         public boolean visit(TinyUnaryOpExpr x) {
-            if (x.getExpr() instanceof TinyELIdentifierExpr) {
+            TinyELExpr expr = x.getExpr();
+
+            if (expr instanceof TinyELLiteralExpr) {
+                return super.visit(x);
+            }
+
+            Class<?> type = getType(x.getExpr());
+
+            if (type == BigDecimal.class) {
+                switch (x.getOperator()) {
+                    case Plus:
+                        x.getExpr().accept(this);
+                        return false;
+                    case Minus:
+                        if (type == BigDecimal.class) {
+                            print("_decimal(");
+                            x.getExpr().accept(this);
+                            print(").negate()");
+                        }
+                        return false;
+                    default:
+                        break;
+                }
+            }
+
+            if (expr instanceof TinyELIdentifierExpr) {
                 TinyELIdentifierExpr identExpr = (TinyELIdentifierExpr) x.getExpr();
                 String varName = identExpr.getName();
 

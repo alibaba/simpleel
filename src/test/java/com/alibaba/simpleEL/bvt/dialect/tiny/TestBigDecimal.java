@@ -21,8 +21,11 @@ public class TestBigDecimal extends TestCase {
         ctx.put("b", new BigDecimal("456"));
         Assert.assertEquals(Boolean.FALSE, service.eval(ctx, "a > b"));
         Assert.assertEquals(Boolean.FALSE, service.eval(ctx, "a >= b"));
-        Assert.assertEquals(Boolean.TRUE, service.eval(ctx, "b >= a"));
-        Assert.assertEquals(Boolean.TRUE, service.eval(ctx, "b >= a"));
+        Assert.assertEquals(Boolean.TRUE, service.eval(ctx, "a < b"));
+        Assert.assertEquals(Boolean.TRUE, service.eval(ctx, "a <= b"));
+        Assert.assertEquals(new BigDecimal("579"), service.eval(ctx, "a + b"));
+        Assert.assertEquals(new BigDecimal("-333"), service.eval(ctx, "a - b"));
+        Assert.assertEquals(new BigDecimal("333"), service.eval(ctx, "-(a - b)"));
     }
 
     
