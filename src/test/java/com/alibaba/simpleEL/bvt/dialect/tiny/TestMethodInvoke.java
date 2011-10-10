@@ -1,6 +1,7 @@
 package com.alibaba.simpleEL.bvt.dialect.tiny;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -33,6 +34,8 @@ public class TestMethodInvoke extends TestCase {
         service.registerFunction(this.getClass().getMethod("f13", Boolean.class));
         service.registerFunction(this.getClass().getMethod("f14", Date.class));
         service.registerFunction(this.getClass().getMethod("f15", String.class));
+        service.registerFunction(this.getClass().getMethod("f16", BigInteger.class));
+        service.registerFunction(this.getClass().getMethod("f17", BigDecimal.class));
         service.registerFunction(this.getClass().getMethod("fn", String.class, Object[].class));
 
         HashMap<String, Object> ctx = new HashMap<String, Object>();
@@ -53,6 +56,8 @@ public class TestMethodInvoke extends TestCase {
         service.eval(ctx, "f13(a)");
         service.eval(ctx, "f14(a)");
         service.eval(ctx, "f15(d)");
+        service.eval(ctx, "f16(a)");
+        service.eval(ctx, "f17(a)");
         service.eval(ctx, "fn(d, a, b)");
     }
 
@@ -117,6 +122,14 @@ public class TestMethodInvoke extends TestCase {
     }
 
     public static Object f15(String v) {
+        return v;
+    }
+    
+    public static Object f16(BigInteger v) {
+        return v;
+    }
+    
+    public static Object f17(BigDecimal v) {
         return v;
     }
 
