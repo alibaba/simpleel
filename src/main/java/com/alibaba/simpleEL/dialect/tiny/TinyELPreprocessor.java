@@ -197,6 +197,17 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
 
             }
             
+            if (expr instanceof TinyELVariantRefExpr) {
+                TinyELVariantRefExpr ident = (TinyELVariantRefExpr) expr;
+                String name = ident.getName();
+
+                Class<?> type = variantResolver.getType(name);
+                if (type != null) {
+                    return type;
+                }
+
+            }
+            
             if (expr instanceof TinyELBinaryOpExpr) {
                 TinyELBinaryOpExpr binaryExpr = (TinyELBinaryOpExpr) expr;
                 Class<?> leftType = getType(binaryExpr.getLeft());

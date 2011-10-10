@@ -19,6 +19,7 @@ public class TestBigDecimal extends TestCase {
         Map<String, Object> ctx = new HashMap<String, Object>();
         ctx.put("a", new BigDecimal("123"));
         ctx.put("b", new BigDecimal("456"));
+        
         Assert.assertEquals(Boolean.FALSE, service.eval(ctx, "a > b"));
         Assert.assertEquals(Boolean.FALSE, service.eval(ctx, "a >= b"));
         Assert.assertEquals(Boolean.TRUE, service.eval(ctx, "a < b"));
@@ -26,6 +27,14 @@ public class TestBigDecimal extends TestCase {
         Assert.assertEquals(new BigDecimal("579"), service.eval(ctx, "a + b"));
         Assert.assertEquals(new BigDecimal("-333"), service.eval(ctx, "a - b"));
         Assert.assertEquals(new BigDecimal("333"), service.eval(ctx, "-(a - b)"));
+        
+        Assert.assertEquals(Boolean.FALSE, service.eval(ctx, "@a > @b"));
+        Assert.assertEquals(Boolean.FALSE, service.eval(ctx, "@a >= @b"));
+        Assert.assertEquals(Boolean.TRUE, service.eval(ctx, "@a < @b"));
+        Assert.assertEquals(Boolean.TRUE, service.eval(ctx, "@a <= @b"));
+        Assert.assertEquals(new BigDecimal("579"), service.eval(ctx, "@a + @b"));
+        Assert.assertEquals(new BigDecimal("-333"), service.eval(ctx, "@a - @b"));
+        Assert.assertEquals(new BigDecimal("333"), service.eval(ctx, "-(@a - @b)"));
     }
 
     
