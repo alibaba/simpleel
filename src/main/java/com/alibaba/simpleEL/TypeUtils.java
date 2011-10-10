@@ -574,4 +574,12 @@ public class TypeUtils {
         ctx.put(name, value);
         return value;
     }
+    
+    public static Date now() {
+        return new Date();
+    }
+    
+    public static long currentTimeMillis() {
+        return System.currentTimeMillis();
+    }
 }
