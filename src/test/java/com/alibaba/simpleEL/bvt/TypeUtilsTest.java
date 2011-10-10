@@ -1,11 +1,13 @@
 package com.alibaba.simpleEL.bvt;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+
+import org.junit.Test;
 
 import com.alibaba.simpleEL.TypeUtils;
 
-public class TypeUtilsTest extends TestCase {
+public class TypeUtilsTest {
+    @Test
 	public void test_0() throws Exception {
 		Assert.assertEquals(null, TypeUtils._bool(null));
 		Assert.assertEquals(null, TypeUtils._byte(null));
@@ -14,5 +16,13 @@ public class TypeUtilsTest extends TestCase {
 		Assert.assertEquals(null, TypeUtils._long(null));
 		Assert.assertEquals(null, TypeUtils._float(null));
 		Assert.assertEquals(null, TypeUtils._double(null));
+		
+		Assert.assertEquals(Boolean.TRUE, TypeUtils._bool(Boolean.TRUE));
+		Assert.assertEquals(Boolean.TRUE, TypeUtils._bool(1));
 	}
+    
+    @Test(expected=Exception.class)
+    public void test_error() throws Exception {
+        TypeUtils._bool(new Object());
+    }
 }
