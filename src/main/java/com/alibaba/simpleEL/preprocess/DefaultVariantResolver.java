@@ -27,21 +27,21 @@ public class DefaultVariantResolver implements VariantResolver {
 			throw new ELException("unkown variant : " + variant);
 		}
 		
-		if (boolean.class == type) {
+		if (Boolean.class == type || boolean.class == type) {
 			return "_bool(ctx.get(\"" + variant + "\"))";
 		} else if (String.class == type) {
 			return "_string(ctx.get(\"" + variant + "\"))";
-		} else if (byte.class == type) {
+		} else if (Byte.class == type || byte.class == type) {
 			return "_byte(ctx.get(\"" + variant + "\"))";
-		} else if (short.class == type) {
+		} else if (Short.class == type || short.class == type) {
 			return "_short(ctx.get(\"" + variant + "\"))";
-		} else if (int.class == type) {
+		} else if (Integer.class == type || int.class == type) {
 			return "_int(ctx.get(\"" + variant + "\"))";
-		} else if (long.class == type) {
+		} else if (Long.class == type || long.class == type) {
 			return "_long(ctx.get(\"" + variant + "\"))";
-		} else if (float.class == type) {
+		} else if (Float.class == type || float.class == type) {
 			return "_float(ctx.get(\"" + variant + "\"))";
-		} else if (double.class == type) {
+		} else if (Double.class == type || double.class == type) {
 			return "_double(ctx.get(\"" + variant + "\"))";
 		} else if (BigInteger.class == type) {
 			return "_bigInt(ctx.get(\"" + variant + "\"))";

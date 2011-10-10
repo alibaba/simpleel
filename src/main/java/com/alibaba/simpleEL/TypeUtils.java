@@ -14,8 +14,16 @@ public class TypeUtils {
         if (val == null) {
             return null;
         }
+        
+        if (val instanceof Boolean) {
+            return (Boolean) val;
+        }
+        
+        if (val instanceof Number) {
+            return ((Number) val).intValue() == 1;
+        }
 
-        return (Boolean) val;
+        throw new IllegalArgumentException();
     }
 
     public static String _string(Object val) {
@@ -167,6 +175,14 @@ public class TypeUtils {
 
         if (val instanceof String) {
             return new BigDecimal((String) val);
+        }
+        
+        if (val instanceof Float) {
+            return new BigDecimal((Float) val);
+        }
+        
+        if (val instanceof Double) {
+            return new BigDecimal((Double) val);
         }
 
         return BigDecimal.valueOf(((Number) val).longValue());

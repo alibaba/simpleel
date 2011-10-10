@@ -407,7 +407,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             x.getLeft().accept(this);
                             print(".compareTo(_decimal(");
                             x.getRight().accept(this);
-                            print(")) >＝ 0");
+                            print(")) >= 0");
                             return false;
                         case LessThan:
                             x.getLeft().accept(this);
@@ -419,7 +419,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             x.getLeft().accept(this);
                             print(".compareTo(_decimal(");
                             x.getRight().accept(this);
-                            print(")) <＝ 0");
+                            print(")) <= 0");
                             return false;
                         default:
                             break;
@@ -474,7 +474,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             x.getLeft().accept(this);
                             print(".compareTo(_decimal(");
                             x.getRight().accept(this);
-                            print(")) >＝ 0");
+                            print(")) >= 0");
                             return false;
                         case LessThan:
                             x.getLeft().accept(this);
@@ -486,7 +486,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                             x.getLeft().accept(this);
                             print(".compareTo(_decimal(");
                             x.getRight().accept(this);
-                            print(")) <＝ 0");
+                            print(")) <= 0");
                             return false;
                         default:
                             break;
