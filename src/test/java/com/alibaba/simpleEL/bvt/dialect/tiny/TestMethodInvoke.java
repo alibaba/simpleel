@@ -15,7 +15,8 @@ public class TestMethodInvoke extends TestCase {
         TinyELEvalService service = new TinyELEvalService();
         service.regsiterVariant(BigDecimal.class, "a", "b", "c");
         service.regsiterVariant(Date.class, "d");
-        
+        service.regsiterVariant(Class.class, "t");
+
         service.registerFunction(this.getClass().getMethod("f0", byte.class));
         service.registerFunction(this.getClass().getMethod("f1", short.class));
         service.registerFunction(this.getClass().getMethod("f2", int.class));
@@ -36,6 +37,7 @@ public class TestMethodInvoke extends TestCase {
         service.registerFunction(this.getClass().getMethod("f15", String.class));
         service.registerFunction(this.getClass().getMethod("f16", BigInteger.class));
         service.registerFunction(this.getClass().getMethod("f17", BigDecimal.class));
+        service.registerFunction(this.getClass().getMethod("f18", Class.class));
         service.registerFunction(this.getClass().getMethod("fn", String.class, Object[].class));
 
         HashMap<String, Object> ctx = new HashMap<String, Object>();
@@ -58,6 +60,7 @@ public class TestMethodInvoke extends TestCase {
         service.eval(ctx, "f15(d)");
         service.eval(ctx, "f16(a)");
         service.eval(ctx, "f17(a)");
+        service.eval(ctx, "f18(t)");
         service.eval(ctx, "fn(d, a, b)");
     }
 
@@ -124,16 +127,21 @@ public class TestMethodInvoke extends TestCase {
     public static Object f15(String v) {
         return v;
     }
-    
+
     public static Object f16(BigInteger v) {
         return v;
     }
-    
+
     public static Object f17(BigDecimal v) {
+        return v;
+    }
+
+    public static Object f18(Class<?> v) {
         return v;
     }
 
     public static Object fn(String v, Object... objects) {
         return v;
     }
+
 }
