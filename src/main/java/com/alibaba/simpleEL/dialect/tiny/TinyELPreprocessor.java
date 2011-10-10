@@ -608,34 +608,34 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                     case PreIncrement:
                         print("putAndGet(ctx, \"");
                         print(varName);
-                        print("\", ");
+                        print("\", _add(");
                         identExpr.accept(this);
-                        print(" + 1");
-                        print(")");
+                        print(", 1");
+                        print("))");
                         return false;
                     case PostIncrement:
                         print("ctx.put(\"");
                         print(varName);
-                        print("\", ");
+                        print("\", _add(");
                         identExpr.accept(this);
-                        print(" + 1");
-                        print(")");
+                        print(", 1");
+                        print("))");
                         return false;
                     case PreDecrement:
                         print("putAndGet(ctx, \"");
                         print(varName);
-                        print("\", ");
+                        print("\", _sub(");
                         identExpr.accept(this);
-                        print(" - 1");
-                        print(")");
+                        print(", 1");
+                        print("))");
                         return false;
                     case PostDecrement:
                         print("ctx.put(\"");
                         print(varName);
-                        print("\", ");
+                        print("\", _sub(");
                         identExpr.accept(this);
-                        print(" - 1");
-                        print(")");
+                        print(", 1");
+                        print("))");
                         return false;
                     default:
                         throw new ELException("TOOD");
@@ -657,34 +657,34 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                     case PreIncrement:
                         print("putAndGet(ctx, \"");
                         print(varName);
-                        print("\", ");
+                        print("\", _add(");
                         var.accept(this);
-                        print(" + 1");
-                        print(")");
+                        print(", 1");
+                        print("))");
                         return false;
                     case PostIncrement:
                         print("ctx.put(\"");
                         print(varName);
-                        print("\", ");
+                        print("\", _add(");
                         var.accept(this);
-                        print(" + 1");
-                        print(")");
+                        print(", 1");
+                        print("))");
                         return false;
                     case PreDecrement:
                         print("putAndGet(ctx, \"");
                         print(varName);
-                        print("\", ");
+                        print("\", _sub(");
                         var.accept(this);
-                        print(" - 1");
-                        print(")");
+                        print(", 1");
+                        print("))");
                         return false;
                     case PostDecrement:
                         print("ctx.put(\"");
                         print(varName);
-                        print("\", ");
+                        print("\", _sub(");
                         var.accept(this);
-                        print(" - 1");
-                        print(")");
+                        print(", 1");
+                        print("))");
                         return false;
                     default:
                         throw new ELException("TOOD");
