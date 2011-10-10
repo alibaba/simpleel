@@ -277,8 +277,9 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                         }
 
                         Class<?> type;
-                        if (i >= types.length) {
+                        if (i >= types.length - 1) {
                             type = types[types.length - 1];
+                            type = type.getComponentType();
                         } else {
                             type = types[i];
                         }
@@ -286,6 +287,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                     }
 
                     out.print(")");
+                    return false;
                 }
             }
 
@@ -314,7 +316,7 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                 return;
             }
 
-            if (boolean.class == type) {
+            if (Boolean.class == type || boolean.class == type) {
                 out.print("_bool(");
                 expr.accept(this);
                 out.print(")");
@@ -322,27 +324,27 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
                 out.print("_string(");
                 expr.accept(this);
                 out.print(")");
-            } else if (byte.class == type) {
+            } else if (Byte.class == type || byte.class == type) {
                 out.print("_byte(");
                 expr.accept(this);
                 out.print(")");
-            } else if (short.class == type) {
+            } else if (Short.class == type || short.class == type) {
                 out.print("_short(");
                 expr.accept(this);
                 out.print(")");
-            } else if (int.class == type) {
+            } else if (Integer.class == type || int.class == type) {
                 out.print("_int(");
                 expr.accept(this);
                 out.print(")");
-            } else if (long.class == type) {
+            } else if (Long.class == type || long.class == type) {
                 out.print("_long(");
                 expr.accept(this);
                 out.print(")");
-            } else if (float.class == type) {
+            } else if (Float.class == type || float.class == type) {
                 out.print("_float(");
                 expr.accept(this);
                 out.print(")");
-            } else if (double.class == type) {
+            } else if (Double.class == type || double.class == type) {
                 out.print("_double(");
                 expr.accept(this);
                 out.print(")");

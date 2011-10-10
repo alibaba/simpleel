@@ -33,6 +33,7 @@ public class TestMethodInvoke extends TestCase {
         service.registerFunction(this.getClass().getMethod("f13", Boolean.class));
         service.registerFunction(this.getClass().getMethod("f14", Date.class));
         service.registerFunction(this.getClass().getMethod("f15", String.class));
+        service.registerFunction(this.getClass().getMethod("fn", String.class, Object[].class));
 
         HashMap<String, Object> ctx = new HashMap<String, Object>();
         ctx.put("a", 1);
@@ -52,6 +53,7 @@ public class TestMethodInvoke extends TestCase {
         service.eval(ctx, "f13(a)");
         service.eval(ctx, "f14(a)");
         service.eval(ctx, "f15(d)");
+        service.eval(ctx, "fn(d, a, b)");
     }
 
     public static Object f0(byte v) {
@@ -118,4 +120,7 @@ public class TestMethodInvoke extends TestCase {
         return v;
     }
 
+    public static Object fn(String v, Object... objects) {
+        return v;
+    }
 }
