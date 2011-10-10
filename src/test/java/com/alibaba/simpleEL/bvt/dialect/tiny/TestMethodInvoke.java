@@ -14,8 +14,10 @@ public class TestMethodInvoke extends TestCase {
     public void test_invoke() throws Exception {
         TinyELEvalService service = new TinyELEvalService();
         service.regsiterVariant(BigDecimal.class, "a", "b", "c");
+        service.regsiterVariant(Integer.class, "i");
         service.regsiterVariant(Date.class, "d");
         service.regsiterVariant(Class.class, "t");
+        service.regsiterVariant(Object.class, "o");
 
         service.registerFunction(this.getClass().getMethod("f0", byte.class));
         service.registerFunction(this.getClass().getMethod("f1", short.class));
@@ -59,8 +61,9 @@ public class TestMethodInvoke extends TestCase {
         service.eval(ctx, "f14(a)");
         service.eval(ctx, "f15(d)");
         service.eval(ctx, "f16(a)");
-        service.eval(ctx, "f17(a)");
+        service.eval(ctx, "f17(i)");
         service.eval(ctx, "f18(t)");
+        service.eval(ctx, "f18(o)");
         service.eval(ctx, "fn(d, a, b)");
     }
 
