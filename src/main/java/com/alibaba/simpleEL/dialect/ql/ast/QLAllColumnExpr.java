@@ -4,7 +4,6 @@ import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
 
 
 public class QLAllColumnExpr extends QLExpr {
-    private static final long serialVersionUID = 1L;
 
     public QLAllColumnExpr() {
 

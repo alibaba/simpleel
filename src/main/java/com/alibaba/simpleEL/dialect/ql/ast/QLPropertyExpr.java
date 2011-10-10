@@ -4,7 +4,6 @@ import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
 
 
 public class QLPropertyExpr extends QLExpr implements QLName {
-    private static final long serialVersionUID = 1L;
 
     private QLExpr owner;
     private String name;
