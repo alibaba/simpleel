@@ -29,6 +29,7 @@ public class QLServiceTest extends TestCase {
 
 	public void test_select() throws Exception {
 		QLEvalService service = new QLEvalService();
+		service.regsiterVariant(int.class, "min", "max");
 		
 		List<Person> srcCollection = new ArrayList<Person>();
 		srcCollection.add(new Person(18, "吴能"));
@@ -49,5 +50,12 @@ public class QLServiceTest extends TestCase {
 		Assert.assertEquals(2, destCollection.size());
 		Assert.assertEquals("夏留", destCollection.get(0).getName());
 		Assert.assertEquals("黄警", destCollection.get(1).getName());
+		
+		destCollection.clear();
+		
+		service.select(Person.class, srcCollection, destCollection, "WHERE age BETWEEN @min AND @max ORDER BY age desc LIMIT 1, 2", context);
+        Assert.assertEquals(2, destCollection.size());
+        Assert.assertEquals("夏留", destCollection.get(0).getName());
+        Assert.assertEquals("黄警", destCollection.get(1).getName());
 	}
 }

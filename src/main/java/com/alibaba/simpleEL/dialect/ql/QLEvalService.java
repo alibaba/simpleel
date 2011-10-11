@@ -11,70 +11,54 @@ import com.alibaba.simpleEL.JavaSource;
 import com.alibaba.simpleEL.JavaSourceCompiler;
 import com.alibaba.simpleEL.compile.JdkCompiler;
 import com.alibaba.simpleEL.eval.DefaultExprCacheProvider;
+import com.alibaba.simpleEL.eval.DefaultExpressEvalService;
 
-public class QLEvalService {
-	private JavaSourceCompiler compiler = new JdkCompiler();
-	private QLPreprocessor preprocessor = new QLPreprocessor();
-	private DefaultExprCacheProvider cacheProvider = new DefaultExprCacheProvider();
+public class QLEvalService extends DefaultExpressEvalService {
 
-	public QLEvalService() {
+    public QLEvalService(){
+        super(new QLPreprocessor());
+    }
 
-	}
+    public void setPreprocessor(QLPreprocessor preprocessor) {
+        this.preprocessor = preprocessor;
+    }
 
-	public JavaSourceCompiler getCompiler() {
-		return compiler;
-	}
+    public <T> void select(Class<T> clazz, Collection<T> srcCollection, Collection<T> destCollection, String ql,
+                           Map<String, Object> context) throws Exception {
+        Expr compiledExpr = getExpr(Collections.<String, Object> singletonMap("class", clazz), ql);
 
-	public void setCompiler(JavaSourceCompiler compiler) {
-		this.compiler = compiler;
-	}
+        Map<String, Object> evalContext = new HashMap<String, Object>();
+        evalContext.put("_src_", srcCollection);
+        evalContext.put("_dest_", destCollection);
+        evalContext.putAll(context);
 
-	public QLPreprocessor getPreprocessor() {
-		return preprocessor;
-	}
+        compiledExpr.eval(evalContext);
+    }
 
-	public ExprCacheProvider getCacheProvider() {
-		return this.cacheProvider;
-	}
+    public Expr getExpr(Map<String, Object> compileContext, String expr) throws InstantiationException,
+                                                                        IllegalAccessException {
+        Expr cachedExpr = null;
 
-	public void setPreprocessor(QLPreprocessor preprocessor) {
-		this.preprocessor = preprocessor;
-	}
+        if (cacheProvider != null) {
+            cachedExpr = cacheProvider.get(compileContext, expr);
+        }
 
-	public <T> void select(Class<T> clazz, Collection<T> srcCollection, Collection<T> destCollection, String ql, Map<String, Object> context) throws Exception {
-		Expr compiledExpr = getExpr(Collections.<String, Object>singletonMap("class", clazz), ql);
+        if (cachedExpr != null) {
+            return cachedExpr;
+        }
 
-		Map<String, Object> evalContext = new HashMap<String, Object>();
-		evalContext.put("_src_", srcCollection);
-		evalContext.put("_dest_", destCollection);
-		evalContext.putAll(context);
+        JavaSource source = preprocessor.handle(compileContext, expr);
 
-		compiledExpr.eval(evalContext);
-	}
+        System.out.println(source.getSource());
 
-	public Expr getExpr(Map<String, Object> compileContext, String expr) throws InstantiationException, IllegalAccessException {
-		Expr cachedExpr = null;
+        Class<? extends Expr> exprClass = compiler.compile(source);
 
-		if (cacheProvider != null) {
-			cachedExpr = cacheProvider.get(compileContext, expr);
-		}
+        Expr compiledExpr = exprClass.newInstance();
 
-		if (cachedExpr != null) {
-			return cachedExpr;
-		}
-		
-		JavaSource source = preprocessor.handle(compileContext, expr);
+        cacheProvider.putIfAbsent(compileContext, expr, compiledExpr);
 
-		System.out.println(source.getSource());
+        cachedExpr = cacheProvider.get(compileContext, expr);
 
-		Class<? extends Expr> exprClass = compiler.compile(source);
-
-		Expr compiledExpr = exprClass.newInstance();
-		
-		cacheProvider.putIfAbsent(compileContext, expr, compiledExpr);
-		
-		cachedExpr = cacheProvider.get(compileContext, expr);
-
-		return cachedExpr;
-	}
+        return cachedExpr;
+    }
 }

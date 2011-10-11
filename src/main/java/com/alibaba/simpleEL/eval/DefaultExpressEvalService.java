@@ -40,8 +40,8 @@ import com.alibaba.simpleEL.preprocess.TemplatePreProcessor;
 public class DefaultExpressEvalService implements ExpressEvalService,
 		DefaultExpressEvalServiceMBean {
 	protected Preprocessor preprocessor;
-	private JavaSourceCompiler compiler = new JdkCompiler();
-	private ExprCacheProvider cacheProvider = new DefaultExprCacheProvider();
+	protected JavaSourceCompiler compiler = new JdkCompiler();
+	protected ExprCacheProvider cacheProvider = new DefaultExprCacheProvider();
 
 	// 计数器
 	private boolean profileEnable = false;
