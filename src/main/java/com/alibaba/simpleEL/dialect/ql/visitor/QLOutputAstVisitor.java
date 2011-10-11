@@ -114,6 +114,7 @@ public class QLOutputAstVisitor extends QLAstVisitorAdapter {
 
         return false;
     }
+    
 
 
     public boolean visit(QLIdentifierExpr astNode) {
@@ -182,8 +183,6 @@ public class QLOutputAstVisitor extends QLAstVisitorAdapter {
         out.print("SELECT ");
 
         if (select.getSelectList() != null) {
-            out.println();
-            out.print("FROM ");
             select.getSelectList().accept(this);
         }
 

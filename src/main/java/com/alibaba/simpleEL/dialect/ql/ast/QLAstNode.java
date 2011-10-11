@@ -34,4 +34,10 @@ public abstract class QLAstNode {
 	}
 	
 	public abstract void output(StringBuffer buf);
+	
+	public String toString() {
+	    StringBuffer buf = new StringBuffer();
+	    output(buf);
+	    return buf.toString();
+	}
 }

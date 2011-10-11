@@ -7,7 +7,9 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import com.alibaba.simpleEL.dialect.ql.ast.QLExpr;
+import com.alibaba.simpleEL.dialect.ql.ast.QLSelect;
 import com.alibaba.simpleEL.dialect.ql.parser.QLExprParser;
+import com.alibaba.simpleEL.dialect.ql.parser.QLSelectParser;
 import com.alibaba.simpleEL.dialect.ql.visitor.QLOutputAstVisitor;
 
 public class TestParser0 extends TestCase {
@@ -67,6 +69,21 @@ public class TestParser0 extends TestCase {
         
         Assert.assertEquals("MAX(AGE) > 10", expr.toString());
         Assert.assertEquals("MAX(AGE) > 10", toString(expr));
+    }
+    
+    public void test_select() throws Exception {
+        QLSelectParser parser = new QLSelectParser("SELECT MAX(AGE) WHERE ID = 0 ORDER BY AGE");
+        QLSelect select = parser.select();
+        
+        Assert.assertEquals("SELECT MAX(AGE)\nWHERE ID = 0 ORDER BY AGE ASC", select.toString());
+        Assert.assertEquals("SELECT MAX(AGE)\nWHERE ID = 0 ORDER BY AGE ASC", toString(select));
+    }
+    
+    public static String toString(QLSelect select) {
+        StringWriter out = new StringWriter();
+        QLOutputAstVisitor visitor = new QLOutputAstVisitor(new PrintWriter(out));
+        select.accept(visitor);
+        return out.toString();
     }
     
     public static String toString(QLExpr expr) {

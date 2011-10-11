@@ -1,6 +1,10 @@
 package com.alibaba.simpleEL.dialect.ql.ast;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import com.alibaba.simpleEL.dialect.ql.visitor.QLAstVisitor;
+import com.alibaba.simpleEL.dialect.ql.visitor.QLOutputAstVisitor;
 
 public class QLSelect extends QLAstNode {
 	private QLSelectList selectList;
@@ -41,25 +45,10 @@ public class QLSelect extends QLAstNode {
 	}
 
 	public void output(StringBuffer buf) {
-		if (selectList != null) {
-			this.selectList.output(buf);
-			buf.append(" ");
-		}
-
-		if (where != null) {
-			where.output(buf);
-			buf.append(" ");
-		}
-
-		if (this.orderBy != null) {
-			buf.append(" ");
-			this.orderBy.output(buf);
-		}
-		
-		if (this.limit != null) {
-			buf.append(" ");
-			this.limit.output(buf);
-		}
+        StringWriter out = new StringWriter();
+        QLOutputAstVisitor visitor = new QLOutputAstVisitor(new PrintWriter(out));
+        this.accept(visitor);
+        buf.append(out.toString());
 	}
 
 	protected void accept0(QLAstVisitor visitor) {

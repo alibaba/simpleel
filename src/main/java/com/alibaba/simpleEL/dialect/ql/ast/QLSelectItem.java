@@ -32,14 +32,14 @@ public class QLSelectItem extends QLAstNode {
 
 	@Override
 	protected void accept0(QLAstVisitor visitor) {
-		// TODO Auto-generated method stub
-
+	    if(visitor.visit(this)) {
+	        acceptChild(visitor, expr);
+	    }
 	}
 
 	@Override
 	public void output(StringBuffer buf) {
-		// TODO Auto-generated method stub
-
+	    
 	}
 
 }

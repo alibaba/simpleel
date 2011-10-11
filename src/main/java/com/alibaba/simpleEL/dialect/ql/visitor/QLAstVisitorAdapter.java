@@ -17,6 +17,7 @@ import com.alibaba.simpleEL.dialect.ql.ast.QLOrderBy;
 import com.alibaba.simpleEL.dialect.ql.ast.QLOrderByItem;
 import com.alibaba.simpleEL.dialect.ql.ast.QLPropertyExpr;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelect;
+import com.alibaba.simpleEL.dialect.ql.ast.QLSelectItem;
 import com.alibaba.simpleEL.dialect.ql.ast.QLSelectList;
 import com.alibaba.simpleEL.dialect.ql.ast.QLVariantRefExpr;
 
@@ -211,5 +212,15 @@ public class QLAstVisitorAdapter implements QLAstVisitor {
 	public boolean visit(QLLimit x) {
 		return true;
 	}
+
+    @Override
+    public void endVisit(QLSelectItem x) {
+        
+    }
+
+    @Override
+    public boolean visit(QLSelectItem x) {
+        return true;
+    }
 
 }
