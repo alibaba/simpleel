@@ -13,6 +13,7 @@ public class TestBigDecimal extends TestCase {
 
     public void test_decimal() throws Exception {
         TinyELEvalService service = new TinyELEvalService();
+        service.setProfileEnable(true);
         
         service.regsiterVariant(BigDecimal.class, "a", "b", "c");
         
