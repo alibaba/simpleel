@@ -35,6 +35,15 @@ public class QLCaseExpr extends QLExpr implements Serializable {
 	public List<Item> getItems() {
 		return this.items;
 	}
+	
+    protected void accept0(QLAstVisitor visitor) {
+        if (visitor.visit(this)) {
+            acceptChild(visitor, this.valueExpr);
+            acceptChild(visitor, this.items);
+            acceptChild(visitor, this.elseExpr);
+        }
+        visitor.endVisit(this);
+    }
 
 	public void output(StringBuffer buf) {
 		buf.append("CASE ");

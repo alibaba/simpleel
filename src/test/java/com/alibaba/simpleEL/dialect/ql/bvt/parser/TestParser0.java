@@ -1,10 +1,14 @@
 package com.alibaba.simpleEL.dialect.ql.bvt.parser;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import com.alibaba.simpleEL.dialect.ql.ast.QLExpr;
 import com.alibaba.simpleEL.dialect.ql.parser.QLExprParser;
+import com.alibaba.simpleEL.dialect.ql.visitor.QLOutputAstVisitor;
 
 public class TestParser0 extends TestCase {
 
@@ -13,6 +17,8 @@ public class TestParser0 extends TestCase {
         QLExpr expr = parser.expr();
         
         Assert.assertEquals("CASE F WHEN T THEN 1 ELSE 0 END", expr.toString());
+        Assert.assertEquals("CASE F WHEN T THEN 1 ELSE 0 END", toString(expr));
+        
     }
     
     public void test_1() throws Exception {
@@ -20,6 +26,7 @@ public class TestParser0 extends TestCase {
         QLExpr expr = parser.expr();
         
         Assert.assertEquals("CASE WHEN T > 0 THEN 1 ELSE 0 END", expr.toString());
+        Assert.assertEquals("CASE WHEN T > 0 THEN 1 ELSE 0 END", toString(expr));
     }
     
     public void test_between() throws Exception {
@@ -27,6 +34,7 @@ public class TestParser0 extends TestCase {
         QLExpr expr = parser.expr();
         
         Assert.assertEquals("F1 BETWEEN @min AND @max", expr.toString());
+        Assert.assertEquals("F1 BETWEEN @min AND @max", toString(expr));
     }
     
     public void test_between_not() throws Exception {
@@ -34,6 +42,7 @@ public class TestParser0 extends TestCase {
         QLExpr expr = parser.expr();
         
         Assert.assertEquals("F1 NOT BETWEEN @min AND @max", expr.toString());
+        Assert.assertEquals("F1 NOT BETWEEN @min AND @max", toString(expr));
     }
     
     public void test_method() throws Exception {
@@ -41,6 +50,7 @@ public class TestParser0 extends TestCase {
         QLExpr expr = parser.expr();
         
         Assert.assertEquals("LEN(F1) > 10", expr.toString());
+        Assert.assertEquals("LEN(F1) > 10", toString(expr));
     }
     
     public void test_method_2() throws Exception {
@@ -48,6 +58,7 @@ public class TestParser0 extends TestCase {
         QLExpr expr = parser.expr();
         
         Assert.assertEquals("u.name.length() > 10", expr.toString());
+        Assert.assertEquals("u.name.length() > 10", toString(expr));
     }
     
     public void test_aggregate() throws Exception {
@@ -55,5 +66,13 @@ public class TestParser0 extends TestCase {
         QLExpr expr = parser.expr();
         
         Assert.assertEquals("MAX(AGE) > 10", expr.toString());
+        Assert.assertEquals("MAX(AGE) > 10", toString(expr));
+    }
+    
+    public static String toString(QLExpr expr) {
+        StringWriter out = new StringWriter();
+        QLOutputAstVisitor visitor = new QLOutputAstVisitor(new PrintWriter(out));
+        expr.accept(visitor);
+        return out.toString();
     }
 }
