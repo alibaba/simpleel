@@ -20,4 +20,18 @@ public class TestParser0 extends TestCase {
         
         Assert.assertEquals("CASE WHEN T > 0 THEN 1 ELSE 0 END", expr.toString());
     }
+    
+    public void test_between() throws Exception {
+        QLExprParser parser = new QLExprParser("F1 BETWEEN @min AND @max");
+        QLExpr expr = parser.expr();
+        
+        Assert.assertEquals("F1 BETWEEN @min AND @max", expr.toString());
+    }
+    
+    public void test_between_not() throws Exception {
+        QLExprParser parser = new QLExprParser("F1 NOT BETWEEN @min AND @max");
+        QLExpr expr = parser.expr();
+        
+        Assert.assertEquals("F1 NOT BETWEEN @min AND @max", expr.toString());
+    }
 }
