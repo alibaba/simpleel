@@ -35,6 +35,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import com.alibaba.simpleEL.Expr;
+
 /**
  * @author wenshao<szujobs@hotmail.com>
  * 
@@ -89,7 +91,7 @@ public class JdkCompileTask<T> {
 		}
 	}
 
-	public synchronized Class<T> compile(final String className, final CharSequence javaSource, final DiagnosticCollector<JavaFileObject> diagnosticsList)
+	public synchronized CompileResult compile(final String className, final CharSequence javaSource, final DiagnosticCollector<JavaFileObject> diagnosticsList)
 			throws JdkCompileException, ClassCastException {
 		if (diagnosticsList != null) {
 			diagnostics = diagnosticsList;
@@ -100,14 +102,17 @@ public class JdkCompileTask<T> {
 		Map<String, CharSequence> classes = new HashMap<String, CharSequence>(1);
 		classes.put(className, javaSource);
 
-		Map<String, Class<T>> compiled = compile(classes, diagnosticsList);
-		Class<T> newClass = compiled.get(className);
+		Map<String, CompileResult> compiled = compile(classes, diagnosticsList);
+		CompileResult newClass = compiled.get(className);
 
 		return newClass;
 	}
 
-	public synchronized Map<String, Class<T>> compile(final Map<String, CharSequence> classes, final DiagnosticCollector<JavaFileObject> diagnosticsList)
+	@SuppressWarnings("unchecked")
+    public synchronized Map<String, CompileResult> compile(final Map<String, CharSequence> classes, final DiagnosticCollector<JavaFileObject> diagnosticsList)
 			throws JdkCompileException {
+	    Map<String, CompileResult> compiled = new HashMap<String, CompileResult>();
+	    
 		List<JavaFileObject> sources = new ArrayList<JavaFileObject>();
 		for (Entry<String, CharSequence> entry : classes.entrySet()) {
 			String qualifiedClassName = entry.getKey();
@@ -118,6 +123,10 @@ public class JdkCompileTask<T> {
 				final String packageName = dotPos == -1 ? "" : qualifiedClassName.substring(0, dotPos);
 				final JavaFileObjectImpl source = new JavaFileObjectImpl(className, javaSource);
 				sources.add(source);
+				
+				CompileResult compileResult = new CompileResult();
+				compileResult.setSource(source);
+				compiled.put(qualifiedClassName, compileResult);
 
 				javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, className + JAVA_EXTENSION, source);
 			}
@@ -132,10 +141,10 @@ public class JdkCompileTask<T> {
 
 		try {
 			// For each class name in the inpput map, get its compiled class and put it in the output map
-			Map<String, Class<T>> compiled = new HashMap<String, Class<T>>();
 			for (String qualifiedClassName : classes.keySet()) {
 				final Class<T> newClass = loadClass(qualifiedClassName);
-				compiled.put(qualifiedClassName, newClass);
+				CompileResult compileResult = compiled.get(qualifiedClassName);
+				compileResult.setExprClass((Class<? extends Expr>) newClass);
 			}
 
 			return compiled;

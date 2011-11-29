@@ -67,26 +67,31 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 	}
 
 	public synchronized Class<? extends Expr> compile(JavaSource javaSource) {
-		compileCount.incrementAndGet();
-		long startTimeMillis = System.nanoTime();
-
-		try {
-			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
-
-			JdkCompileTask<Expr> compileTask = new JdkCompileTask<Expr>(classLoader, options);
-
-			String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
-
-			return (Class<? extends Expr>) compileTask.compile(fullName, javaSource.getSource(), errs);
-		} catch (JdkCompileException ex) {
-			DiagnosticCollector<JavaFileObject> diagnostics = ex.getDiagnostics();
-
-			throw new CompileExprException("compile error, source : \n" + javaSource + ", " + diagnostics.getDiagnostics(), ex);
-		} catch (Exception ex) {
-			throw new CompileExprException("compile error, source : \n" + javaSource, ex);
-		} finally {
-			// 编译时间统计
-			compileTimeNano.addAndGet(System.nanoTime() - startTimeMillis);
-		}
+		return compileEx(javaSource).getExprClass();
 	}
+
+    @Override
+    public CompileResult compileEx(JavaSource javaSource) {
+        compileCount.incrementAndGet();
+        long startTimeMillis = System.nanoTime();
+
+        try {
+            final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
+
+            JdkCompileTask<Expr> compileTask = new JdkCompileTask<Expr>(classLoader, options);
+
+            String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
+
+            return compileTask.compile(fullName, javaSource.getSource(), errs);
+        } catch (JdkCompileException ex) {
+            DiagnosticCollector<JavaFileObject> diagnostics = ex.getDiagnostics();
+
+            throw new CompileExprException("compile error, source : \n" + javaSource + ", " + diagnostics.getDiagnostics(), ex);
+        } catch (Exception ex) {
+            throw new CompileExprException("compile error, source : \n" + javaSource, ex);
+        } finally {
+            // 编译时间统计
+            compileTimeNano.addAndGet(System.nanoTime() - startTimeMillis);
+        }
+    }
 }

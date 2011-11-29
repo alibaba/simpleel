@@ -404,7 +404,7 @@ public class TinyELExprParser {
                 break;
             case BANG:
                 lexer.nextToken();
-                primaryExpr = expr();
+                primaryExpr = primary();
                 primaryExpr = new TinyUnaryOpExpr(primaryExpr, TinyUnaryOperator.Not);
                 break;
             case NEW:

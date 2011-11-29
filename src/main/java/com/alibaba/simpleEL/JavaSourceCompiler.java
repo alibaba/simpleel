@@ -15,6 +15,8 @@
  */
 package com.alibaba.simpleEL;
 
+import com.alibaba.simpleEL.compile.CompileResult;
+
 /**
  * @author wenshao<szujobs@hotmail.com>
  *
@@ -22,5 +24,8 @@ package com.alibaba.simpleEL;
 public interface JavaSourceCompiler {
 	Class<? extends Expr> compile(JavaSource javaSource);
 	
+	CompileResult compileEx(JavaSource javaSource);
+	
 	void resetClassLoader();
+	
 }

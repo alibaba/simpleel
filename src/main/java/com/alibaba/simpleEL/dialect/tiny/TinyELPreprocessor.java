@@ -379,7 +379,9 @@ public class TinyELPreprocessor extends TemplatePreProcessor {
             if (getType(x.getLeft()) == String.class || getType(x.getRight()) == String.class) {
                 out.print("(");
                 x.getLeft().accept(this);
-                out.print(" + ");
+                out.print(" ");
+                out.print(x.getOperator().name);
+                out.print(" ");
                 x.getRight().accept(this);
                 out.print(")");
                 return false;

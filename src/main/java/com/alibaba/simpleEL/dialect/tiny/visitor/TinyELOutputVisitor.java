@@ -520,7 +520,13 @@ public class TinyELOutputVisitor extends TinyELAstVisitorAdapter {
 			break;
 		case Not:
 		    print("!");
-		    x.getExpr().accept(this);
+		    if (x.getExpr() instanceof TinyELBinaryOpExpr) {
+		        print("(");
+		        x.getExpr().accept(this);
+		        print(")");
+		    } else {
+		        x.getExpr().accept(this);		        
+		    }
 		    break;
 		default:
 			throw new ELException("TOOD");
