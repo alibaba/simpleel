@@ -21,8 +21,9 @@ public class Test_Conditional extends TestCase {
         ctx.put("A", 123L);
         ctx.put("B", 456L);
         ctx.put("C", 789L);
+        ctx.put("bandwidth", 0);
 
-        Assert.assertEquals(456L, service.eval(ctx, "@bandwidth != 0 ? ((@in_byte_total - last(@in_byte_total)) * 8 / (@@INTERVAL + 0.0)) / (@bandwidth * 1048576) : 0L"));
+        Assert.assertEquals(0, service.eval(ctx, "@bandwidth != 0 ? ((@in_byte_total - last(@in_byte_total)) * 8 / (@@INTERVAL + 0.0)) / (@bandwidth * 1048576) : 0L"));
     }
     
     public static Object last(Object o) {

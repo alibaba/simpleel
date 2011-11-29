@@ -579,6 +579,22 @@ public class TypeUtils {
         return new Date();
     }
     
+    public static BigDecimal abs(BigDecimal value) {
+        if (value == null) {
+            return null;
+        }
+        
+        return value.abs();
+    }
+    
+    public static BigInteger abs(BigInteger value) {
+        if (value == null) {
+            return null;
+        }
+        
+        return value.abs();
+    }
+    
     public static long currentTimeMillis() {
         return System.currentTimeMillis();
     }
