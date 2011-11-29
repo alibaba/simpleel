@@ -82,7 +82,9 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 
             String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
 
-            return compileTask.compile(fullName, javaSource.getSource(), errs);
+            CompileResult result = compileTask.compile(fullName, javaSource.getSource(), errs);
+            
+            return result;
         } catch (JdkCompileException ex) {
             DiagnosticCollector<JavaFileObject> diagnostics = ex.getDiagnostics();
 

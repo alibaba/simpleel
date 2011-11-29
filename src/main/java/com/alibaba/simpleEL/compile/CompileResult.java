@@ -6,6 +6,7 @@ public class CompileResult {
 
     private Class<? extends Expr> clazz;
     private JavaFileObjectImpl    source;
+    private byte[]                bytecode;
 
     public JavaFileObjectImpl getSource() {
         return source;
@@ -24,11 +25,11 @@ public class CompileResult {
     }
 
     public byte[] getBytecode() {
-        if (source == null) {
-            return null;
-        }
-        return source.getByteCode();
+        return bytecode;
     }
 
+    public void setBytecode(byte[] bytecode) {
+        this.bytecode = bytecode;
+    }
 
 }

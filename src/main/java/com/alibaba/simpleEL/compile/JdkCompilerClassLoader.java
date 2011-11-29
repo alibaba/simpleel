@@ -24,6 +24,10 @@ public final class JdkCompilerClassLoader extends ClassLoader implements JdkComp
 	public void clearCache() {
 		this.classes.clear();
 	}
+	
+	public JavaFileObject getJavaFileObject(String qualifiedClassName) {
+	    return classes.get(qualifiedClassName);
+	}
 
 	@Override
 	protected synchronized Class<?> findClass(String qualifiedClassName) throws ClassNotFoundException {

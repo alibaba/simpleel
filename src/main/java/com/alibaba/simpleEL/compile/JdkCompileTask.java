@@ -144,6 +144,8 @@ public class JdkCompileTask<T> {
 			for (String qualifiedClassName : classes.keySet()) {
 				final Class<T> newClass = loadClass(qualifiedClassName);
 				CompileResult compileResult = compiled.get(qualifiedClassName);
+				JavaFileObjectImpl fileImpl = (JavaFileObjectImpl) classLoader.getJavaFileObject(qualifiedClassName);
+				compileResult.setBytecode(fileImpl.getByteCode());
 				compileResult.setExprClass((Class<? extends Expr>) newClass);
 			}
 
