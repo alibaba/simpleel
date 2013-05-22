@@ -28,47 +28,66 @@ import com.alibaba.simpleEL.JavaSourceCompiler;
 
 /**
  * @author wenshao<szujobs@hotmail.com>
- * 
  */
 public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
-	private final AtomicLong compileCount = new AtomicLong();
-	private final AtomicLong compileTimeNano = new AtomicLong();
 
-	private final List<String> options = new ArrayList<String>();
+    private final AtomicLong       compileCount      = new AtomicLong();
+    private final AtomicLong       compileTimeNano   = new AtomicLong();
 
-	private JdkCompilerClassLoader classLoader;
+    private final List<String>     options           = new ArrayList<String>();
 
-	public JdkCompiler() {
-		options.add("-target");
-		options.add("1.6");
+    private JdkCompilerClassLoader classLoader;
+    private ClassLoader            parentClassLoader = Thread.currentThread().getContextClassLoader();
 
-		classLoader = new JdkCompilerClassLoader(this.getClass().getClassLoader());
-	}
+    public JdkCompiler(){
+        options.add("-target");
+        options.add("1.6");
 
-	public JdkCompilerClassLoader getClassLoader() {
-		return this.classLoader;
-	}
+        try {
+            parentClassLoader.loadClass("com.alibaba.simpleEL.compile.JdkCompiler");
+        } catch (Exception e) {
+            parentClassLoader = JdkCompiler.class.getClassLoader();
+        }
 
-	public void resetClassLoader() {
-		classLoader.clearCache();
-		classLoader = new JdkCompilerClassLoader(this.getClass().getClassLoader());
-	}
+        classLoader = new JdkCompilerClassLoader(parentClassLoader);
+    }
 
-	public List<String> getOptions() {
-		return this.options;
-	}
+    public ClassLoader getParentClassLoader() {
+        return parentClassLoader;
+    }
 
-	public long getCompileCount() {
-		return compileCount.get();
-	}
+    public void setParentClassLoader(ClassLoader parentClassLoader) {
+        this.parentClassLoader = parentClassLoader;
+    }
 
-	public long getCompileTimeNano() {
-		return compileTimeNano.get();
-	}
+    public void setClassLoader(JdkCompilerClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
-	public synchronized Class<? extends Expr> compile(JavaSource javaSource) {
-		return compileEx(javaSource).getExprClass();
-	}
+    public JdkCompilerClassLoader getClassLoader() {
+        return this.classLoader;
+    }
+
+    public void resetClassLoader() {
+        classLoader.clearCache();
+        classLoader = new JdkCompilerClassLoader(parentClassLoader);
+    }
+
+    public List<String> getOptions() {
+        return this.options;
+    }
+
+    public long getCompileCount() {
+        return compileCount.get();
+    }
+
+    public long getCompileTimeNano() {
+        return compileTimeNano.get();
+    }
+
+    public synchronized Class<? extends Expr> compile(JavaSource javaSource) {
+        return compileEx(javaSource).getExprClass();
+    }
 
     @Override
     public CompileResult compileEx(JavaSource javaSource) {
@@ -83,12 +102,13 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
             String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
 
             CompileResult result = compileTask.compile(fullName, javaSource.getSource(), errs);
-            
+
             return result;
         } catch (JdkCompileException ex) {
             DiagnosticCollector<JavaFileObject> diagnostics = ex.getDiagnostics();
 
-            throw new CompileExprException("compile error, source : \n" + javaSource + ", " + diagnostics.getDiagnostics(), ex);
+            throw new CompileExprException("compile error, source : \n" + javaSource + ", "
+                                           + diagnostics.getDiagnostics(), ex);
         } catch (Exception ex) {
             throw new CompileExprException("compile error, source : \n" + javaSource, ex);
         } finally {
