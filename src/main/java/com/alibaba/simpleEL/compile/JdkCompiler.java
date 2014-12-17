@@ -38,10 +38,23 @@ public class JdkCompiler implements JavaSourceCompiler, JdkCompilerMBean {
 
     private JdkCompilerClassLoader classLoader;
     private ClassLoader            parentClassLoader = Thread.currentThread().getContextClassLoader();
+    
+     private static String javaVersion = System.getProperty("java.version");
+    
+    static
+    {
+    	if (javaVersion.contains("1.7.")) {
+			javaVersion = "1.7";
+		} else if (javaVersion.contains("1.6.")) {
+			javaVersion = "1.6";
+		}
+    }
+
 
     public JdkCompiler(){
         options.add("-target");
-        options.add("1.6");
+       // options.add("1.6");
+       options.add(javaVersion);
 
         try {
             parentClassLoader.loadClass("com.alibaba.simpleEL.compile.JdkCompiler");
