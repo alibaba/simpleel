@@ -117,7 +117,7 @@ public class TemplatePreProcessor implements Preprocessor {
 		if (size != is.read(bytes, 0, size)) {
 			throw new IOException();
 		}
-
+                is.close();
 		String template = new String(bytes, "UTF-8");
 
 		return template;
