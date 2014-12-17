@@ -4,12 +4,16 @@
 
 	<groupId>com.alibaba</groupId>
 	<artifactId>SimpleEL</artifactId>
-	<version>0.1.6-SNAPSHOT</version>
+	<version>0.1.7</version>
 	<name>SimpleEL</name>
 	<packaging>jar</packaging>
-	
+
 	<properties>
+		<junit.version>4.11</junit.version>
+		<gpg.skip>false</gpg.skip>
+		<javadoc.skip>false</javadoc.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.5</jdk.version>
 	</properties>
 	
 	<developers>
@@ -32,6 +36,20 @@
 			<url>dav:http://code.alibabatech.com/mvn/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+	<scm>
+		<url>https://wenshao@github.com/alibaba/simpleel.git</url>
+		<connection>scm:git:https://wenshao@github.com/alibaba/simpleel.git</connection>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
 	
 	<build>
         <extensions>
@@ -47,8 +65,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
 			
@@ -83,6 +101,22 @@
 						<include>**/bvt/**/*.java</include>
 					</includes>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<configuration>
+					<skip>${gpg.skip}</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
