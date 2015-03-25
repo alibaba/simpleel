@@ -44,7 +44,7 @@ public class ExpressUtils {
 
 		TokenType type = TokenType.Text;
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		char[] charArray = expr.toCharArray();
 		for (int i = 0; i < charArray.length; ++i) {
 			char ch = charArray[i];
@@ -54,7 +54,7 @@ public class ExpressUtils {
 					tokenList.add(new Token(type, buf.toString()));
 				}
 				type = TokenType.Variant;
-				buf = new StringBuffer();
+				buf = new StringBuilder();
 
 				continue;
 			}
@@ -63,6 +63,7 @@ public class ExpressUtils {
 				if (buf.length() > 0) {
 					tokenList.add(new Token(type, buf.toString()));
 				}
+                buf = new StringBuilder();
 				buf.append("/*");
 				++i;
 				type = TokenType.MultiLineComment;
@@ -73,6 +74,7 @@ public class ExpressUtils {
 				if (buf.length() > 0) {
 					tokenList.add(new Token(type, buf.toString()));
 				}
+                buf = new StringBuilder();
 				buf.append("//");
 				++i;
 				type = TokenType.LineComment;
@@ -87,7 +89,7 @@ public class ExpressUtils {
 				} else {
 					tokenList.add(new Token(type, buf.toString()));
 					type = TokenType.Text;
-					buf = new StringBuffer();
+                    buf = new StringBuilder();
 					--i;
 				}
 				continue;
@@ -104,7 +106,7 @@ public class ExpressUtils {
 					++i;
 					tokenList.add(new Token(type, buf.toString()));
 					type = TokenType.Text;
-					buf = new StringBuffer();
+                    buf = new StringBuilder();
 					continue;
 				} else {
 					buf.append(ch);
@@ -116,7 +118,7 @@ public class ExpressUtils {
 					buf.append(ch);
 					tokenList.add(new Token(type, buf.toString()));
 					type = TokenType.Text;
-					buf = new StringBuffer();
+                    buf = new StringBuilder();
 				} else if (ch == '\r') {
 					buf.append(ch);
 					if (i < charArray.length - 1 && charArray[i + 1] == '\n') {
@@ -126,7 +128,7 @@ public class ExpressUtils {
 					
 					tokenList.add(new Token(type, buf.toString()));
 					type = TokenType.Text;
-					buf = new StringBuffer();
+                    buf = new StringBuilder();
 				} else {
 					buf.append(ch);
 				}
