@@ -15,29 +15,52 @@
  */
 package com.alibaba.simpleEL.bvt;
 
+import com.alibaba.simpleEL.preprocess.VariantResolver;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import com.alibaba.simpleEL.preprocess.ExpressUtils;
-import com.alibaba.simpleEL.preprocess.VariantResolver;
+import java.util.List;
+
+import static com.alibaba.simpleEL.preprocess.ExpressUtils.*;
 
 public class ExpressUtilsTest extends TestCase {
 	public void test_0 () throws Exception {
 		String text = "@_last_loginid_2 * 10";
-		String result = ExpressUtils.resolve(text, new VariantResolver() {
+		String result = resolve(text, new VariantResolver() {
 
-			@Override
-			public String resolve(String variant) {
-				return "ctx.get(\"" + variant + "\")";
-			}
+            @Override
+            public String resolve(String variant) {
+                return "ctx.get(\"" + variant + "\")";
+            }
 
-			@Override
-			public Class<?> getType(String variant) {
-				return null;
-			}
-			
-		});
+            @Override
+            public Class<?> getType(String variant) {
+                return null;
+            }
+
+        });
 		
 		Assert.assertEquals("ctx.get(\"_last_loginid_2\") * 10", result);
 	}
+
+    public void testMultipleLineComment() {
+        String script = "/* source file BizOrder_TradeEvent_PayOrderItem.xml*/\n" +
+                "java.util.Map<String,Object> result = new java.util.HashMap<String,Object>();\n" +
+                "/* some comment*/\n" +
+                "Object expr = new Object() ; \n";
+        List<Token> tokens = parse(script);
+        Assert.assertEquals(tokens.get(2).getText(),"/* some comment*/");
+        Assert.assertEquals(tokens.get(2).getType(),TokenType.MultiLineComment);
+    }
+
+    public void testSingleLineComment() {
+        String script = "// source file BizOrder_TradeEvent_PayOrderItem.xml\n" +
+                "java.util.Map<String,Object> result = new java.util.HashMap<String,Object>();\n" +
+                "// some comment\n" +
+                "Object expr = new Object() ; \n";
+        List<Token> tokens = parse(script);
+        Assert.assertEquals(tokens.get(2).getText(),"// some comment\n");
+        Assert.assertEquals(tokens.get(2).getType(),TokenType.LineComment);
+    }
+
 }
